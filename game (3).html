@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0f1e">
+  <title>Кликер Империи</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+  <style>
+    :root{--app-max-width:560px;--shell-gap:clamp(10px,2.4vw,14px);--page-pad:clamp(14px,4vw,20px);--section-pad:clamp(12px,3vw,16px);--section-radius:clamp(14px,3vw,18px);--top-number:clamp(24px,6vw,30px);--card-blur:10px;--clicker-wrap-size:clamp(180px,48vw,238px);--clicker-button-size:calc(var(--clicker-wrap-size) - clamp(24px,6vw,32px));--clicker-coin-size:calc(var(--clicker-button-size) - clamp(38px,10vw,52px));--clicker-ring-size:calc(var(--clicker-wrap-size) + clamp(20px,5vw,30px))}
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+    html,body{width:100%;height:100%;overflow:hidden}
+    body{font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0f1e;color:#fff;transition:background .35s ease}
+    .theme-default{background:#0a0f1e}
+    .theme-space{background:#05070f}
+    .theme-neon{background:#13081e}
+    .theme-dungeon{background:#170b07}
+    .bg-particles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+    .particle{position:absolute;border-radius:50%}
+    .theme-space .particle{background:#fff;animation:twinkle 3s infinite ease-in-out}
+    .theme-neon .particle{width:2px;height:28px;background:linear-gradient(to bottom,transparent,#d946ef,transparent);animation:fall 4s infinite linear}
+    .theme-dungeon .particle{width:4px;height:4px;background:#fb923c;box-shadow:0 0 8px #fb923c;animation:rise 5s infinite ease-out}
+    @keyframes twinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.2)}}
+    @keyframes fall{0%{transform:translateY(-40px);opacity:0}10%,90%{opacity:1}100%{transform:translateY(100vh);opacity:0}}
+    @keyframes rise{0%{transform:translateY(100vh) scale(1);opacity:1}100%{transform:translateY(-10vh) scale(0);opacity:0}}
+    .app{position:relative;z-index:1;width:min(100%,var(--app-max-width));height:100%;margin:0 auto;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+    .top-bar{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;padding:clamp(12px,3.5vw,16px) var(--page-pad) 8px;position:relative;flex-shrink:0}
+    .top-left,.top-right{display:flex;align-items:center;gap:8px;min-width:0;z-index:1}.top-right{justify-self:end}
+    .coins-val{font-size:var(--top-number);font-weight:900;color:#ffd700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;max-width:36vw;overflow:hidden;text-overflow:ellipsis}
+    .diamond-val{font-size:clamp(16px,4.5vw,20px);font-weight:800;color:#ead8ff;font-variant-numeric:tabular-nums;line-height:1}
+    .rank-badge{position:static;justify-self:center;transform:none;padding:5px 12px;border-radius:999px;border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.06);font-size:10px;letter-spacing:1.2px;color:#ffd700;font-weight:800;text-transform:uppercase;white-space:nowrap;min-width:0;max-width:40vw;overflow:hidden;text-overflow:ellipsis;text-align:center}
+    .coin-art{--c1:#fff0a6;--c2:#ffd700;--c3:#9c6400;--mark:#5a3e00;--glow:rgba(255,215,0,.22);position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 28%,var(--c1),var(--c2) 58%,var(--c3));box-shadow:inset 0 6px 12px rgba(255,255,255,.15),inset 0 -8px 14px rgba(0,0,0,.22),0 0 18px var(--glow);overflow:hidden}
+    .coin-art:before{content:'';position:absolute;top:12%;left:18%;width:42%;height:18%;border-radius:50%;transform:rotate(-18deg);background:radial-gradient(ellipse,rgba(255,255,255,.35),transparent 72%)}
+    .coin-art:after{content:'';position:absolute;inset:7%;border-radius:50%;border:2px solid rgba(255,255,255,.16)}
+    .coin-mark{position:relative;z-index:1;font-weight:900;color:var(--mark);text-shadow:0 2px 4px rgba(0,0,0,.18);line-height:1}
+    .coin-mini{width:28px;height:28px;font-size:13px}
+    .coin-main{width:var(--clicker-coin-size);height:var(--clicker-coin-size);font-size:clamp(34px,8.8vw,46px)}
+    .coin-preview{width:42px;height:42px;font-size:16px;margin:0 auto}
+    .skin-classic{--c1:#fff0a6;--c2:#ffd700;--c3:#9c6400;--mark:#5a3e00;--glow:rgba(255,215,0,.22)}
+    .skin-ruby{--c1:#ffd5d8;--c2:#ef4444;--c3:#7f1d1d;--mark:#fff3f3;--glow:rgba(239,68,68,.24)}
+    .skin-emerald{--c1:#c8ffe0;--c2:#22c55e;--c3:#14532d;--mark:#f2fff7;--glow:rgba(34,197,94,.24)}
+    .skin-imperial{--c1:#d7e7ff;--c2:#60a5fa;--c3:#1e3a8a;--mark:#fff7cf;--glow:rgba(96,165,250,.24)}
+    .skin-sunfire{--c1:#ffd9b2;--c2:#f97316;--c3:#7c2d12;--mark:#fff8ea;--glow:rgba(249,115,22,.28)}
+    .skin-void{--c1:#d8b4fe;--c2:#7c3aed;--c3:#2e1065;--mark:#f8f2ff;--glow:rgba(124,58,237,.28)}
+    .stats-row{padding:4px var(--page-pad) 8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:stretch;flex-shrink:0}
+    .stat-item{font-size:11px;color:rgba(255,255,255,.42);font-weight:600;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.05);backdrop-filter:blur(6px);min-width:0}
+    .stat-item b{color:rgba(255,255,255,.72)}
+    .level-strip{padding:0 var(--page-pad) 10px;flex-shrink:0}
+    .level-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+    .level-chip{padding:4px 10px;border-radius:999px;background:rgba(91,138,255,.16);color:#a9c2ff;font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+    .level-label{font-size:11px;color:rgba(255,255,255,.62);font-weight:700;flex:1;min-width:120px}
+    .level-xp{font-size:10px;color:rgba(255,255,255,.36);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .level-bar,.progress-bar,.boss-hp-bar,.achievement-progress,.quest-progress{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+    .level-fill,.progress-fill,.boss-hp-fill,.achievement-progress-fill,.quest-progress-fill{height:100%;width:0;border-radius:999px}
+    .level-fill{background:linear-gradient(90deg,#38bdf8,#8b5cf6)}
+    .location-block{padding:2px var(--page-pad) 10px;flex-shrink:0}
+    .loc-title{font-size:12px;font-weight:800;color:#5b8aff;letter-spacing:2px;text-transform:uppercase}
+    .loc-desc{margin-top:2px;font-size:11px;color:rgba(255,255,255,.2);font-style:italic}
+    .loc-divider{width:100%;height:1px;background:rgba(255,255,255,.04);margin-top:8px}
+    .pages-shell{position:relative;flex:1;min-height:0;overflow:hidden;padding:0}
+    .tab-page{position:absolute;inset:0;display:none;flex-direction:column;min-height:0;overflow:hidden;background:#0a0f1e;opacity:0;transform:translateY(8px)}
+    .tab-page.active{display:flex;opacity:1;transform:translateY(0);animation:pageFade .18s ease}
+    .tab-page#page-home{flex-direction:column;gap:var(--shell-gap);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:12px}
+    @keyframes pageFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .card,.quest-strip,.bank-card,.ad-card,.profile-card,.shop-item{background:rgba(18,22,40,.7);border:1px solid rgba(255,255,255,.05);border-radius:14px}
+    .quest-strip{margin:8px var(--page-pad) 0;padding:var(--section-pad);border-radius:var(--section-radius);backdrop-filter:blur(var(--card-blur));box-shadow:0 10px 28px rgba(0,0,0,.14)}
+    .quest-top{display:flex;justify-content:space-between;gap:10px;color:rgba(255,255,255,.38);font-size:10px;letter-spacing:1px;text-transform:uppercase}
+    .quest-title{font-size:12px;font-weight:800;margin:6px 0 8px;color:#fff}
+    .quest-progress-row{display:flex;align-items:center;gap:10px}
+    .quest-progress{flex:1}
+    .quest-progress-fill{background:linear-gradient(90deg,#5b8aff,#8b5cf6)}
+    .quest-progress-text{min-width:68px;text-align:right;font-size:10px;color:rgba(255,255,255,.42);font-variant-numeric:tabular-nums}
+    .quest-btn,.bank-btn,.boss-nav-btn,.shop-item-btn,.ad-btn,.btn-reset,.prestige-btn,.achievement-btn{font-family:inherit;border:none;outline:none;cursor:pointer;transition:transform .12s ease,opacity .12s ease}
+    .quest-btn{width:100%;margin-top:10px;padding:10px;border-radius:10px;background:rgba(91,138,255,.14);color:#aac1ff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px}
+    .quest-btn.ready{background:linear-gradient(135deg,#22c55e,#16a34a);color:#05140a}
+    .quest-btn:disabled,.bank-btn:disabled,.shop-item-btn:disabled,.boss-nav-btn:disabled,.prestige-btn:disabled,.ad-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .clicker-section{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(16px,4vw,24px) 0 clamp(12px,3vw,20px);min-height:min(46vh,420px);overflow:hidden}
+    .clicker-section:before{content:'';position:absolute;width:clamp(260px,68vw,360px);height:clamp(260px,68vw,360px);border-radius:50%;background:radial-gradient(circle,rgba(91,138,255,.16),transparent 66%);filter:blur(8px);top:50%;left:50%;transform:translate(-50%,-54%);pointer-events:none}
+    .clicker-wrap{position:relative;width:var(--clicker-wrap-size);height:var(--clicker-wrap-size);display:flex;align-items:center;justify-content:center}
+    .clicker-aura,.clicker-pulse{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none}
+    .clicker-aura{width:calc(var(--clicker-wrap-size) + clamp(26px,7vw,42px));height:calc(var(--clicker-wrap-size) + clamp(26px,7vw,42px));background:radial-gradient(circle,rgba(255,215,0,.12),rgba(91,138,255,.08) 45%,transparent 70%);filter:blur(10px)}
+    .clicker-pulse{width:calc(var(--clicker-wrap-size) + clamp(10px,3vw,18px));height:calc(var(--clicker-wrap-size) + clamp(10px,3vw,18px));border:1px solid rgba(255,255,255,.07);animation:clickerPulse 3s infinite ease-out}
+    @keyframes clickerPulse{0%{opacity:.18;transform:translate(-50%,-50%) scale(.92)}70%{opacity:.04;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.14)}}
+    .clicker-ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:var(--clicker-ring-size);height:var(--clicker-ring-size);border-radius:50%;border:1px solid rgba(255,255,255,.03)}
+    .clicker-btn{width:var(--clicker-button-size);height:var(--clicker-button-size);border-radius:50%;background:radial-gradient(circle at 35% 30%,#3d4258,#1c1f30 45%,#0e1019 85%);box-shadow:0 0 0 2px rgba(255,255,255,.02),0 0 0 6px rgba(0,0,0,.4),inset 0 6px 20px rgba(255,255,255,.06),inset 0 -6px 20px rgba(0,0,0,.5),0 12px 40px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
+    .clicker-btn:active,.bank-btn:active,.boss-nav-btn:active,.shop-item-btn:active,.ad-btn:active,.btn-reset:active,.prestige-btn:active,.quest-btn:active,.achievement-btn:active{transform:scale(.97)}
+    .click-label{margin-top:14px;font-size:clamp(14px,3.8vw,16px);color:rgba(255,255,255,.5);font-weight:600;text-align:center}
+    .click-label .plus{color:rgba(255,255,255,.8);font-weight:800}
+    .combo-chip{margin-top:10px;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.08);font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.48);font-weight:800;text-transform:uppercase;max-width:calc(100% - var(--page-pad) * 2);text-align:center}
+    .combo-chip.hot{color:#ffd700;border-color:rgba(255,215,0,.24);box-shadow:0 0 18px rgba(255,215,0,.08)}
+    .float-num{position:fixed;z-index:50;pointer-events:none;font-size:18px;font-weight:800;color:rgba(255,255,255,.92);text-shadow:0 2px 4px rgba(0,0,0,.4);animation:floatAway .7s ease-out forwards}
+    @keyframes floatAway{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-70px) scale(.6)}}
+    .bank-card{margin:0 var(--page-pad) 14px;padding:var(--section-pad);border-radius:var(--section-radius);backdrop-filter:blur(var(--card-blur));box-shadow:0 12px 28px rgba(0,0,0,.14)}
+    .bank-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+    .bank-title-row{display:flex;align-items:center;gap:7px}
+    .bank-logo{width:18px;height:18px;display:flex}
+    .bank-logo svg{width:100%;height:100%;fill:#e8c84a}
+    .bank-title{font-size:13px;font-weight:800;color:#e8c84a}
+    .bank-rate{font-size:11px;color:rgba(255,255,255,.32);white-space:nowrap}
+    .bank-info{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:rgba(255,255,255,.28)}
+    .bank-info b{color:#ffd700}
+    .bank-btns{display:flex;gap:8px}
+    .bank-btn{flex:1;padding:11px 8px;border-radius:10px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);font-size:11px;font-weight:800;text-transform:uppercase;border:1px solid rgba(255,255,255,.06)}
+    .bottom-nav{display:flex;justify-content:space-around;align-items:center;padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px));background:rgba(8,12,24,.95);border-top:1px solid rgba(255,255,255,.04);flex-shrink:0;backdrop-filter:blur(10px)}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 8px;cursor:pointer;min-width:50px;background:transparent;border:none}
+    .nav-icon-wrap{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+    .nav-icon-wrap svg{width:22px;height:22px;fill:rgba(255,255,255,.2);transition:fill .2s}
+    .nav-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.22);transition:color .2s;white-space:nowrap}
+    .nav-item.active .nav-icon-wrap svg,.nav-item.active .nav-label{fill:#ffd700;color:#ffd700}
+    .shop-content,.profile-content,.ad-content{padding:12px 14px 18px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;overscroll-behavior:contain}
+    .shop-section-title{margin:12px 0 8px;color:rgba(255,255,255,.42);font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+    .shop-hero{padding:16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(91,138,255,.1));border:1px solid rgba(255,255,255,.06);margin-bottom:12px}
+    .shop-hero-title{font-size:15px;font-weight:900;color:#fff;letter-spacing:.4px}
+    .shop-hero-desc{margin-top:4px;font-size:11px;line-height:1.45;color:rgba(255,255,255,.42)}
+    .shop-hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    .shop-hero-cell{padding:10px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.05)}
+    .shop-hero-cell span{display:block;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.34)}
+    .shop-hero-cell b{display:block;margin-top:5px;font-size:13px;font-weight:900;color:#fff}
+    .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .shop-item{position:relative;padding:12px;text-align:center;transition:border-color .2s,transform .15s ease,background .15s ease;background:linear-gradient(180deg,rgba(27,32,55,.9),rgba(15,19,34,.85));box-shadow:0 10px 24px rgba(0,0,0,.16)}
+    .shop-item:before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 40%);pointer-events:none}
+    .shop-item.owned{border-color:rgba(255,215,0,.28)}
+    .shop-item:hover{transform:translateY(-1px)}
+    .shop-item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+    .shop-item-badge{padding:4px 8px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;background:rgba(91,138,255,.14);color:#a8c1ff}
+    .shop-item-price{font-size:10px;font-weight:900;color:rgba(255,255,255,.55)}
+    .shop-item-icon{font-size:26px;min-height:42px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+    .shop-item-name{font-size:11px;font-weight:800;margin-bottom:2px}
+    .shop-item-name .lvl{color:rgba(255,215,0,.56)}
+    .shop-item-desc{font-size:9px;line-height:1.42;color:rgba(255,255,255,.32);min-height:32px;margin-bottom:10px}
+    .shop-item-btn{width:100%;padding:9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase}
+    .shop-btn-buy{background:linear-gradient(135deg,#e8c84a,#c4a535);color:#1a1d2e}
+    .shop-btn-select{background:rgba(255,215,0,.1);color:#ffd700;border:1px solid rgba(255,215,0,.2)}
+    .shop-btn-equipped{background:rgba(255,255,255,.05);color:rgba(255,255,255,.32);cursor:default}
+    .shop-btn-disabled{background:rgba(255,255,255,.03);color:rgba(255,255,255,.22);cursor:not-allowed}
+    .boss-content{padding:16px 14px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+    .boss-card{position:relative;isolation:isolate;overflow:hidden;width:100%;padding:18px;border-radius:20px;background:linear-gradient(180deg,rgba(27,18,27,.88),rgba(16,12,27,.9));border:1px solid rgba(255,255,255,.06);box-shadow:0 18px 40px rgba(0,0,0,.24);transition:background .3s ease,border-color .3s ease,box-shadow .3s ease,transform .3s ease}
+    .boss-card:before,.boss-card:after{content:'';position:absolute;pointer-events:none;z-index:-1}
+    .boss-card:before{inset:-20% auto auto -10%;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.08),transparent 65%);filter:blur(6px);opacity:.85}
+    .boss-card:after{right:-60px;bottom:-70px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.05),transparent 68%);filter:blur(10px);opacity:.55}
+    .boss-card.active-battle{transform:translateY(-1px)}
+    .boss-card.mech-shield{box-shadow:0 0 0 1px rgba(96,165,250,.18) inset,0 18px 40px rgba(0,0,0,.24)}
+    .boss-card.mech-storm:after{animation:stormWave 2.4s infinite linear}
+    .boss-card.mech-vulnerable:before{opacity:1;filter:blur(2px);animation:vulnerableGlow 1.6s infinite ease-in-out}
+    .boss-state-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+    .boss-state-badge{padding:5px 10px;border-radius:999px;background:rgba(239,68,68,.14);color:#fca5a5;font-size:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+    .boss-timer-text{font-size:12px;font-weight:900;color:#fff;font-variant-numeric:tabular-nums}
+    .boss-name{font-size:15px;font-weight:900;color:#ef4444;letter-spacing:1px;margin-bottom:6px}
+    .boss-req,.boss-reward{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px}
+    .boss-reward b{color:#ead8ff}
+    .boss-meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+    .boss-meta{min-height:74px;padding:10px 8px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.05);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 8px 18px rgba(0,0,0,.12)}
+    .boss-meta span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.9px;color:rgba(255,255,255,.34);line-height:1.1}
+    .boss-meta b{display:block;margin-top:6px;font-size:clamp(13px,3.8vw,18px);font-weight:900;color:#fff;line-height:1.1;word-break:break-word}
+    .boss-sprite{font-size:88px;line-height:1;cursor:pointer;filter:drop-shadow(0 0 15px rgba(255,50,50,.4));transition:transform .1s,filter .1s,opacity .2s;margin:10px 0 6px;transform-origin:center center}
+    .boss-sprite.hit{transform:scale(.9);filter:brightness(2) drop-shadow(0 0 20px rgba(255,50,50,.8))}
+    .boss-sprite.boss-theme-0{animation:guardianFloat 3.5s infinite ease-in-out}
+    .boss-sprite.boss-theme-1{animation:goblinJerk 2.4s infinite ease-in-out}
+    .boss-sprite.boss-theme-2{animation:golemRumble 1.8s infinite ease-in-out}
+    .boss-sprite.boss-theme-3{animation:dragonHover 2.8s infinite ease-in-out}
+    .boss-sprite.boss-theme-4{animation:lichFlicker 2.2s infinite ease-in-out}
+    .boss-sprite.boss-theme-5{animation:demonPulse 2.1s infinite ease-in-out}
+    .boss-sprite.shielded{filter:drop-shadow(0 0 16px rgba(96,165,250,.85))}
+    .boss-sprite.storming{filter:hue-rotate(20deg) drop-shadow(0 0 18px rgba(56,189,248,.75))}
+    .boss-sprite.enraged{filter:drop-shadow(0 0 22px rgba(239,68,68,.9)) saturate(1.2)}
+    .boss-sprite.invulnerable{opacity:.78;filter:drop-shadow(0 0 18px rgba(168,85,247,.75))}
+    .boss-timer-bar{width:100%;height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:10px 0 8px}
+    .boss-timer-fill{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,#38bdf8,#8b5cf6);transition:width .18s linear,background .25s ease}
+    .boss-hp-bar{width:100%;margin:12px 0 6px}
+    .boss-hp-fill{background:linear-gradient(90deg,#ef4444,#dc2626);transition:width .18s linear,background .25s ease}
+    .boss-hp-text{font-size:12px;color:rgba(255,255,255,.42);font-weight:700}
+    .boss-start-btn{width:100%;margin-top:12px;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;cursor:pointer}
+    .boss-warning{margin-top:10px;font-size:11px;line-height:1.42;color:rgba(255,255,255,.38)}
+    .boss-nav{display:flex;gap:10px;margin-top:16px}
+    .boss-nav-btn{padding:8px 16px;border-radius:8px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:11px;font-weight:800;border:1px solid rgba(255,255,255,.08)}
+    .boss-card.boss-theme-0{background:linear-gradient(180deg,rgba(18,31,58,.92),rgba(10,16,31,.96));border-color:rgba(96,165,250,.18)}
+    .boss-card.boss-theme-0:before{background:radial-gradient(circle,rgba(96,165,250,.18),transparent 65%)}
+    .boss-card.boss-theme-1{background:linear-gradient(180deg,rgba(26,44,22,.92),rgba(12,24,14,.96));border-color:rgba(74,222,128,.18)}
+    .boss-card.boss-theme-1:before{background:radial-gradient(circle,rgba(74,222,128,.16),transparent 65%)}
+    .boss-card.boss-theme-2{background:linear-gradient(180deg,rgba(39,34,28,.92),rgba(21,18,14,.96));border-color:rgba(180,149,115,.18)}
+    .boss-card.boss-theme-2:before{background:radial-gradient(circle,rgba(214,158,46,.16),transparent 65%)}
+    .boss-card.boss-theme-3{background:linear-gradient(180deg,rgba(58,21,14,.92),rgba(27,12,8,.96));border-color:rgba(251,146,60,.2)}
+    .boss-card.boss-theme-3:before{background:radial-gradient(circle,rgba(251,146,60,.18),transparent 65%)}
+    .boss-card.boss-theme-4{background:linear-gradient(180deg,rgba(42,20,52,.92),rgba(17,9,22,.96));border-color:rgba(196,181,253,.18)}
+    .boss-card.boss-theme-4:before{background:radial-gradient(circle,rgba(196,181,253,.18),transparent 65%)}
+    .boss-card.boss-theme-5{background:linear-gradient(180deg,rgba(56,12,20,.94),rgba(17,5,8,.98));border-color:rgba(248,113,113,.18)}
+    .boss-card.boss-theme-5:before{background:radial-gradient(circle,rgba(248,113,113,.18),transparent 65%)}
+    @keyframes guardianFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes goblinJerk{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-4px) rotate(-4deg)}75%{transform:translateY(1px) rotate(4deg)}}
+    @keyframes golemRumble{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+    @keyframes dragonHover{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-2deg)}}
+    @keyframes lichFlicker{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.7;transform:translateY(-5px)}}
+    @keyframes demonPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    @keyframes stormWave{0%{transform:translateX(0) scale(1);opacity:.45}50%{transform:translateX(-15px) scale(1.08);opacity:.18}100%{transform:translateX(0) scale(1);opacity:.45}}
+    @keyframes vulnerableGlow{0%,100%{opacity:.45;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
+    .profile-card{padding:12px;margin-bottom:10px}
+    .profile-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px;color:rgba(255,255,255,.52)}
+    .profile-row:last-child{border-bottom:none}
+    .profile-row b{color:#fff;font-weight:700;font-variant-numeric:tabular-nums}
+    .profile-note{font-size:11px;color:rgba(255,255,255,.4);line-height:1.45;margin-top:10px}
+    .prestige-btn{width:100%;margin-top:12px;padding:13px;border-radius:10px;background:linear-gradient(135deg,#38bdf8,#7c3aed);color:#fff;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.4px}
+    .btn-reset{width:100%;padding:14px;border-radius:10px;background:rgba(239,68,68,.12);color:#ef4444;font-size:12px;font-weight:800;border:1px solid rgba(239,68,68,.2);margin-top:10px}
+    .achievement-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+    .achievement-item{background:rgba(18,22,40,.6);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:12px}
+    .achievement-item.unlocked{border-color:rgba(34,197,94,.24)}
+    .achievement-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .achievement-name{font-size:12px;font-weight:800;color:#fff;margin-bottom:3px}
+    .achievement-desc{font-size:10px;color:rgba(255,255,255,.35);line-height:1.4}
+    .achievement-reward{font-size:10px;color:#ffd700;font-weight:900;white-space:nowrap}
+    .achievement-progress{margin-top:10px}
+    .achievement-progress-fill{background:linear-gradient(90deg,#eab308,#22c55e)}
+    .achievement-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:rgba(255,255,255,.42)}
+    .achievement-btn{padding:8px 10px;border-radius:8px;font-size:10px;font-weight:900;text-transform:uppercase}
+    .achievement-btn.ready{background:linear-gradient(135deg,#22c55e,#16a34a);color:#06160b}
+    .achievement-btn.claimed{background:rgba(34,197,94,.12);color:#86efac;cursor:default}
+    .achievement-btn.locked{background:rgba(255,255,255,.05);color:rgba(255,255,255,.28);cursor:default}
+    .ad-content{display:flex;flex-direction:column;gap:12px;justify-content:flex-start}
+    .ad-card{padding:16px;text-align:left;background:linear-gradient(180deg,rgba(26,20,45,.86),rgba(16,15,34,.86));box-shadow:0 10px 24px rgba(0,0,0,.18)}
+    .ad-card.daily-card{text-align:center}
+    .ad-card h3{color:#c084fc;font-size:14px;margin-bottom:4px}
+    .ad-card p{font-size:11px;color:rgba(255,255,255,.38);line-height:1.4;margin-bottom:12px}
+    .daily-status{font-size:11px;color:rgba(255,255,255,.48);margin-bottom:12px}
+    .daily-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:12px}
+    .daily-day{border-radius:10px;padding:7px 4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);text-align:center}
+    .daily-day.current{border-color:rgba(91,138,255,.35);box-shadow:0 0 0 1px rgba(91,138,255,.12) inset}
+    .daily-day.claimed{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.26)}
+    .daily-day-num{font-size:9px;color:rgba(255,255,255,.36);margin-bottom:3px;text-transform:uppercase}
+    .daily-day-reward{font-size:10px;font-weight:800;color:rgba(255,255,255,.68)}
+    .bonus-card{display:flex;align-items:center;gap:12px}
+    .bonus-card-icon{width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);font-size:22px}
+    .bonus-card-body{min-width:0;flex:1}
+    .bonus-card-title{font-size:13px;font-weight:900;color:#fff}
+    .bonus-card-desc{margin-top:4px;font-size:11px;line-height:1.4;color:rgba(255,255,255,.38)}
+    .bonus-card-side{width:126px;max-width:38%;display:flex;align-items:center;justify-content:flex-end}
+    .adsgram-task-card{padding:16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+    .adsgram-task-title{font-size:12px;font-weight:900;color:#fff;margin-bottom:6px}
+    .adsgram-task-desc{font-size:11px;line-height:1.45;color:rgba(255,255,255,.4);margin-bottom:12px}
+    adsgram-task.task{display:block;width:100%;min-height:84px;border-radius:14px;overflow:hidden}
+    .bonus-info-card{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+    .bonus-info-title{font-size:12px;font-weight:900;color:#fff;margin-bottom:6px}
+    .bonus-info-text{font-size:11px;line-height:1.45;color:rgba(255,255,255,.4)}
+    .daily-task-list{display:flex;flex-direction:column;gap:8px}
+    .daily-task-item{padding:12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+    .daily-task-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .daily-task-title{font-size:12px;font-weight:800;color:#fff}
+    .daily-task-reward{font-size:10px;font-weight:900;color:#ffd700;white-space:nowrap}
+    .daily-task-desc{margin-top:4px;font-size:10px;line-height:1.4;color:rgba(255,255,255,.34)}
+    .daily-task-progress{height:7px;margin-top:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+    .daily-task-progress-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#22c55e,#14b8a6)}
+    .daily-task-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:rgba(255,255,255,.42)}
+    .daily-task-btn{padding:7px 10px;border:none;border-radius:8px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#04140a;font-size:10px;font-weight:900;text-transform:uppercase;font-family:inherit;cursor:pointer}
+    .daily-task-btn:disabled{opacity:.45;cursor:not-allowed}
+    .collection-card{padding:12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);margin-bottom:10px}
+    .collection-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+    .collection-item{padding:10px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+    .collection-item span{display:block;font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.34)}
+    .collection-item b{display:block;margin-top:5px;font-size:13px;font-weight:900;color:#fff}
+    .collection-note{margin-top:8px;font-size:10px;line-height:1.4;color:rgba(255,255,255,.34)}
+    .ad-btn{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.5px}
+    .ad-btn.loading{display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.28);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    .modal-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:200}
+    .modal-overlay.show{display:flex}
+    .modal-box{max-width:85%;padding:26px;border-radius:16px;background:rgba(18,22,40,.95);border:1px solid rgba(255,215,0,.2);text-align:center;animation:pop .28s cubic-bezier(.34,1.56,.64,1)}
+    @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+    .chest-anim{font-size:72px;cursor:pointer;animation:shake .5s infinite}
+    .chest-anim.rare{filter:drop-shadow(0 0 18px rgba(96,165,250,.5))}
+    .chest-anim.legendary{filter:drop-shadow(0 0 22px rgba(250,204,21,.65));animation-duration:.35s}
+    @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+    .chest-hint{margin-top:10px;color:rgba(255,255,255,.42);font-size:12px;line-height:1.35}
+    .reward-text{font-size:32px;line-height:1.2;margin:14px 0}
+    .toast{position:fixed;top:max(20px,env(safe-area-inset-top,20px));left:50%;transform:translateX(-50%) translateY(-120px);background:rgba(18,22,40,.96);border:1px solid rgba(255,215,0,.2);padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:300;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;pointer-events:none}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .loading-screen{position:fixed;inset:0;background:#0a0f1e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease,visibility .4s ease}
+    .loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.1);border-top-color:#ffd700;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{margin-top:14px;color:rgba(255,255,255,.4);font-size:12px}
+    ::-webkit-scrollbar{width:0}
+    @media(min-width:481px){.app{border-left:1px solid rgba(255,255,255,.05);border-right:1px solid rgba(255,255,255,.05);box-shadow:0 0 0 1px rgba(255,255,255,.02) inset,0 24px 60px rgba(0,0,0,.22)}}
+    @media(min-width:768px){:root{--app-max-width:620px;--page-pad:22px;--section-pad:16px;--clicker-wrap-size:250px}.top-bar{padding-top:18px}.stats-row{grid-template-columns:repeat(3,minmax(0,1fr))}.quest-strip,.bank-card{margin-left:var(--page-pad);margin-right:var(--page-pad)}}
+    @media(max-height:760px){.clicker-section{min-height:min(40vh,340px)}.quest-strip{margin-top:6px}.bank-card{margin-bottom:10px}}
+    @media(max-height:670px){:root{--clicker-wrap-size:170px}.coin-main{width:84px;height:84px;font-size:34px}.clicker-section{padding-top:12px;padding-bottom:14px}}
+    @media(max-width:420px){.top-bar{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:12px var(--page-pad) 8px}.rank-badge{grid-column:auto;justify-self:center;margin-top:0;max-width:38vw;font-size:9px;padding:4px 10px}.stats-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat-item{padding:8px 10px;font-size:10px;text-align:center}.level-top{align-items:center}.bank-info{gap:6px}.bank-btns{flex-direction:column}.bottom-nav{padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px))}.nav-item{padding:6px 6px}.nav-label{font-size:9px}}
+    @media(max-width:520px){.top-bar{gap:8px}.quest-progress-row{flex-direction:column;align-items:stretch}.quest-progress-text{text-align:left;min-width:0}.quest-strip,.bank-card,.boss-card,.profile-card,.collection-card,.ad-card{margin-left:var(--page-pad);margin-right:var(--page-pad)}.bank-top{flex-wrap:wrap}.bank-rate{margin-left:auto}.boss-content{padding:12px 0}.boss-state-row{flex-wrap:wrap;justify-content:center}.boss-meta-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.boss-meta{min-height:68px;padding:8px 6px}.boss-meta span{font-size:9px}.boss-meta b{font-size:14px}.bonus-card{flex-wrap:wrap}.bonus-card-side{width:100%;max-width:none;justify-content:stretch}.bonus-card-side .ad-btn{width:100%}.profile-row{flex-wrap:wrap}.profile-row b{width:100%;text-align:left}.collection-grid{grid-template-columns:1fr 1fr}.ad-content,.shop-content,.profile-content{padding:10px 0 12px}.shop-item{padding:11px}.shop-item-desc{min-height:auto}}
+    @media(max-width:380px){.collection-grid{grid-template-columns:1fr}.boss-meta-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.boss-meta{min-height:64px;padding:8px 4px}.boss-meta span{font-size:8px;letter-spacing:.7px}.boss-meta b{font-size:12px}.bonus-card{flex-direction:column;align-items:center;text-align:center}.bonus-card-icon{margin:0 auto}.bonus-card-body{text-align:center}.bonus-card-side{width:100%}.ad-card{text-align:center}.bank-info{flex-direction:column;align-items:flex-start}.coins-val{max-width:32vw}.diamond-val{font-size:15px}.top-bar{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}.rank-badge{max-width:44vw}.bottom-nav{padding-left:0;padding-right:0}.nav-item{min-width:0;padding:6px 4px}.quest-title{font-size:11px}.boss-name{font-size:13px}}
+    @media(max-width:340px){:root{--page-pad:12px;--clicker-wrap-size:162px}.shop-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr;gap:8px}.coins-val{max-width:34vw}.daily-days{grid-template-columns:repeat(4,1fr)}.coin-main{width:78px;height:78px;font-size:31px}.level-top{gap:6px;align-items:flex-start}.top-left,.top-right{gap:6px}.rank-badge{max-width:46vw}}
+  </style>
+</head>
+<body class="theme-default">
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <div class="loading-text">Загрузка...</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <div class="app">
+    <div class="top-bar">
+      <div class="top-left">
+        <div class="coin-art coin-mini skin-classic" id="topCoinIcon"><span class="coin-mark" id="topCoinMark">$</span></div>
+        <div class="coins-val" id="goldVal">0</div>
+      </div>
+      <div class="rank-badge" id="rankBadge">БЕДНЯК</div>
+      <div class="top-right">
+        <div style="width:20px;height:20px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+            <defs><linearGradient id="dg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a855f7"/><stop offset="100%" style="stop-color:#7c3aed"/></linearGradient></defs>
+            <polygon points="12,1.5 21.5,9 17,22.5 7,22.5 2.5,9" fill="url(#dg)" stroke="#c084fc" stroke-width="0.6"></polygon>
+            <polygon points="12,1.5 21.5,9 2.5,9" fill="#c084fc" opacity="0.3"></polygon>
+          </svg>
+        </div>
+        <div class="diamond-val" id="gemsVal">0</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item"><b id="cpsVal">0</b> / сек</div>
+      <div class="stat-item"><b id="cpcVal">1</b> / клик</div>
+      <div class="stat-item">Комбо <b id="comboVal">x1.00</b></div>
+    </div>
+
+    <div class="level-strip">
+      <div class="level-top">
+        <span class="level-chip" id="playerLevel">Lv.1</span>
+        <span class="level-label" id="levelLabel">Ученик монет</span>
+        <span class="level-xp" id="levelXpText">0 / 100 XP</span>
+      </div>
+      <div class="level-bar"><div class="level-fill" id="levelFill"></div></div>
+    </div>
+
+    <div class="location-block">
+      <div class="loc-title" id="locTitle">ЛОКАЦИЯ: СИНЯЯ ПЕЩЕРА</div>
+      <div class="loc-desc" id="locDesc">Вы начали свой путь в древней пещере...</div>
+      <div class="loc-divider"></div>
+    </div>
+
+
+    <div class="pages-shell">
+    <div class="tab-page active" id="page-home">
+      <div class="quest-strip">
+        <div class="quest-top"><span>Контракт <span id="questTier">I</span></span><span id="questReward">+0 💎</span></div>
+        <div class="quest-title" id="questTitle">Сделайте первый шаг к богатству</div>
+        <div class="quest-progress-row">
+          <div class="quest-progress" style="flex:1"><div class="quest-progress-fill" id="questFill"></div></div>
+          <div class="quest-progress-text" id="questText">0 / 0</div>
+        </div>
+        <button class="quest-btn" id="btnQuestClaim" type="button" disabled>В процессе</button>
+      </div>
+
+      <div class="clicker-section">
+        <div class="clicker-wrap">
+          <div class="clicker-aura"></div>
+          <div class="clicker-pulse"></div>
+          <div class="clicker-ring"></div>
+          <button class="clicker-btn" id="clickerBtn" type="button">
+            <div class="coin-art coin-main skin-classic" id="mainCoin"><span class="coin-mark" id="mainCoinMark">$</span></div>
+          </button>
+        </div>
+        <div class="click-label">+<span class="plus" id="clickPlus">1</span> за клик</div>
+        <div class="combo-chip" id="comboChip">COMBO x1.00</div>
+      </div>
+
+      <div class="bank-card">
+        <div class="bank-top">
+          <div class="bank-title-row">
+            <div class="bank-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7V9H22V7L12 2Z"></path><rect x="4" y="10" width="2.5" height="8" rx="0.3"></rect><rect x="10.75" y="10" width="2.5" height="8" rx="0.3"></rect><rect x="17.5" y="10" width="2.5" height="8" rx="0.3"></rect><rect x="2" y="19" width="20" height="3" rx="1"></rect></svg></div>
+            <div class="bank-title">ИМПЕРСКИЙ БАНК</div>
+          </div>
+          <div class="bank-rate">+10% / час</div>
+        </div>
+        <div class="bank-info"><div>Вложено: <b id="bankDepVal">0</b></div><div>|</div><div>Доход: <b id="bankIncVal">0</b>/мин</div></div>
+        <div class="bank-btns">
+          <button class="bank-btn" id="btnDeposit" type="button">Вложить всё</button>
+          <button class="bank-btn" id="btnWithdraw" type="button">Снять всё</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-page" id="page-shop"><div class="shop-content" id="shopContent"></div></div>
+
+    <div class="tab-page" id="page-bosses">
+      <div class="boss-content">
+        <div class="boss-card" id="bossCard">
+          <div class="boss-state-row">
+            <div class="boss-state-badge" id="bossState">Ожидание</div>
+            <div class="boss-timer-text" id="bossTimerText">00:00</div>
+          </div>
+          <div class="boss-name" id="bossName">СТРАЖ ПЕЩЕРЫ</div>
+          <div class="boss-req" id="bossReq">Открыт</div>
+          <div class="boss-reward">Награда: <b id="bossReward">5</b> 💎</div>
+          <div class="boss-meta-grid">
+            <div class="boss-meta"><span>Броня</span><b id="bossArmor">0</b></div>
+            <div class="boss-meta"><span>Режим</span><b id="bossRage">Спокойствие</b></div>
+            <div class="boss-meta"><span>Реген</span><b id="bossDuration">0/с</b></div>
+          </div>
+          <div class="boss-timer-bar"><div class="boss-timer-fill" id="bossTimerFill"></div></div>
+          <div class="boss-sprite" id="bossSprite">👹</div>
+          <div class="boss-hp-bar"><div class="boss-hp-fill" id="bossHpFill"></div></div>
+          <div class="boss-hp-text"><span id="bossHp">100</span> / <span id="bossMaxHp">100</span> HP</div>
+          <button class="boss-start-btn" id="btnStartBoss" type="button">Начать бой</button>
+          <div class="boss-warning" id="bossHintText">Нажмите «Начать бой», затем атакуйте босса до истечения таймера.</div>
+          <div class="boss-nav">
+            <button class="boss-nav-btn" id="btnPrevBoss" type="button">← Пред.</button>
+            <button class="boss-nav-btn" id="btnNextBoss" type="button">След. →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-page" id="page-profile">
+      <div class="profile-content" id="profileContent">
+        <div class="shop-section-title" style="margin-top:0">Статистика</div>
+        <div class="profile-card">
+          <div class="profile-row"><span>Уровень игрока</span><b id="statLevel">1</b></div>
+          <div class="profile-row"><span>Всего кликов</span><b id="statClicks">0</b></div>
+          <div class="profile-row"><span>Всего заработано</span><b id="statGold">0</b></div>
+          <div class="profile-row"><span>Боссов побеждено</span><b id="statBosses">0</b></div>
+          <div class="profile-row"><span>Сундуков открыто</span><b id="statChests">0</b></div>
+          <div class="profile-row"><span>Редких сундуков</span><b id="statRareChests">0</b></div>
+          <div class="profile-row"><span>Контрактов выполнено</span><b id="statQuests">0</b></div>
+          <div class="profile-row"><span>Престиж</span><b id="statPrestige">0</b></div>
+        </div>
+
+        <div class="shop-section-title">Перерождение</div>
+        <div class="profile-card">
+          <div class="profile-row"><span>Бонус престижа</span><b id="prestigeBonus">+0%</b></div>
+          <div class="profile-row"><span>Доступно звёзд</span><b id="prestigeGain">0</b></div>
+          <div class="profile-row"><span>До следующей звезды</span><b id="prestigeNeed">500K</b></div>
+          <div class="profile-row"><span>Золото текущего цикла</span><b id="runGoldVal">0</b></div>
+          <div class="profile-note">Перерождение сбрасывает монеты, улучшения, банк и босса, но сохраняет кристаллы, темы, питомцев, скины, достижения и ежедневную серию.</div>
+          <button class="prestige-btn" id="btnPrestige" type="button" disabled>Переродиться</button>
+        </div>
+
+        <div class="shop-section-title">Коллекции</div>
+        <div class="collection-card">
+          <div class="collection-grid">
+            <div class="collection-item"><span>Скины монет</span><b id="colCoinSkins">0/0</b></div>
+            <div class="collection-item"><span>Питомцы</span><b id="colPets">0/0</b></div>
+            <div class="collection-item"><span>Карточки боссов</span><b id="colBossCards">0/0</b></div>
+            <div class="collection-item"><span>Рамки профиля</span><b id="colFrames">0/0</b></div>
+            <div class="collection-item"><span>Титулы</span><b id="colTitles">0/0</b></div>
+            <div class="collection-item"><span>Текущий титул</span><b id="colCurrentTitle">—</b></div>
+          </div>
+          <div class="collection-note">Собирайте коллекции, чтобы усиливать вовлечённость: монеты, питомцы, карточки боссов, рамки и титулы открываются по прогрессу.</div>
+        </div>
+
+        <div class="shop-section-title">Достижения</div>
+        <div class="achievement-list" id="achievementsList"></div>
+
+        <button class="btn-reset" id="btnReset" type="button">Сбросить весь прогресс</button>
+      </div>
+    </div>
+
+    <div class="tab-page" id="page-bonus">
+      <div class="ad-content" id="bonusContent">
+        <div class="ad-card daily-card">
+          <h3>🎁 Ежедневная награда</h3>
+          <p class="daily-status" id="dailyStatus">Забирайте награду каждый день и наращивайте серию.</p>
+          <div class="daily-days" id="dailyDays"></div>
+          <button class="ad-btn" id="btnDailyClaim" type="button">Забрать награду</button>
+        </div>
+
+        <div class="ad-card">
+          <h3>📜 Ежедневные задания</h3>
+          <div class="daily-task-list" id="dailyTasksList"></div>
+          <div class="collection-note" id="dailyTasksTimer">Задания обновятся завтра.</div>
+        </div>
+
+        <div class="adsgram-task-card">
+          <div class="adsgram-task-title">AdsGram Task</div>
+          <div class="adsgram-task-desc">Выполните рекламное задание AdsGram и получите внутриигровую награду. Сейчас за выполнение выдаётся +20 кристаллов.</div>
+          <adsgram-task
+             data-block-id='task-32691'
+             data-debug='false'
+             data-debug-console='false'
+             class='task'
+          ></adsgram-task>
+        </div>
+
+        <div class="bonus-info-card">
+          <div class="bonus-info-title">Ритм входа</div>
+          <div class="bonus-info-text" id="bonusCooldownText">Следующий бесплатный бонус уже доступен.</div>
+          <div class="bonus-info-text" id="nextRareChestText" style="margin-top:8px">Зайди завтра — откроется редкий сундук.</div>
+        </div>
+
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">⚡</div><div class="bonus-card-body"><div class="bonus-card-title">x2 доход на 60 сек</div><div class="bonus-card-desc">Удваивает весь доход на одну минуту.</div></div><div class="bonus-card-side"><button class="ad-btn" id="adBtn1" data-reward-button="x2" type="button">Получить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">💎</div><div class="bonus-card-body"><div class="bonus-card-title">+5 кристаллов</div><div class="bonus-card-desc">Небольшая награда для косметики и редких покупок.</div></div><div class="bonus-card-side"><button class="ad-btn" id="adBtn2" data-reward-button="gems" type="button">Получить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">📦</div><div class="bonus-card-body"><div class="bonus-card-title">Мгновенный доход</div><div class="bonus-card-desc">Даёт быстрый запас монет для следующей покупки.</div></div><div class="bonus-card-side"><button class="ad-btn" id="adBtn3" data-reward-button="offline" type="button">Получить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">❤️</div><div class="bonus-card-body"><div class="bonus-card-title">Возрождение в бою</div><div class="bonus-card-desc">Вернитесь в незавершённый бой с боссом, если время вышло.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="bossRevive" type="button">Активировать</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">⏳</div><div class="bonus-card-body"><div class="bonus-card-title">+10 секунд к таймеру</div><div class="bonus-card-desc">Продлевает текущий бой с боссом на 10 секунд.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="bossTime" type="button">Добавить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">🎲</div><div class="bonus-card-body"><div class="bonus-card-title">Повторный розыгрыш сундука</div><div class="bonus-card-desc">Открывает ещё один сундук после последней награды.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="chestReroll" type="button">Повторить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">👑</div><div class="bonus-card-body"><div class="bonus-card-title">Двойная награда за босса</div><div class="bonus-card-desc">Следующий побеждённый босс даст двойную награду.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="bossDouble" type="button">Удвоить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">🏦</div><div class="bonus-card-body"><div class="bonus-card-title">Ускорение банка</div><div class="bonus-card-desc">Усиливает банковый доход на 5 минут.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="bankBoost" type="button">Ускорить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">🤖</div><div class="bonus-card-body"><div class="bonus-card-title">Автоклик на 5 минут</div><div class="bonus-card-desc">Даёт временный прирост автоматического дохода.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="autoClick" type="button">Запустить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">🎁</div><div class="bonus-card-body"><div class="bonus-card-title">Удвоение ежедневной награды</div><div class="bonus-card-desc">Удваивает текущую или следующую ежедневную награду.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="dailyDouble" type="button">Удвоить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">🔁</div><div class="bonus-card-body"><div class="bonus-card-title">Восстановление серии</div><div class="bonus-card-desc">Возвращает потерянную серию входов, если вы пропустили день.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="restoreStreak" type="button">Вернуть</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">⏭</div><div class="bonus-card-body"><div class="bonus-card-title">Пропуск части ожидания</div><div class="bonus-card-desc">Сбрасывает ожидание до следующего бесплатного бонуса.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="skipWait" type="button">Пропустить</button></div></div></div>
+        <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">💠</div><div class="bonus-card-body"><div class="bonus-card-title">Бесплатный редкий сундук</div><div class="bonus-card-desc">Мгновенно выдаёт редкий сундук с улучшенной добычей.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="rareChest" type="button">Открыть</button></div></div></div>
+      </div>
+    </div>
+
+    </div>
+
+    <nav class="bottom-nav">
+      <div class="nav-item active" data-page="home"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg></div><span class="nav-label">Главная</span></div>
+      <div class="nav-item" data-page="shop"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"></path></svg></div><span class="nav-label">Магазин</span></div>
+      <div class="nav-item" data-page="bosses"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"></path></svg></div><span class="nav-label">Боссы</span></div>
+      <div class="nav-item" data-page="profile"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg></div><span class="nav-label">Профиль</span></div>
+      <div class="nav-item" data-page="bonus"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"></path></svg></div><span class="nav-label">Бонусы</span></div>
+    </nav>
+
+  </div>
+
+  <div class="modal-overlay" id="chestModal">
+    <div class="modal-box">
+      <div class="chest-anim" id="chestAnim">🎁</div>
+      <div class="chest-hint" id="chestHint">Нажмите, чтобы открыть!</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="rewardModal">
+    <div class="modal-box">
+      <h2 style="color:#ffd700;font-size:17px;margin-bottom:10px">Награда!</h2>
+      <div class="reward-text" id="rewardContent"></div>
+      <button class="bank-btn" id="btnCloseReward" type="button" style="width:100%;padding:12px">Забрать</button>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const SAVE_KEY = 'goldEmp_v13';
+      const LOAD_KEYS = ['goldEmp_v13', 'goldEmp_v12', 'goldEmp_v10'];
+      const BASE_PRESTIGE_COST = 500000;
+      const DAY_MS = 86400000;
+      const ADSGRAM_CONFIG = {
+        interstitialBlockId: 'int-32690',
+        rewardBlockIds: {
+          x2: '32687',
+          gems: '32688',
+          offline: '32689'
+        },
+        interstitialCooldownMs: 90000,
+        pauseInterstitialMinMs: 45000,
+        debug: false
+      };
+      const TELEGRAM_WEBAPP = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+      const adsControllers = {};
+      // Reward URL настраивается только в кабинете AdsGram.
+      // Для server-side reward confirm используй https GET endpoint с [userId].
+
+      function getDefaultState() {
+        return {
+          gold: 0,
+          gems: 0,
+          bankDep: 0,
+          bankLifetime: 0,
+          totalClicks: 0,
+          totalGold: 0,
+          runGold: 0,
+          bossesDefeated: 0,
+          chestsOpened: 0,
+          rareChestsOpened: 0,
+          questsCompleted: 0,
+          prestige: 0,
+          clickPower: 1,
+          autoClick: 0,
+          bossIdx: 0,
+          bossHp: 100,
+          upgrades: {},
+          ownedPets: ['pet_none'],
+          currentPet: 'pet_none',
+          ownedThemes: ['theme_default'],
+          currentTheme: 'theme_default',
+          ownedCoinSkins: ['classic'],
+          currentCoinSkin: 'classic',
+          x2End: 0,
+          combo: 1,
+          comboExpire: 0,
+          questLevel: 0,
+          activeQuest: null,
+          dailyClaimedAt: 0,
+          dailyStreak: 0,
+          dailyCycle: 0,
+          achievementsClaimed: {},
+          activeChestType: 'common',
+          bossBattleActive: false,
+          bossBattleEndsAt: 0,
+          bossBattleStartedAt: 0,
+          bossReviveAvailable: false,
+          bossReviveHp: 0,
+          bossReviveUsed: false,
+          nextBossRewardDouble: false,
+          bankBoostEnd: 0,
+          autoClickBoostEnd: 0,
+          dailyDoublePending: false,
+          dailyStreakLost: false,
+          lastBrokenStreak: 0,
+          dailyTasksDate: '',
+          dailyTasks: [],
+          chestRerollAvailable: false,
+          ownedBossCards: [],
+          ownedFrames: ['frame_default'],
+          currentFrame: 'frame_default',
+          ownedTitles: ['title_novice'],
+          currentTitle: 'title_novice',
+          appLaunchCount: 0,
+          lastAppOpenAt: 0,
+          lastSave: Date.now()
+        };
+      }
+
+      const state = getDefaultState();
+
+      const CLICK_UPGRADES = [
+        { id: 'c1', name: 'Перчатки', icon: '🧤', baseCost: 25, mult: 1.18, desc: '+1 к силе клика', val: 1, type: 'click' },
+        { id: 'c2', name: 'Молот', icon: '🔨', baseCost: 180, mult: 1.2, desc: '+3 к силе клика', val: 3, type: 'click' },
+        { id: 'c3', name: 'Пресс', icon: '⚒️', baseCost: 1400, mult: 1.22, desc: '+12 к силе клика', val: 12, type: 'click' },
+        { id: 'c4', name: 'Руна', icon: '🔱', baseCost: 12000, mult: 1.24, desc: '+45 к силе клика', val: 45, type: 'click' },
+        { id: 'c5', name: 'Катализатор', icon: '💥', baseCost: 105000, mult: 1.26, desc: '+180 к силе клика', val: 180, type: 'click' },
+        { id: 'c6', name: 'Сингулярность', icon: '☄️', baseCost: 980000, mult: 1.28, desc: '+750 к силе клика', val: 750, type: 'click' }
+      ];
+
+      const AUTO_UPGRADES = [
+        { id: 'u1', name: 'Кликер', icon: '⚙️', baseCost: 15, mult: 1.15, desc: '+1/сек', val: 1, type: 'auto' },
+        { id: 'u2', name: 'Шахта', icon: '⛏', baseCost: 100, mult: 1.15, desc: '+5/сек', val: 5, type: 'auto' },
+        { id: 'u3', name: 'Мельница', icon: '🏭', baseCost: 1100, mult: 1.15, desc: '+20/сек', val: 20, type: 'auto' },
+        { id: 'u4', name: 'Банк', icon: '🏦', baseCost: 12000, mult: 1.15, desc: '+100/сек', val: 100, type: 'auto' },
+        { id: 'u5', name: 'Храм', icon: '🏛', baseCost: 130000, mult: 1.15, desc: '+500/сек', val: 500, type: 'auto' },
+        { id: 'u6', name: 'Портал', icon: '🌀', baseCost: 1400000, mult: 1.15, desc: '+2500/сек', val: 2500, type: 'auto' },
+        { id: 'u7', name: 'Лаборатория', icon: '🧪', baseCost: 17000000, mult: 1.16, desc: '+12000/сек', val: 12000, type: 'auto' },
+        { id: 'u8', name: 'Орбиталь', icon: '🛰️', baseCost: 240000000, mult: 1.16, desc: '+60000/сек', val: 60000, type: 'auto' },
+        { id: 'u9', name: 'Ковчег', icon: '🚀', baseCost: 3200000000, mult: 1.17, desc: '+300000/сек', val: 300000, type: 'auto' }
+      ];
+
+      const ALL_UPGRADES = CLICK_UPGRADES.concat(AUTO_UPGRADES);
+
+      const PETS = [
+        { id: 'pet_none', name: 'Нет', icon: '🚫', cost: 0, effect: 1 },
+        { id: 'pet_hamster', name: 'Хомяк', icon: '🐹', cost: 50, effect: 1.3 },
+        { id: 'pet_robot', name: 'Робот', icon: '🤖', cost: 200, effect: 1.6 },
+        { id: 'pet_dragon', name: 'Дракон', icon: '🐉', cost: 1000, effect: 2.0 },
+        { id: 'pet_ghost', name: 'Призрак', icon: '👻', cost: 5000, effect: 3.0 }
+      ];
+
+      const THEMES = [
+        { id: 'theme_default', name: 'Стандарт', icon: '🌑', cost: 0 },
+        { id: 'theme_space', name: 'Космос', icon: '🌌', cost: 1000 },
+        { id: 'theme_neon', name: 'Неон', icon: '🌃', cost: 5000 },
+        { id: 'theme_dungeon', name: 'Подземелье', icon: '🔥', cost: 15000 }
+      ];
+
+      const COIN_SKINS = [
+        { id: 'classic', name: 'Классика', mark: '$', cost: 0, desc: 'Базовая монета империи.', reqBosses: 0, reqPrestige: 0 },
+        { id: 'ruby', name: 'Рубин', mark: '♦', cost: 35, desc: 'Багровый блеск для коллекции.', reqBosses: 0, reqPrestige: 0 },
+        { id: 'emerald', name: 'Изумруд', mark: '✦', cost: 90, desc: 'Редкий зелёный скин.', reqBosses: 3, reqPrestige: 0 },
+        { id: 'imperial', name: 'Империя', mark: '♛', cost: 220, desc: 'Королевский стиль с золотой аурой.', reqBosses: 10, reqPrestige: 0 },
+        { id: 'sunfire', name: 'Солнечный жар', mark: '☀', cost: 600, desc: 'Раскалённая монета для late game.', reqBosses: 25, reqPrestige: 1 },
+        { id: 'void', name: 'Пустота', mark: '◈', cost: 1200, desc: 'Тёмный эндгейм-скин для перерождённых.', reqBosses: 40, reqPrestige: 2 }
+      ];
+
+      const BOSSES = [
+        { name: 'СТРАЖ ПЕЩЕРЫ', sprite: '👹', hp: 100, reward: 5, unlockGold: 0, duration: 16, armor: 0, rageThreshold: 0.4, rageArmor: 2, regen: 0, rageRegen: 1 },
+        { name: 'ГОБЛИН', sprite: '👺', hp: 1100, reward: 12, unlockGold: 4000, duration: 20, armor: 4, rageThreshold: 0.4, rageArmor: 4, regen: 6, rageRegen: 16 },
+        { name: 'ГОЛЕМ', sprite: '🗿', hp: 6500, reward: 28, unlockGold: 30000, duration: 24, armor: 12, rageThreshold: 0.45, rageArmor: 8, regen: 40, rageRegen: 95 },
+        { name: 'ДРАКОН', sprite: '🐉', hp: 42000, reward: 70, unlockGold: 250000, duration: 30, armor: 38, rageThreshold: 0.5, rageArmor: 20, regen: 220, rageRegen: 620 },
+        { name: 'ЛИЧ', sprite: '💀', hp: 240000, reward: 180, unlockGold: 2000000, duration: 35, armor: 120, rageThreshold: 0.5, rageArmor: 60, regen: 1300, rageRegen: 4100 },
+        { name: 'ДЕМОН', sprite: '😈', hp: 1300000, reward: 450, unlockGold: 25000000, duration: 40, armor: 420, rageThreshold: 0.55, rageArmor: 190, regen: 9500, rageRegen: 27000 }
+      ];
+
+      const RANKS = [
+        { name: 'БЕДНЯК', req: 0 },
+        { name: 'НОВИЧОК', req: 1000 },
+        { name: 'ТОРГОВЕЦ', req: 10000 },
+        { name: 'БОГАЧ', req: 100000 },
+        { name: 'МИЛЛИОНЕР', req: 1000000 },
+        { name: 'ОЛИГАРХ', req: 10000000 },
+        { name: 'ТИТАН', req: 1000000000 }
+      ];
+
+      const LOCS = [
+        { name: 'ЛОКАЦИЯ: СИНЯЯ ПЕЩЕРА', desc: 'Вы начали свой путь в древней пещере...', req: 0 },
+        { name: 'ЛОКАЦИЯ: ИМПЕРСКИЙ ДВОРЕЦ', desc: 'Величественный дворец императора...', req: 10000 },
+        { name: 'ЛОКАЦИЯ: НЕБЕСНЫЙ ХРАМ', desc: 'Храм высоко в облаках...', req: 1000000 },
+        { name: 'ЛОКАЦИЯ: ИЗМЕРЕНИЕ ТЕНЕЙ', desc: 'Тёмное измерение за гранью реальности...', req: 100000000 },
+        { name: 'ЛОКАЦИЯ: СЕРДЦЕ ЗВЕЗДЫ', desc: 'Поздняя империя сияет под давлением космоса...', req: 5000000000 }
+      ];
+
+      const QUEST_TEMPLATES = [
+        { type: 'clicks', target: tier => Math.floor(40 * Math.pow(1.45, tier)), rewardGold: tier => Math.floor(80 * Math.pow(1.8, tier)), rewardGems: tier => 2 + Math.floor(tier / 2), title: target => 'Сделайте ' + fmt(target) + ' кликов' },
+        { type: 'earn', target: tier => Math.floor(500 * Math.pow(1.75, tier)), rewardGold: tier => Math.floor(140 * Math.pow(1.9, tier)), rewardGems: tier => 3 + Math.floor(tier / 2), title: target => 'Заработайте ' + fmt(target) + ' монет' },
+        { type: 'boss', target: tier => 1 + Math.floor(tier / 2), rewardGold: tier => Math.floor(450 * Math.pow(1.9, tier)), rewardGems: tier => 5 + Math.floor(tier / 2), title: target => 'Победите ' + target + ' босс.' },
+        { type: 'bank', target: tier => Math.floor(900 * Math.pow(1.7, tier)), rewardGold: tier => Math.floor(220 * Math.pow(1.85, tier)), rewardGems: tier => 4 + Math.floor(tier / 2), title: target => 'Вложите ' + fmt(target) + ' в банк' },
+        { type: 'chest', target: tier => 1 + Math.floor(tier / 3), rewardGold: tier => Math.floor(320 * Math.pow(1.8, tier)), rewardGems: tier => 4 + Math.floor(tier / 2), title: target => 'Откройте ' + target + ' сундук(а)' }
+      ];
+
+      const DAILY_REWARDS = [
+        { gold: 300, gems: 5 },
+        { gold: 700, gems: 8 },
+        { gold: 1400, gems: 12 },
+        { gold: 3200, gems: 18 },
+        { gold: 6500, gems: 26 },
+        { gold: 13000, gems: 40 },
+        { gold: 32000, gems: 75, x2: 120000 }
+      ];
+
+      const ACHIEVEMENTS = [
+        { id: 'click_100', name: 'Разогрев пальцев', desc: 'Сделайте 100 кликов.', type: 'clicks', target: 100, rewardGold: 800, rewardGems: 10 },
+        { id: 'click_1000', name: 'Без остановки', desc: 'Сделайте 1000 кликов.', type: 'clicks', target: 1000, rewardGold: 6000, rewardGems: 28 },
+        { id: 'gold_50k', name: 'Первые мешки', desc: 'Заработайте 50K общего золота.', type: 'gold', target: 50000, rewardGold: 15000, rewardGems: 40 },
+        { id: 'gold_1m', name: 'Монетный лорд', desc: 'Заработайте 1M общего золота.', type: 'gold', target: 1000000, rewardGold: 250000, rewardGems: 120 },
+        { id: 'boss_5', name: 'Охотник', desc: 'Победите 5 боссов.', type: 'bosses', target: 5, rewardGold: 4000, rewardGems: 30 },
+        { id: 'boss_25', name: 'Палач чудовищ', desc: 'Победите 25 боссов.', type: 'bosses', target: 25, rewardGold: 40000, rewardGems: 90 },
+        { id: 'chest_10', name: 'Коллекционер сундуков', desc: 'Откройте 10 сундуков.', type: 'chests', target: 10, rewardGold: 12000, rewardGems: 45 },
+        { id: 'rare_5', name: 'Редкий нюх', desc: 'Откройте 5 редких сундуков.', type: 'rareChests', target: 5, rewardGold: 50000, rewardGems: 110 },
+        { id: 'quest_15', name: 'Контрактник', desc: 'Завершите 15 контрактов.', type: 'quests', target: 15, rewardGold: 70000, rewardGems: 100 },
+        { id: 'level_10', name: 'Опытный магнат', desc: 'Достигните 10 уровня.', type: 'level', target: 10, rewardGold: 90000, rewardGems: 90 },
+        { id: 'prestige_1', name: 'Первое перерождение', desc: 'Получите 1 престиж.', type: 'prestige', target: 1, rewardGold: 0, rewardGems: 150 },
+        { id: 'prestige_5', name: 'Звёздный цикл', desc: 'Получите 5 престижа.', type: 'prestige', target: 5, rewardGold: 0, rewardGems: 300 }
+      ];
+
+      const CHEST_TYPES = {
+        common: { emoji: '🎁', hint: 'Обычный сундук. Может содержать золото или кристаллы.', goldFactor: 40, autoFactor: 18, gemMin: 5, gemMax: 19, gemChance: 0.18 },
+        rare: { emoji: '💠', hint: 'Редкий сундук! Внутри большой куш и гарантированные кристаллы.', goldFactor: 120, autoFactor: 60, gemMin: 18, gemMax: 45, gemChance: 1 },
+        legendary: { emoji: '👑', hint: 'Легендарный сундук! Огромная награда и усиление x2.', goldFactor: 300, autoFactor: 180, gemMin: 45, gemMax: 120, gemChance: 1, x2: 120000 }
+      };
+
+      const LEVEL_TITLES = ['Ученик монет', 'Сборщик налогов', 'Казначей', 'Банкир', 'Магнат', 'Имперский лорд', 'Повелитель золота', 'Хранитель звёзд'];
+      const PROFILE_FRAMES = [
+        { id: 'frame_default', name: 'Стандарт' },
+        { id: 'frame_silver', name: 'Серебряная', unlockLevel: 5 },
+        { id: 'frame_gold', name: 'Золотая', unlockBosses: 10 },
+        { id: 'frame_void', name: 'Пустотная', unlockPrestige: 3 }
+      ];
+      const PLAYER_TITLES = [
+        { id: 'title_novice', name: 'Новичок Империи' },
+        { id: 'title_hunter', name: 'Охотник на боссов', unlockBosses: 5 },
+        { id: 'title_collector', name: 'Коллекционер редкостей', unlockSkins: 3 },
+        { id: 'title_legend', name: 'Легенда перерождений', unlockPrestige: 5 }
+      ];
+      // Распределение reward-действий по 3 placement'ам AdsGram:
+      // 31328 -> боевые усиления
+      // 31361 -> gem / daily бонусы
+      // 31362 -> экономические бонусы
+      const REWARD_ACTION_PLACEMENTS = {
+        x2: 'x2',
+        gems: 'gems',
+        offline: 'offline',
+        bossRevive: 'x2',
+        bossTime: 'x2',
+        bossDouble: 'x2',
+        autoClick: 'x2',
+        dailyDouble: 'gems',
+        restoreStreak: 'gems',
+        rareChest: 'gems',
+        chestReroll: 'offline',
+        bankBoost: 'offline',
+        skipWait: 'offline'
+      };
+
+      const el = {};
+      let toastTimer = null;
+      let clickCooldown = false;
+      let bossCooldown = false;
+      let bonusCooldownUntil = 0;
+      let chestOpen = false;
+      let audioCtx = null;
+      let skipAutoSave = false;
+      let lastInterstitialAt = 0;
+      let interstitialAdInProgress = false;
+      let rewardAdInProgress = false;
+      let appHiddenAt = 0;
+      let lastTaskRewardAt = 0;
+
+      function cacheElements() {
+        Object.assign(el, {
+          goldVal: document.getElementById('goldVal'), gemsVal: document.getElementById('gemsVal'), rankBadge: document.getElementById('rankBadge'),
+          cpsVal: document.getElementById('cpsVal'), cpcVal: document.getElementById('cpcVal'), comboVal: document.getElementById('comboVal'),
+          playerLevel: document.getElementById('playerLevel'), levelLabel: document.getElementById('levelLabel'), levelXpText: document.getElementById('levelXpText'), levelFill: document.getElementById('levelFill'),
+          locTitle: document.getElementById('locTitle'), locDesc: document.getElementById('locDesc'), clickPlus: document.getElementById('clickPlus'), clickerBtn: document.getElementById('clickerBtn'), comboChip: document.getElementById('comboChip'),
+          bankDepVal: document.getElementById('bankDepVal'), bankIncVal: document.getElementById('bankIncVal'), btnDeposit: document.getElementById('btnDeposit'), btnWithdraw: document.getElementById('btnWithdraw'),
+          shopContent: document.getElementById('shopContent'),
+          bossName: document.getElementById('bossName'), bossReq: document.getElementById('bossReq'), bossReward: document.getElementById('bossReward'), bossCard: document.getElementById('bossCard'), bossSprite: document.getElementById('bossSprite'), bossHpFill: document.getElementById('bossHpFill'), bossHp: document.getElementById('bossHp'), bossMaxHp: document.getElementById('bossMaxHp'), bossState: document.getElementById('bossState'), bossTimerText: document.getElementById('bossTimerText'), bossTimerFill: document.getElementById('bossTimerFill'), bossArmor: document.getElementById('bossArmor'), bossRage: document.getElementById('bossRage'), bossDuration: document.getElementById('bossDuration'), bossHintText: document.getElementById('bossHintText'), btnStartBoss: document.getElementById('btnStartBoss'), btnPrevBoss: document.getElementById('btnPrevBoss'), btnNextBoss: document.getElementById('btnNextBoss'),
+          profileContent: document.getElementById('profileContent'), statLevel: document.getElementById('statLevel'), statClicks: document.getElementById('statClicks'), statGold: document.getElementById('statGold'), statBosses: document.getElementById('statBosses'), statChests: document.getElementById('statChests'), statRareChests: document.getElementById('statRareChests'), statQuests: document.getElementById('statQuests'), statPrestige: document.getElementById('statPrestige'), prestigeBonus: document.getElementById('prestigeBonus'), prestigeGain: document.getElementById('prestigeGain'), prestigeNeed: document.getElementById('prestigeNeed'), runGoldVal: document.getElementById('runGoldVal'), achievementsList: document.getElementById('achievementsList'), colCoinSkins: document.getElementById('colCoinSkins'), colPets: document.getElementById('colPets'), colBossCards: document.getElementById('colBossCards'), colFrames: document.getElementById('colFrames'), colTitles: document.getElementById('colTitles'), colCurrentTitle: document.getElementById('colCurrentTitle'), btnPrestige: document.getElementById('btnPrestige'), btnReset: document.getElementById('btnReset'),
+          dailyStatus: document.getElementById('dailyStatus'), dailyDays: document.getElementById('dailyDays'), btnDailyClaim: document.getElementById('btnDailyClaim'), dailyTasksList: document.getElementById('dailyTasksList'), dailyTasksTimer: document.getElementById('dailyTasksTimer'), bonusCooldownText: document.getElementById('bonusCooldownText'), nextRareChestText: document.getElementById('nextRareChestText'), bonusContent: document.getElementById('bonusContent'),
+          adBtn1: document.getElementById('adBtn1'), adBtn2: document.getElementById('adBtn2'), adBtn3: document.getElementById('adBtn3'),
+          toast: document.getElementById('toast'), chestModal: document.getElementById('chestModal'), chestAnim: document.getElementById('chestAnim'), chestHint: document.getElementById('chestHint'), rewardModal: document.getElementById('rewardModal'), rewardContent: document.getElementById('rewardContent'), btnCloseReward: document.getElementById('btnCloseReward'), loadingScreen: document.getElementById('loadingScreen'), bgParticles: document.getElementById('bgParticles'),
+          questTier: document.getElementById('questTier'), questReward: document.getElementById('questReward'), questTitle: document.getElementById('questTitle'), questFill: document.getElementById('questFill'), questText: document.getElementById('questText'), btnQuestClaim: document.getElementById('btnQuestClaim'),
+          topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark')
+        });
+      }
+
+      function fmt(n) {
+        n = Math.floor(Number(n) || 0);
+        if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T';
+        if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+        if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+        if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+        return String(n);
+      }
+
+      function fmtSeconds(totalSeconds) {
+        totalSeconds = Math.max(0, Math.floor(totalSeconds || 0));
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }
+
+      function romanize(num) {
+        const map = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
+        return map[num - 1] || String(num);
+      }
+
+      function getLevelTitle(level) {
+        return LEVEL_TITLES[Math.min(LEVEL_TITLES.length - 1, Math.floor((level - 1) / 5))];
+      }
+
+      function getDayStart(ts = Date.now()) {
+        const d = new Date(ts);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
+      }
+
+      function getDayDiff(fromTs, toTs = Date.now()) {
+        return Math.floor((getDayStart(toTs) - getDayStart(fromTs)) / DAY_MS);
+      }
+
+      function showToast(msg) {
+        el.toast.textContent = msg;
+        el.toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.toast.classList.remove('show'), 2500);
+      }
+
+      function initAudio() {
+        if (audioCtx) return;
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; }
+      }
+
+      function playSound(type) {
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(620, now);
+          osc.frequency.exponentialRampToValueAtTime(320, now + 0.06);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.start(now); osc.stop(now + 0.06);
+        } else if (type === 'reward') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(784, now + 0.16);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now); osc.stop(now + 0.35);
+        } else {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.exponentialRampToValueAtTime(55, now + 0.1);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          osc.start(now); osc.stop(now + 0.1);
+        }
+      }
+
+      function clearSavedProgressStorage() {
+        try {
+          Array.from(new Set(LOAD_KEYS.concat([SAVE_KEY]))).forEach(key => localStorage.removeItem(key));
+        } catch (e) {}
+      }
+
+      function getSavedRaw() {
+        for (const key of LOAD_KEYS) {
+          const raw = localStorage.getItem(key);
+          if (raw) return raw;
+        }
+        return null;
+      }
+
+      function getPlayerXp() {
+        return Math.floor(state.totalGold + state.totalClicks * 5 + state.bossesDefeated * 250 + state.questsCompleted * 800 + state.prestige * 4000 + state.rareChestsOpened * 1600);
+      }
+
+      function getLevelData() {
+        let xp = getPlayerXp();
+        let level = 1;
+        let need = 120;
+        while (xp >= need) {
+          xp -= need;
+          level += 1;
+          need = Math.floor(120 * Math.pow(level, 1.28));
+        }
+        return { level, current: xp, need, total: getPlayerXp() };
+      }
+
+      function getLevelBonusMult() {
+        return 1 + Math.floor((getLevelData().level - 1) / 5) * 0.02;
+      }
+
+      function addGold(amount, countRun = true) {
+        amount = Math.floor(Number(amount) || 0);
+        if (amount <= 0) return;
+        state.gold += amount;
+        state.totalGold += amount;
+        if (countRun) state.runGold += amount;
+      }
+
+      function spendGold(amount) {
+        amount = Math.floor(Number(amount) || 0);
+        if (amount <= 0 || state.gold < amount) return false;
+        state.gold -= amount;
+        return true;
+      }
+
+      function addGems(amount) {
+        amount = Math.floor(Number(amount) || 0);
+        if (amount > 0) state.gems += amount;
+      }
+
+      function getPetMult() { return (PETS.find(p => p.id === state.currentPet) || PETS[0]).effect; }
+      function getPrestigeMult() { return 1 + state.prestige * 0.12; }
+      function getX2Mult() { return Date.now() < state.x2End ? 2 : 1; }
+      function getComboMult() { return Date.now() > state.comboExpire ? 1 : Math.min(1 + (Math.max(1, state.combo) - 1) * 0.04, 2.2); }
+      function getClickPower() { return Math.max(1, Math.floor(state.clickPower * getPetMult() * getPrestigeMult() * getX2Mult() * getComboMult() * getLevelBonusMult())); }
+      function getAutoIncome() {
+        const base = state.autoClick;
+        const boost = Date.now() < state.autoClickBoostEnd ? Math.max(10, Math.floor(state.clickPower * 0.5 + state.autoClick * 0.35)) : 0;
+        return Math.max(0, Math.floor((base + boost) * getPetMult() * getPrestigeMult() * getX2Mult() * getLevelBonusMult()));
+      }
+      function getBankIncomePerMinute() {
+        const boostMult = Date.now() < state.bankBoostEnd ? 3 : 1;
+        return Math.floor(state.bankDep * 0.1 / 60 * boostMult);
+      }
+      function getBossDmg() { return Math.max(1, Math.floor(getClickPower() * 10)); }
+
+      function getRank() {
+        let rank = RANKS[0].name;
+        for (let i = RANKS.length - 1; i >= 0; i--) if (state.totalGold >= RANKS[i].req) { rank = RANKS[i].name; break; }
+        return rank;
+      }
+
+      function getLoc() {
+        let loc = LOCS[0];
+        for (let i = LOCS.length - 1; i >= 0; i--) if (state.totalGold >= LOCS[i].req) { loc = LOCS[i]; break; }
+        return loc;
+      }
+
+      function getCoinSkin(id) { return COIN_SKINS.find(s => s.id === id) || COIN_SKINS[0]; }
+
+      function renderCoinTargets() {
+        const skin = getCoinSkin(state.currentCoinSkin);
+        el.topCoinIcon.className = 'coin-art coin-mini skin-' + skin.id;
+        el.mainCoin.className = 'coin-art coin-main skin-' + skin.id;
+        el.topCoinMark.textContent = skin.mark;
+        el.mainCoinMark.textContent = skin.mark;
+      }
+
+      function coinPreviewMarkup(id) {
+        const skin = getCoinSkin(id);
+        return '<div class="coin-art coin-preview skin-' + skin.id + '"><span class="coin-mark">' + skin.mark + '</span></div>';
+      }
+
+      function spawnFloat(x, y, text) {
+        const d = document.createElement('div');
+        d.className = 'float-num';
+        d.textContent = text;
+        d.style.left = (x - 20) + 'px';
+        d.style.top = (y - 30) + 'px';
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 700);
+      }
+
+      function getMaxUnlockedBossIdx() {
+        let unlocked = 0;
+        for (let i = 0; i < BOSSES.length; i++) if (state.totalGold >= BOSSES[i].unlockGold) unlocked = i;
+        return unlocked;
+      }
+
+      function isBossUnlocked(index) {
+        return !!BOSSES[index] && state.totalGold >= BOSSES[index].unlockGold;
+      }
+
+      function getCurrentBoss() {
+        return BOSSES[state.bossIdx];
+      }
+
+      function getBossRemainingMs() {
+        if (!state.bossBattleActive) return 0;
+        return Math.max(0, state.bossBattleEndsAt - Date.now());
+      }
+
+      function getBossFightElapsedMs() {
+        if (!state.bossBattleStartedAt) return 0;
+        return Math.max(0, Date.now() - state.bossBattleStartedAt);
+      }
+
+      function getBossMechanics() {
+        const boss = getCurrentBoss();
+        const elapsed = getBossFightElapsedMs();
+        const mechanics = { regenFast: false, shield: false, enraged: false, storm: false, vulnerable: true };
+        if (!boss) return mechanics;
+        if (state.bossIdx === 0) {
+          mechanics.regenFast = true;
+        } else if (state.bossIdx === 1) {
+          mechanics.shield = elapsed > 0 && elapsed % 10000 < 3000;
+        } else if (state.bossIdx === 2) {
+          mechanics.enraged = true;
+        } else if (state.bossIdx === 3) {
+          mechanics.storm = elapsed > 0 && elapsed % 8000 < 4000;
+        } else if (state.bossIdx === 4) {
+          mechanics.vulnerable = elapsed > 0 ? elapsed % 9000 < 3000 : true;
+        } else if (state.bossIdx === 5) {
+          const cycle = elapsed % 12000;
+          mechanics.shield = cycle < 2500;
+          mechanics.storm = cycle >= 2500 && cycle < 6500;
+          mechanics.vulnerable = cycle >= 8000 && cycle < 11000;
+          mechanics.enraged = true;
+        }
+        return mechanics;
+      }
+
+      function isBossEnraged() {
+        const boss = getCurrentBoss();
+        const mechanics = getBossMechanics();
+        return !!boss && state.bossBattleActive && state.bossHp > 0 && (mechanics.enraged || state.bossHp <= boss.hp * (boss.rageThreshold || 0));
+      }
+
+      function getBossArmorValue() {
+        const boss = getCurrentBoss();
+        const mechanics = getBossMechanics();
+        if (!boss) return 0;
+        return (boss.armor || 0) + (isBossEnraged() ? (boss.rageArmor || 0) : 0) + (mechanics.shield ? Math.max(6, Math.floor((boss.armor || 0) * 0.8 + 6)) : 0);
+      }
+
+      function getBossRegenValue() {
+        const boss = getCurrentBoss();
+        const mechanics = getBossMechanics();
+        if (!boss) return 0;
+        let regen = isBossEnraged() ? (boss.rageRegen || boss.regen || 0) : (boss.regen || 0);
+        if (mechanics.regenFast) regen = Math.max(regen, Math.max(2, Math.floor(boss.hp * 0.025)));
+        if (mechanics.shield) regen += Math.max(1, Math.floor((boss.regen || 0) * 0.35));
+        return regen;
+      }
+
+      function resetBossBattle(showMessage = false) {
+        const boss = getCurrentBoss();
+        if (showMessage && state.bossBattleActive && state.bossHp > 0 && !state.bossReviveUsed) {
+          state.bossReviveAvailable = true;
+          state.bossReviveHp = state.bossHp;
+        } else {
+          state.bossReviveAvailable = false;
+          state.bossReviveHp = 0;
+        }
+        state.bossBattleActive = false;
+        state.bossBattleEndsAt = 0;
+        state.bossBattleStartedAt = 0;
+        checkBossBattleState._lastRegenAt = 0;
+        if (!state.bossReviveAvailable && boss) state.bossHp = boss.hp;
+        if (showMessage) showToast(state.bossReviveAvailable ? 'Время вышло! Можно возродиться через reward' : 'Время на бой вышло!');
+      }
+
+      function startBossBattle(forceResetHp = false) {
+        const boss = getCurrentBoss();
+        if (!boss || !isBossUnlocked(state.bossIdx)) return false;
+        state.bossBattleActive = true;
+        state.bossBattleEndsAt = Date.now() + boss.duration * 1000;
+        state.bossBattleStartedAt = Date.now();
+        checkBossBattleState._lastRegenAt = Date.now();
+        if (forceResetHp) {
+          state.bossHp = boss.hp;
+          state.bossReviveUsed = false;
+          state.bossReviveAvailable = false;
+          state.bossReviveHp = 0;
+        }
+        return true;
+      }
+
+      function reviveBossBattle() {
+        if (!state.bossReviveAvailable) return false;
+        state.bossReviveAvailable = false;
+        state.bossReviveUsed = true;
+        state.bossBattleActive = true;
+        state.bossBattleEndsAt = Date.now() + 10000;
+        state.bossBattleStartedAt = Date.now();
+        state.bossHp = Math.max(1, state.bossReviveHp || state.bossHp || 1);
+        checkBossBattleState._lastRegenAt = Date.now();
+        return true;
+      }
+
+      function checkBossBattleState() {
+        if (!state.bossBattleActive) return;
+        if (getBossRemainingMs() <= 0) {
+          resetBossBattle(true);
+          updateUI();
+          saveGame();
+          return;
+        }
+
+        const boss = getCurrentBoss();
+        if (!boss || state.bossHp <= 0) return;
+        const now = Date.now();
+        if (!checkBossBattleState._lastRegenAt) checkBossBattleState._lastRegenAt = now;
+        if (now - checkBossBattleState._lastRegenAt >= 1000) {
+          const seconds = Math.floor((now - checkBossBattleState._lastRegenAt) / 1000);
+          checkBossBattleState._lastRegenAt += seconds * 1000;
+          const regen = getBossRegenValue();
+          if (regen > 0) state.bossHp = Math.min(boss.hp, state.bossHp + regen * seconds);
+        }
+      }
+
+      function getBossHitPayload() {
+        const base = getBossDmg();
+        const crit = Math.random() < 0.12;
+        const miss = Math.random() < 0.08;
+        const mechanics = getBossMechanics();
+        if (miss) return { dmg: 0, crit, miss: true, blocked: '' };
+        if (!mechanics.vulnerable) return { dmg: 0, crit, miss: false, blocked: 'vulnerable' };
+        let raw = crit ? Math.floor(base * 1.8) : base;
+        if (mechanics.storm) raw = Math.floor(raw * 0.45);
+        const dmg = Math.max(1, raw - getBossArmorValue());
+        return { dmg, crit, miss: false, blocked: mechanics.storm ? 'storm' : (mechanics.shield ? 'shield' : '') };
+      }
+
+      function applyBossVisualTheme(mechanics, active) {
+        const themeClass = 'boss-theme-' + state.bossIdx;
+        if (el.bossCard) {
+          el.bossCard.className = 'boss-card ' + themeClass
+            + (active ? ' active-battle' : '')
+            + (mechanics.shield ? ' mech-shield' : '')
+            + (mechanics.storm ? ' mech-storm' : '')
+            + (mechanics.vulnerable && active ? ' mech-vulnerable' : '');
+        }
+        if (el.bossSprite) {
+          el.bossSprite.className = 'boss-sprite ' + themeClass
+            + (mechanics.shield ? ' shielded' : '')
+            + (mechanics.storm ? ' storming' : '')
+            + (isBossEnraged() ? ' enraged' : '')
+            + (!mechanics.vulnerable && active ? ' invulnerable' : '');
+        }
+        if (el.bossTimerFill) {
+          if (state.bossIdx === 0) el.bossTimerFill.style.background = 'linear-gradient(90deg,#60a5fa,#2563eb)';
+          else if (state.bossIdx === 1) el.bossTimerFill.style.background = 'linear-gradient(90deg,#4ade80,#16a34a)';
+          else if (state.bossIdx === 2) el.bossTimerFill.style.background = 'linear-gradient(90deg,#f59e0b,#92400e)';
+          else if (state.bossIdx === 3) el.bossTimerFill.style.background = 'linear-gradient(90deg,#f97316,#ef4444)';
+          else if (state.bossIdx === 4) el.bossTimerFill.style.background = 'linear-gradient(90deg,#c084fc,#7c3aed)';
+          else el.bossTimerFill.style.background = 'linear-gradient(90deg,#fb7185,#7f1d1d)';
+        }
+        if (el.bossHpFill) {
+          if (state.bossIdx === 4) el.bossHpFill.style.background = 'linear-gradient(90deg,#a855f7,#6d28d9)';
+          else if (state.bossIdx === 3) el.bossHpFill.style.background = 'linear-gradient(90deg,#f97316,#b91c1c)';
+          else if (state.bossIdx === 1) el.bossHpFill.style.background = 'linear-gradient(90deg,#22c55e,#15803d)';
+          else el.bossHpFill.style.background = 'linear-gradient(90deg,#ef4444,#dc2626)';
+        }
+      }
+
+      function updateBossUI() {
+        const boss = getCurrentBoss();
+        const unlocked = isBossUnlocked(state.bossIdx);
+        const remainingMs = getBossRemainingMs();
+        const remainingSec = Math.ceil(remainingMs / 1000);
+        const active = unlocked && state.bossBattleActive && remainingMs > 0;
+        const mechanics = getBossMechanics();
+        applyBossVisualTheme(mechanics, active);
+        el.bossName.textContent = boss.name;
+        el.bossReward.textContent = fmt(boss.reward) + (state.nextBossRewardDouble ? ' x2' : '');
+        el.bossSprite.textContent = boss.sprite;
+        el.bossHp.textContent = fmt(state.bossHp);
+        el.bossMaxHp.textContent = fmt(boss.hp);
+        el.bossHpFill.style.width = Math.max(0, state.bossHp / boss.hp * 100) + '%';
+        el.bossTimerText.textContent = active ? fmtSeconds(remainingSec) : fmtSeconds(boss.duration);
+        el.bossTimerFill.style.width = active ? Math.max(0, remainingMs / (boss.duration * 1000) * 100) + '%' : '100%';
+        el.bossArmor.textContent = fmt(getBossArmorValue());
+        el.bossRage.textContent = state.bossReviveAvailable ? 'Нокдаун' : (isBossEnraged() ? 'Ярость' : (active ? 'Бой' : 'Ожидание'));
+        el.bossDuration.textContent = fmt(getBossRegenValue()) + '/с';
+        el.btnPrevBoss.disabled = state.bossIdx <= 0;
+        el.btnNextBoss.disabled = state.bossIdx >= BOSSES.length - 1;
+        el.bossReq.textContent = unlocked ? 'Открыт • требуется ' + fmt(boss.unlockGold) + ' общего золота' : 'Откроется на ' + fmt(boss.unlockGold) + ' общего золота';
+        if (!unlocked) {
+          el.bossState.textContent = 'Закрыт';
+          el.bossHintText.textContent = 'Сначала заработайте больше общего золота, чтобы открыть этого босса.';
+          el.btnStartBoss.disabled = true;
+          el.btnStartBoss.textContent = 'Бой недоступен';
+        } else if (state.bossReviveAvailable) {
+          el.bossState.textContent = 'Можно возродиться';
+          el.bossHintText.textContent = 'Таймер закончился. Активируйте reward-возрождение на вкладке бонусов, чтобы продолжить бой с текущим HP.';
+          el.btnStartBoss.disabled = false;
+          el.btnStartBoss.textContent = 'Начать заново';
+        } else if (active) {
+          if (state.bossIdx === 0) el.bossHintText.textContent = 'Страж быстро восстанавливает здоровье. Давите его постоянным темпом.';
+          else if (state.bossIdx === 1) el.bossHintText.textContent = mechanics.shield ? 'У босса поднят щит: броня резко выросла.' : 'Каждые 10 секунд гоблин поднимает щит на короткое время.';
+          else if (state.bossIdx === 2) el.bossHintText.textContent = 'На низком HP голем входит в ярость и усиливает броню и реген.';
+          else if (state.bossIdx === 3) el.bossHintText.textContent = mechanics.storm ? 'Шторм активен: ваш урон по дракону снижен.' : 'Дракон периодически вызывает шторм, уменьшая входящий урон.';
+          else if (state.bossIdx === 4) el.bossHintText.textContent = mechanics.vulnerable ? 'Лич уязвим — бейте, пока окно открыто!' : 'Лич закрыт магическим куполом. Ждите короткое окно уязвимости.';
+          else el.bossHintText.textContent = mechanics.shield ? 'Демон усилил щит.' : mechanics.storm ? 'Демон поднял шторм.' : mechanics.vulnerable ? 'Поймано окно уязвимости: бейте сильнее!' : 'Демон меняет фазы: щит, шторм и уязвимые окна.';
+          el.bossState.textContent = isBossEnraged() ? 'Ярость' : (mechanics.shield ? 'Щит' : mechanics.storm ? 'Шторм' : mechanics.vulnerable ? 'Бой идёт' : 'Неуязвим');
+          el.btnStartBoss.disabled = false;
+          el.btnStartBoss.textContent = 'Перезапустить бой';
+        } else {
+          el.bossState.textContent = 'Ожидание';
+          el.bossHintText.textContent = 'Нажмите «Начать бой», затем атакуйте босса до истечения таймера.';
+          el.btnStartBoss.disabled = false;
+          el.btnStartBoss.textContent = 'Начать бой';
+        }
+      }
+
+      function metricByQuestType(type) {
+        if (type === 'clicks') return state.totalClicks;
+        if (type === 'earn') return state.runGold;
+        if (type === 'boss') return state.bossesDefeated;
+        if (type === 'bank') return state.bankLifetime;
+        if (type === 'chest') return state.chestsOpened;
+        return 0;
+      }
+
+      function ensureQuest(force = false) {
+        if (state.activeQuest && !force) return;
+        const index = state.questLevel % QUEST_TEMPLATES.length;
+        const tier = Math.floor(state.questLevel / QUEST_TEMPLATES.length);
+        const tpl = QUEST_TEMPLATES[index];
+        state.activeQuest = { type: tpl.type, tier: tier + 1, target: tpl.target(tier), rewardGold: tpl.rewardGold(tier), rewardGems: tpl.rewardGems(tier), start: metricByQuestType(tpl.type), title: tpl.title(tpl.target(tier)) };
+      }
+
+      function getQuestProgress() {
+        ensureQuest();
+        return Math.max(0, metricByQuestType(state.activeQuest.type) - (state.activeQuest.start || 0));
+      }
+
+      function updateQuestUI() {
+        ensureQuest();
+        const q = state.activeQuest;
+        const progress = Math.min(getQuestProgress(), q.target);
+        const ready = progress >= q.target;
+        el.questTier.textContent = romanize(Math.min(10, q.tier));
+        el.questReward.textContent = '+' + fmt(q.rewardGold) + ' $ • +' + q.rewardGems + ' 💎';
+        el.questTitle.textContent = q.title;
+        el.questFill.style.width = Math.max(0, progress / q.target * 100) + '%';
+        el.questText.textContent = fmt(progress) + ' / ' + fmt(q.target);
+        el.btnQuestClaim.disabled = !ready;
+        el.btnQuestClaim.classList.toggle('ready', ready);
+        el.btnQuestClaim.textContent = ready ? 'Забрать награду' : 'В процессе';
+      }
+
+      function getPrestigeGain() {
+        return Math.floor(Math.sqrt(state.runGold / BASE_PRESTIGE_COST));
+      }
+
+      function getNextPrestigeNeed() {
+        const next = getPrestigeGain() + 1;
+        return Math.pow(next, 2) * BASE_PRESTIGE_COST;
+      }
+
+      function getTodayKey() {
+        return new Date(getDayStart()).toISOString().slice(0, 10);
+      }
+
+      function syncDailyState() {
+        if (!state.dailyClaimedAt) return;
+        const diff = getDayDiff(state.dailyClaimedAt);
+        if (diff > 1) {
+          if (state.dailyStreak > 0 && !state.dailyStreakLost) state.lastBrokenStreak = state.dailyStreak;
+          state.dailyStreakLost = true;
+          state.dailyStreak = 0;
+          state.dailyCycle = 0;
+        }
+      }
+
+      function canClaimDailyReward() {
+        syncDailyState();
+        return !state.dailyClaimedAt || getDayDiff(state.dailyClaimedAt) >= 1;
+      }
+
+      function getCurrentDailyReward() {
+        syncDailyState();
+        return DAILY_REWARDS[state.dailyCycle % DAILY_REWARDS.length];
+      }
+
+      function getScaledDailyGold(baseGold) {
+        return Math.max(baseGold, Math.floor(getAutoIncome() * 120 + getClickPower() * 35 + 200));
+      }
+
+      function ensureDailyTasks() {
+        const today = getTodayKey();
+        if (state.dailyTasksDate === today && Array.isArray(state.dailyTasks) && state.dailyTasks.length) return;
+        const level = getLevelData().level;
+        state.dailyTasksDate = today;
+        state.dailyTasks = [
+          { id: 'd_clicks', type: 'clicks', target: 120 + level * 10, start: state.totalClicks, rewardGold: 900 + level * 120, rewardGems: 6, title: 'Сделайте серию кликов', desc: 'Нажмите по монете ' + fmt(120 + level * 10) + ' раз.' },
+          { id: 'd_earn', type: 'earn', target: 1800 + state.prestige * 500 + level * 120, start: state.runGold, rewardGold: 1800 + level * 200, rewardGems: 8, title: 'Заработайте за день', desc: 'Соберите ' + fmt(1800 + state.prestige * 500 + level * 120) + ' монет за текущий цикл.' },
+          { id: 'd_boss', type: 'boss', target: Math.max(1, Math.min(3, 1 + Math.floor(level / 12))), start: state.bossesDefeated, rewardGold: 2500 + level * 180, rewardGems: 12, title: 'Сокрушите боссов', desc: 'Победите ' + Math.max(1, Math.min(3, 1 + Math.floor(level / 12))) + ' босса(ов).' }
+        ].map(item => ({ ...item, claimed: false }));
+      }
+
+      function getDailyTaskMetric(task) {
+        if (task.type === 'clicks') return state.totalClicks;
+        if (task.type === 'earn') return state.runGold;
+        if (task.type === 'boss') return state.bossesDefeated;
+        if (task.type === 'chest') return state.chestsOpened;
+        return 0;
+      }
+
+      function getDailyTaskProgress(task) {
+        return Math.max(0, getDailyTaskMetric(task) - (task.start || 0));
+      }
+
+      function renderDailyRewards() {
+        ensureDailyTasks();
+        const reward = getCurrentDailyReward();
+        const canClaim = canClaimDailyReward();
+        const streakText = state.dailyStreak > 0 ? 'Серия: ' + state.dailyStreak + ' дн.' : 'Начните серию сегодня';
+        const bonusTag = state.dailyDoublePending ? ' • следующая награда x2' : '';
+        el.dailyStatus.textContent = canClaim ? 'День ' + (state.dailyCycle + 1) + ' • ' + streakText + ' • Награда: ' + fmt(getScaledDailyGold(reward.gold)) + ' $ и ' + reward.gems + ' 💎' + (reward.x2 ? ' + x2' : '') + bonusTag : 'Сегодня уже забрано • ' + streakText + bonusTag;
+        el.btnDailyClaim.disabled = !canClaim;
+        el.btnDailyClaim.textContent = canClaim ? (state.dailyDoublePending ? 'Забрать x2 день ' + (state.dailyCycle + 1) : 'Забрать день ' + (state.dailyCycle + 1)) : 'Доступно завтра';
+        let html = '';
+        const claimedCount = canClaim ? state.dailyCycle : (state.dailyCycle === 0 && state.dailyStreak > 0 ? DAILY_REWARDS.length : state.dailyCycle);
+        for (let i = 0; i < DAILY_REWARDS.length; i++) {
+          const r = DAILY_REWARDS[i];
+          const claimed = i < claimedCount;
+          const current = canClaim && i === state.dailyCycle;
+          html += '<div class="daily-day' + (claimed ? ' claimed' : '') + (current ? ' current' : '') + '"><div class="daily-day-num">День ' + (i + 1) + '</div><div class="daily-day-reward">' + r.gems + '💎</div></div>';
+        }
+        el.dailyDays.innerHTML = html;
+        const nextBonusMs = Math.max(0, bonusCooldownUntil - Date.now());
+        el.bonusCooldownText.textContent = nextBonusMs > 0 ? 'Следующий бесплатный бонус через ' + fmtSeconds(Math.ceil(nextBonusMs / 1000)) + '.' : 'Следующий бесплатный бонус уже доступен.';
+        const nextDailyMs = Math.max(0, getDayStart(Date.now() + DAY_MS) - Date.now());
+        el.nextRareChestText.textContent = canClaim ? 'Зайди завтра — откроется редкий сундук. До следующего входа: ' + fmtSeconds(Math.ceil(nextDailyMs / 1000)) : 'Завтра тебя уже ждёт редкий сундук за вход. Осталось: ' + fmtSeconds(Math.ceil(nextDailyMs / 1000)) + '.';
+      }
+
+      function renderDailyTasks() {
+        ensureDailyTasks();
+        let html = '';
+        state.dailyTasks.forEach(task => {
+          const progress = Math.min(getDailyTaskProgress(task), task.target);
+          const ready = progress >= task.target;
+          html += '<div class="daily-task-item">';
+          html += '<div class="daily-task-head"><div><div class="daily-task-title">' + task.title + '</div><div class="daily-task-desc">' + task.desc + '</div></div><div class="daily-task-reward">+' + fmt(task.rewardGold) + '$ • +' + task.rewardGems + '💎</div></div>';
+          html += '<div class="daily-task-progress"><div class="daily-task-progress-fill" style="width:' + Math.max(0, progress / task.target * 100) + '%"></div></div>';
+          html += '<div class="daily-task-foot"><span>' + fmt(progress) + ' / ' + fmt(task.target) + '</span>';
+          if (task.claimed) html += '<button class="daily-task-btn" disabled>Получено</button>';
+          else html += '<button class="daily-task-btn" data-daily-task="' + task.id + '" ' + (ready ? '' : 'disabled') + '>Забрать</button>';
+          html += '</div></div>';
+        });
+        el.dailyTasksList.innerHTML = html;
+        el.dailyTasksTimer.textContent = 'Задания обновятся после следующего дневного сброса.';
+      }
+
+      function claimDailyTask(taskId) {
+        ensureDailyTasks();
+        const task = state.dailyTasks.find(item => item.id === taskId);
+        if (!task || task.claimed) return;
+        if (getDailyTaskProgress(task) < task.target) return;
+        task.claimed = true;
+        addGold(task.rewardGold);
+        addGems(task.rewardGems);
+        playSound('reward');
+        updateUI();
+        saveGame();
+        showToast('Ежедневное задание выполнено!');
+      }
+
+      function claimDailyReward(multiplier = 1) {
+        if (!canClaimDailyReward()) return showToast('Сегодня уже получено!');
+        const reward = getCurrentDailyReward();
+        const totalMultiplier = multiplier * (state.dailyDoublePending ? 2 : 1);
+        const gold = getScaledDailyGold(reward.gold) * totalMultiplier;
+        addGold(gold);
+        addGems(reward.gems * totalMultiplier);
+        if (reward.x2) state.x2End = Math.max(state.x2End, Date.now() + reward.x2 * totalMultiplier);
+        if (state.dailyClaimedAt && getDayDiff(state.dailyClaimedAt) === 1) state.dailyStreak += 1; else state.dailyStreak = 1;
+        state.dailyClaimedAt = Date.now();
+        state.dailyCycle = (state.dailyCycle + 1) % DAILY_REWARDS.length;
+        state.dailyDoublePending = false;
+        state.dailyStreakLost = false;
+        playSound('reward');
+        updateUI();
+        saveGame();
+        showReward('🎁 ' + fmt(gold) + ' $ • ' + (reward.gems * totalMultiplier) + ' 💎' + (totalMultiplier > 1 ? ' • x' + totalMultiplier : '') + (reward.x2 ? ' • x2' : ''));
+      }
+
+      function setRewardButtonsLoading(activeAction, isLoading) {
+        Array.from(document.querySelectorAll('[data-reward-button]')).forEach(btn => {
+          const action = btn.getAttribute('data-reward-button');
+          if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = btn.textContent.trim();
+          btn.disabled = !!isLoading;
+          btn.classList.toggle('loading', !!isLoading && action === activeAction);
+          if (isLoading && action === activeAction) {
+            btn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>Загрузка...</span>';
+          } else {
+            btn.textContent = btn.dataset.defaultLabel || 'Получить';
+          }
+        });
+      }
+
+      function getAdsgramController(blockId) {
+        if (!blockId || typeof blockId !== 'string' || !window.Adsgram || typeof window.Adsgram.init !== 'function') return null;
+        if (!adsControllers[blockId]) {
+          try {
+            const initParams = { blockId };
+            if (ADSGRAM_CONFIG.debug) {
+              initParams.debug = true;
+              initParams.debugBannerType = 'FullscreenMedia';
+            }
+            adsControllers[blockId] = window.Adsgram.init(initParams);
+          } catch (e) {
+            return null;
+          }
+        }
+        return adsControllers[blockId];
+      }
+
+      function handleAdsgramError(result, mode) {
+        const stateName = result && result.state ? result.state : '';
+        const description = result && result.description ? String(result.description) : '';
+        const normalized = description.toLowerCase();
+
+        if (stateName === 'load' || normalized.includes('banner not found') || normalized.includes('not found')) {
+          showToast(mode === 'reward' ? 'Reward-реклама недоступна' : 'Реклама недоступна');
+          return;
+        }
+        if (normalized.includes('too long session')) {
+          showToast('Перезапусти приложение для новой рекламы');
+          return;
+        }
+        if (normalized.includes('non stop') || normalized.includes('too often')) {
+          showToast('Слишком частый показ рекламы');
+          return;
+        }
+        if (description) {
+          showToast(description);
+          return;
+        }
+        showToast(mode === 'reward' ? 'Ошибка reward-рекламы' : 'Ошибка показа рекламы');
+      }
+
+      function showAdsgramInterstitial(reason, onDone) {
+        const now = Date.now();
+        if (!TELEGRAM_WEBAPP) {
+          if (typeof onDone === 'function') onDone();
+          return;
+        }
+        if (interstitialAdInProgress) {
+          if (typeof onDone === 'function') onDone();
+          return;
+        }
+        if (now - lastInterstitialAt < ADSGRAM_CONFIG.interstitialCooldownMs) {
+          if (typeof onDone === 'function') onDone();
+          return;
+        }
+
+        const controller = getAdsgramController(ADSGRAM_CONFIG.interstitialBlockId);
+        if (!controller) {
+          if (typeof onDone === 'function') onDone();
+          return;
+        }
+
+        interstitialAdInProgress = true;
+        controller.show()
+          .then(() => {
+            lastInterstitialAt = Date.now();
+          })
+          .catch(result => {
+            handleAdsgramError(result, 'interstitial');
+          })
+          .finally(() => {
+            interstitialAdInProgress = false;
+            if (typeof onDone === 'function') onDone();
+          });
+      }
+
+      function showAdsgramReward(kind, onReward, activeAction = kind) {
+        const blockId = ADSGRAM_CONFIG.rewardBlockIds[kind];
+        if (!blockId) {
+          showToast('Добавь Reward blockId для ' + kind);
+          return;
+        }
+        if (!TELEGRAM_WEBAPP) {
+          showToast('Reward работает внутри Telegram Mini App');
+          return;
+        }
+        if (rewardAdInProgress) {
+          showToast('Реклама уже запускается');
+          return;
+        }
+
+        const controller = getAdsgramController(blockId);
+        if (!controller) {
+          showToast('Reward SDK не готов');
+          return;
+        }
+
+        rewardAdInProgress = true;
+        setRewardButtonsLoading(activeAction, true);
+
+        controller.show()
+          .then(() => {
+            onReward();
+          })
+          .catch(result => {
+            const isSkip = result && result.done === false && result.error === false;
+            if (isSkip) {
+              showToast('Награда не выдана');
+            } else {
+              handleAdsgramError(result, 'reward');
+            }
+          })
+          .finally(() => {
+            rewardAdInProgress = false;
+            setRewardButtonsLoading(null, false);
+          });
+      }
+
+      function maybeShowInterstitial(reason, onDone) {
+        if (reason === 'boss' && state.bossesDefeated % 3 !== 0) {
+          if (typeof onDone === 'function') onDone();
+          return;
+        }
+        if (reason === 'pause' && rewardAdInProgress) {
+          if (typeof onDone === 'function') onDone();
+          return;
+        }
+        showAdsgramInterstitial(reason, onDone);
+      }
+
+      function shouldShowLaunchInterstitial() {
+        const now = Date.now();
+        if (!TELEGRAM_WEBAPP) return false;
+        if (rewardAdInProgress || interstitialAdInProgress) return false;
+        if ((state.appLaunchCount || 0) < 2) return false;
+        if (now - (state.lastAppOpenAt || 0) < 15 * 60 * 1000) return false;
+        if (now - lastInterstitialAt < ADSGRAM_CONFIG.interstitialCooldownMs) return false;
+        return true;
+      }
+
+      function getAchievementMetric(ach) {
+        if (ach.type === 'clicks') return state.totalClicks;
+        if (ach.type === 'gold') return state.totalGold;
+        if (ach.type === 'bosses') return state.bossesDefeated;
+        if (ach.type === 'chests') return state.chestsOpened;
+        if (ach.type === 'rareChests') return state.rareChestsOpened;
+        if (ach.type === 'quests') return state.questsCompleted;
+        if (ach.type === 'prestige') return state.prestige;
+        if (ach.type === 'level') return getLevelData().level;
+        return 0;
+      }
+
+      function canClaimAchievement(ach) {
+        return !state.achievementsClaimed[ach.id] && getAchievementMetric(ach) >= ach.target;
+      }
+
+      function ensureCollectionsUnlocks() {
+        const level = getLevelData().level;
+        PROFILE_FRAMES.forEach(frame => {
+          if (frame.unlockLevel && level < frame.unlockLevel) return;
+          if (frame.unlockBosses && state.bossesDefeated < frame.unlockBosses) return;
+          if (frame.unlockPrestige && state.prestige < frame.unlockPrestige) return;
+          if (!state.ownedFrames.includes(frame.id)) state.ownedFrames.push(frame.id);
+        });
+        PLAYER_TITLES.forEach(title => {
+          if (title.unlockBosses && state.bossesDefeated < title.unlockBosses) return;
+          if (title.unlockPrestige && state.prestige < title.unlockPrestige) return;
+          if (title.unlockSkins && state.ownedCoinSkins.length < title.unlockSkins) return;
+          if (!state.ownedTitles.includes(title.id)) state.ownedTitles.push(title.id);
+        });
+        state.currentFrame = state.ownedFrames[state.ownedFrames.length - 1] || 'frame_default';
+        state.currentTitle = state.ownedTitles[state.ownedTitles.length - 1] || 'title_novice';
+      }
+
+      function renderCollections() {
+        ensureCollectionsUnlocks();
+        el.colCoinSkins.textContent = state.ownedCoinSkins.length + '/' + COIN_SKINS.length;
+        el.colPets.textContent = state.ownedPets.filter(id => id !== 'pet_none').length + '/' + (PETS.length - 1);
+        el.colBossCards.textContent = state.ownedBossCards.length + '/' + BOSSES.length;
+        el.colFrames.textContent = state.ownedFrames.length + '/' + PROFILE_FRAMES.length;
+        el.colTitles.textContent = state.ownedTitles.length + '/' + PLAYER_TITLES.length;
+        const titleObj = PLAYER_TITLES.find(item => item.id === state.currentTitle);
+        el.colCurrentTitle.textContent = titleObj ? titleObj.name : '—';
+      }
+
+      function renderAchievements() {
+        let html = '';
+        for (const ach of ACHIEVEMENTS) {
+          const progress = Math.min(getAchievementMetric(ach), ach.target);
+          const pct = Math.max(0, Math.min(100, progress / ach.target * 100));
+          const claimed = !!state.achievementsClaimed[ach.id];
+          const ready = canClaimAchievement(ach);
+          html += '<div class="achievement-item' + (ready || claimed ? ' unlocked' : '') + '">';
+          html += '<div class="achievement-head"><div><div class="achievement-name">' + ach.name + '</div><div class="achievement-desc">' + ach.desc + '</div></div><div class="achievement-reward">+' + (ach.rewardGold ? fmt(ach.rewardGold) + '$ ' : '') + '+' + ach.rewardGems + '💎</div></div>';
+          html += '<div class="achievement-progress"><div class="achievement-progress-fill" style="width:' + pct + '%"></div></div>';
+          html += '<div class="achievement-foot"><span>' + fmt(progress) + ' / ' + fmt(ach.target) + '</span>';
+          if (claimed) html += '<button class="achievement-btn claimed" disabled>Получено</button>';
+          else if (ready) html += '<button class="achievement-btn ready" data-achievement="' + ach.id + '">Забрать</button>';
+          else html += '<button class="achievement-btn locked" disabled>Не выполнено</button>';
+          html += '</div></div>';
+        }
+        el.achievementsList.innerHTML = html;
+      }
+
+      function sanitizeName(name) {
+        name = String(name || '').replace(/\s+/g, ' ').trim();
+        if (!name) return 'Игрок';
+        return name.slice(0, 20);
+      }
+      function saveCurrentRecord() { return false; }
+
+      function renderLeaderboard() {}
+
+      function getChestDropType() {
+        const roll = Math.random();
+        const bonus = getLevelData().level >= 10 ? 0.01 : 0;
+        if (roll < 0.015 + bonus * 0.5) return 'legendary';
+        if (roll < 0.1 + bonus) return 'rare';
+        return 'common';
+      }
+
+      function showReward(text) {
+        el.rewardContent.textContent = text;
+        el.rewardModal.classList.add('show');
+      }
+
+      function showChest(type) {
+        if (chestOpen) return;
+        chestOpen = true;
+        state.activeChestType = type || getChestDropType();
+        const cfg = CHEST_TYPES[state.activeChestType];
+        el.chestAnim.textContent = cfg.emoji;
+        el.chestAnim.classList.toggle('rare', state.activeChestType === 'rare');
+        el.chestAnim.classList.toggle('legendary', state.activeChestType === 'legendary');
+        el.chestHint.textContent = cfg.hint;
+        el.chestModal.classList.add('show');
+      }
+
+      function openChest() {
+        if (!chestOpen) return;
+        chestOpen = false;
+        el.chestModal.classList.remove('show');
+        const type = state.activeChestType || 'common';
+        const cfg = CHEST_TYPES[type];
+        state.chestsOpened += 1;
+        state.chestRerollAvailable = true;
+        if (type !== 'common') state.rareChestsOpened += 1;
+        let rewardText = '';
+        if (type === 'common' && Math.random() < cfg.gemChance) {
+          const gems = Math.floor(Math.random() * (cfg.gemMax - cfg.gemMin + 1)) + cfg.gemMin;
+          addGems(gems);
+          rewardText = '💎 +' + gems + ' кристаллов';
+        } else {
+          const gold = Math.max(getClickPower() * cfg.goldFactor, Math.floor(getAutoIncome() * cfg.autoFactor) + 50);
+          addGold(gold);
+          rewardText = '💰 +' + fmt(gold) + ' монет';
+          if (type !== 'common') {
+            const gems = Math.floor(Math.random() * (cfg.gemMax - cfg.gemMin + 1)) + cfg.gemMin;
+            addGems(gems);
+            rewardText += ' • 💎 +' + gems;
+          }
+          if (cfg.x2) {
+            state.x2End = Math.max(state.x2End, Date.now() + cfg.x2);
+            rewardText += ' • x2';
+          }
+        }
+        playSound('reward');
+        updateUI();
+        renderShop();
+        saveGame();
+        showReward(rewardText);
+      }
+
+      function applyTheme(themeId) {
+        document.body.className = themeId.replace('_', '-');
+        initParticles();
+      }
+
+      function initParticles() {
+        el.bgParticles.innerHTML = '';
+        let count = 30;
+        if (state.currentTheme === 'theme_space') count = 50;
+        if (state.currentTheme === 'theme_neon') count = 24;
+        if (state.currentTheme === 'theme_dungeon') count = 20;
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement('div');
+          p.className = 'particle';
+          p.style.left = Math.random() * 100 + '%';
+          p.style.top = Math.random() * 100 + '%';
+          p.style.animationDelay = Math.random() * 5 + 's';
+          p.style.animationDuration = 2 + Math.random() * 4 + 's';
+          if (state.currentTheme === 'theme_space') {
+            const s = 1 + Math.random() * 2;
+            p.style.width = s + 'px';
+            p.style.height = s + 'px';
+          }
+          el.bgParticles.appendChild(p);
+        }
+      }
+
+      function canAccessCoinSkin(skin) {
+        return state.bossesDefeated >= (skin.reqBosses || 0) && state.prestige >= (skin.reqPrestige || 0);
+      }
+
+      function getCoinRequirementText(skin) {
+        const req = [];
+        if (skin.reqBosses) req.push('боссов: ' + skin.reqBosses);
+        if (skin.reqPrestige) req.push('престиж: ' + skin.reqPrestige);
+        return req.length ? 'Требования: ' + req.join(' • ') : 'Без требований';
+      }
+
+      function renderUpgradeCard(upg, badge) {
+        const lvl = state.upgrades[upg.id] || 0;
+        const cost = Math.floor(upg.baseCost * Math.pow(upg.mult, lvl));
+        const canBuy = state.gold >= cost;
+        return '<div class="shop-item">'
+          + '<div class="shop-item-top"><span class="shop-item-badge">' + badge + '</span><span class="shop-item-price">' + fmt(cost) + ' $</span></div>'
+          + '<div class="shop-item-icon">' + upg.icon + '</div>'
+          + '<div class="shop-item-name">' + upg.name + ' <span class="lvl">Lv.' + lvl + '</span></div>'
+          + '<div class="shop-item-desc">' + upg.desc + '</div>'
+          + (canBuy
+            ? '<button class="shop-item-btn shop-btn-buy" data-action="buyUpgrade" data-id="' + upg.id + '" data-cost="' + cost + '">Купить за ' + fmt(cost) + ' $</button>'
+            : '<button class="shop-item-btn shop-btn-disabled" disabled>Нужно ' + fmt(cost) + ' $</button>')
+          + '</div>';
+      }
+
+      function renderShop() {
+        let html = '';
+        html += '<div class="shop-section-title">Сила клика</div><div class="shop-grid">' + CLICK_UPGRADES.map(item => renderUpgradeCard(item, 'Клик')).join('') + '</div>';
+        html += '<div class="shop-section-title">Автодоход</div><div class="shop-grid">' + AUTO_UPGRADES.map(item => renderUpgradeCard(item, 'Доход')).join('') + '</div>';
+
+        html += '<div class="shop-section-title">Питомцы</div><div class="shop-grid">';
+        for (const pet of PETS) {
+          const owned = state.ownedPets.includes(pet.id);
+          const active = state.currentPet === pet.id;
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Питомец</span><span class="shop-item-price">x' + pet.effect + '</span></div><div class="shop-item-icon">' + pet.icon + '</div><div class="shop-item-name">' + pet.name + '</div><div class="shop-item-desc">x' + pet.effect + ' ко всему доходу</div>';
+          if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Выбрано</button>';
+          else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="equipPet" data-id="' + pet.id + '">Выбрать</button>';
+          else html += '<button class="shop-item-btn shop-btn-buy" data-action="buyPet" data-id="' + pet.id + '" data-cost="' + pet.cost + '">' + pet.cost + ' 💎</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+
+        html += '<div class="shop-section-title">Темы</div><div class="shop-grid">';
+        for (const theme of THEMES) {
+          const owned = state.ownedThemes.includes(theme.id);
+          const active = state.currentTheme === theme.id;
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Тема</span><span class="shop-item-price">' + fmt(theme.cost) + ' 💎</span></div><div class="shop-item-icon">' + theme.icon + '</div><div class="shop-item-name">' + theme.name + '</div><div class="shop-item-desc">Тема оформления</div>';
+          if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Активно</button>';
+          else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="selectTheme" data-id="' + theme.id + '">Выбрать</button>';
+          else html += '<button class="shop-item-btn shop-btn-buy" data-action="buyTheme" data-id="' + theme.id + '" data-cost="' + theme.cost + '">' + theme.cost + ' 💎</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+
+        html += '<div class="shop-section-title">Скины монеты</div><div class="shop-grid">';
+        for (const skin of COIN_SKINS) {
+          const owned = state.ownedCoinSkins.includes(skin.id);
+          const active = state.currentCoinSkin === skin.id;
+          const allowed = canAccessCoinSkin(skin);
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Скин</span><span class="shop-item-price">' + fmt(skin.cost) + ' 💎</span></div><div class="shop-item-icon">' + coinPreviewMarkup(skin.id) + '</div><div class="shop-item-name">' + skin.name + '</div><div class="shop-item-desc">' + skin.desc + '<br>' + getCoinRequirementText(skin) + '</div>';
+          if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Активно</button>';
+          else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="selectCoinSkin" data-id="' + skin.id + '">Выбрать</button>';
+          else if (!allowed) html += '<button class="shop-item-btn shop-btn-disabled" disabled>Закрыто</button>';
+          else html += '<button class="shop-item-btn shop-btn-buy" data-action="buyCoinSkin" data-id="' + skin.id + '" data-cost="' + skin.cost + '">' + skin.cost + ' 💎</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+        el.shopContent.innerHTML = html;
+      }
+
+      function handleClick(event) {
+        event.preventDefault();
+        if (clickCooldown) return;
+        clickCooldown = true;
+        setTimeout(() => { clickCooldown = false; }, 80);
+        const now = Date.now();
+        state.combo = now <= state.comboExpire ? Math.min(state.combo + 1, 31) : 1;
+        state.comboExpire = now + 1400;
+        const earned = getClickPower();
+        addGold(earned);
+        state.totalClicks += 1;
+        playSound('click');
+        let x = 0, y = 0;
+        if (event.clientX !== undefined) { x = event.clientX; y = event.clientY; }
+        else if (event.touches && event.touches[0]) { x = event.touches[0].clientX; y = event.touches[0].clientY; }
+        if (x && y) spawnFloat(x, y, '+' + fmt(earned));
+        if (Math.random() < 0.03) showChest();
+        updateUI();
+      }
+
+      function handleShopAction(event) {
+        const btn = event.target.closest('[data-action]');
+        if (!btn) return;
+        event.preventDefault();
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        const cost = Number(btn.dataset.cost || 0);
+
+        if (action === 'buyUpgrade') {
+          if (!spendGold(cost)) return;
+          state.upgrades[id] = (state.upgrades[id] || 0) + 1;
+          const upg = ALL_UPGRADES.find(item => item.id === id);
+          if (upg) upg.type === 'click' ? state.clickPower += upg.val : state.autoClick += upg.val;
+          playSound('reward');
+          renderShop(); updateUI(); saveGame(); showToast((upg ? upg.name : 'Улучшение') + ' усилен!');
+          return;
+        }
+        if (action === 'buyPet') {
+          if (state.gems < cost) return showToast('Недостаточно кристаллов!');
+          state.gems -= cost; if (!state.ownedPets.includes(id)) state.ownedPets.push(id); state.currentPet = id;
+          playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Питомец получен!');
+          return;
+        }
+        if (action === 'equipPet') {
+          state.currentPet = id; playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Питомец выбран!');
+          return;
+        }
+        if (action === 'buyTheme') {
+          if (state.gems < cost) return showToast('Недостаточно кристаллов!');
+          state.gems -= cost; if (!state.ownedThemes.includes(id)) state.ownedThemes.push(id); state.currentTheme = id; applyTheme(id);
+          playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Тема активирована!');
+          return;
+        }
+        if (action === 'selectTheme') {
+          state.currentTheme = id; applyTheme(id); playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Тема выбрана!');
+          return;
+        }
+        if (action === 'buyCoinSkin') {
+          const skin = getCoinSkin(id);
+          if (!canAccessCoinSkin(skin)) return showToast('Скин пока закрыт!');
+          if (state.gems < cost) return showToast('Недостаточно кристаллов!');
+          state.gems -= cost; if (!state.ownedCoinSkins.includes(id)) state.ownedCoinSkins.push(id); state.currentCoinSkin = id;
+          playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Скин монеты получен!');
+          return;
+        }
+        if (action === 'selectCoinSkin') {
+          state.currentCoinSkin = id; playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Скин монеты выбран!');
+        }
+      }
+
+      function claimQuest() {
+        ensureQuest();
+        const q = state.activeQuest;
+        if (getQuestProgress() < q.target) return;
+        addGold(q.rewardGold); addGems(q.rewardGems);
+        state.questsCompleted += 1;
+        state.questLevel += 1;
+        state.activeQuest = null;
+        ensureQuest(true);
+        playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Контракт закрыт!');
+      }
+
+      function grantBonus(type) {
+        if (Date.now() < bonusCooldownUntil) return showToast('Подождите 30 секунд...');
+        bonusCooldownUntil = Date.now() + 30000;
+        if (type === 'x2') { state.x2End = Date.now() + 60000; showToast('x2 доход на 60 сек!'); }
+        else if (type === 'gems') { addGems(5); showToast('+5 кристаллов!'); }
+        else {
+          let bonus = Math.floor(Math.max(state.bankDep * 0.1, getAutoIncome() * 60));
+          if (bonus < 100) bonus = 100;
+          addGold(bonus); showToast('+' + fmt(bonus) + ' монет!');
+        }
+        playSound('reward'); updateUI(); saveGame();
+      }
+
+      function grantRewardAction(action) {
+        if (action === 'bossRevive') {
+          if (!state.bossReviveAvailable) return showToast('Сначала проиграйте бой по таймеру, чтобы появилось возрождение');
+          if (reviveBossBattle()) {
+            playSound('reward');
+            updateUI();
+            saveGame();
+            return showToast('Возрождение активировано!');
+          }
+          return;
+        }
+        if (action === 'bossTime') {
+          if (!state.bossBattleActive) return showToast('Сначала начните бой с боссом');
+          state.bossBattleEndsAt += 10000;
+          playSound('reward'); updateUI(); saveGame();
+          return showToast('+10 секунд к таймеру!');
+        }
+        if (action === 'chestReroll') {
+          if (!state.chestRerollAvailable) return showToast('Сначала откройте сундук');
+          state.chestRerollAvailable = false;
+          playSound('reward');
+          showChest();
+          updateUI();
+          saveGame();
+          return showToast('Повторный розыгрыш готов!');
+        }
+        if (action === 'bossDouble') {
+          state.nextBossRewardDouble = true;
+          playSound('reward'); updateUI(); saveGame();
+          return showToast('Следующий босс даст двойную награду!');
+        }
+        if (action === 'bankBoost') {
+          state.bankBoostEnd = Math.max(state.bankBoostEnd, Date.now() + 300000);
+          playSound('reward'); updateUI(); saveGame();
+          return showToast('Банк ускорен на 5 минут!');
+        }
+        if (action === 'autoClick') {
+          state.autoClickBoostEnd = Math.max(state.autoClickBoostEnd, Date.now() + 300000);
+          playSound('reward'); updateUI(); saveGame();
+          return showToast('Автоклик усилен на 5 минут!');
+        }
+        if (action === 'dailyDouble') {
+          if (canClaimDailyReward()) {
+            claimDailyReward(2);
+            return;
+          }
+          state.dailyDoublePending = true;
+          playSound('reward'); updateUI(); saveGame();
+          return showToast('Следующая ежедневная награда будет удвоена');
+        }
+        if (action === 'restoreStreak') {
+          if (!state.dailyStreakLost || !state.lastBrokenStreak) return showToast('Серия не нуждается в восстановлении');
+          state.dailyStreak = state.lastBrokenStreak;
+          state.dailyCycle = state.dailyStreak % DAILY_REWARDS.length;
+          state.dailyStreakLost = false;
+          playSound('reward'); updateUI(); saveGame();
+          return showToast('Серия ежедневных наград восстановлена!');
+        }
+        if (action === 'skipWait') {
+          if (bonusCooldownUntil <= Date.now()) return showToast('Ожидание уже отсутствует');
+          bonusCooldownUntil = Date.now();
+          playSound('reward'); updateUI(); saveGame();
+          return showToast('Ожидание пропущено!');
+        }
+        if (action === 'rareChest') {
+          playSound('reward');
+          showChest('rare');
+          updateUI();
+          saveGame();
+          return showToast('Редкий сундук призван!');
+        }
+      }
+
+      function giveBonus(type) {
+        showAdsgramReward(type, () => grantBonus(type), type);
+      }
+
+      function triggerRewardAction(action) {
+        const placement = REWARD_ACTION_PLACEMENTS[action];
+        if (!placement) return;
+        showAdsgramReward(placement, () => grantRewardAction(action), action);
+      }
+
+      function bindAdsgramTask() {
+        const taskEl = document.querySelector('adsgram-task.task');
+        if (!taskEl || taskEl.__goldEmpBound) return;
+        taskEl.__goldEmpBound = true;
+
+        taskEl.addEventListener('reward', () => {
+          const now = Date.now();
+          if (now - lastTaskRewardAt < 2500) return;
+          lastTaskRewardAt = now;
+          addGems(20);
+          playSound('reward');
+          updateUI();
+          saveGame();
+          showReward('💎 +20 кристаллов');
+        });
+
+        taskEl.addEventListener('onError', () => {
+          showToast('Ошибка AdsGram Task');
+        });
+
+        taskEl.addEventListener('onBannerNotFound', () => {
+          showToast('Задание AdsGram сейчас недоступно');
+        });
+
+        taskEl.addEventListener('onTooLongSession', () => {
+          showToast('Перезапусти приложение для новых заданий');
+        });
+      }
+
+      function doPrestige() {
+        const gain = getPrestigeGain();
+        if (gain <= 0) return showToast('Недостаточно золота цикла');
+        if (!confirm('Переродиться и получить +' + gain + '★? Это сбросит монеты, улучшения, банк и текущего босса.')) return;
+        state.prestige += gain;
+        state.gold = 0; state.bankDep = 0; state.bankLifetime = 0; state.runGold = 0; state.clickPower = 1; state.autoClick = 0; state.bossIdx = 0; state.bossHp = BOSSES[0].hp; state.bossBattleActive = false; state.bossBattleEndsAt = 0; state.upgrades = {}; state.x2End = 0; state.combo = 1; state.comboExpire = 0; state.activeQuest = null;
+        ensureQuest(true);
+        playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Перерождение выполнено! +' + gain + '★');
+        maybeShowInterstitial('prestige');
+      }
+
+      function updateUI() {
+        checkBossBattleState();
+        const levelData = getLevelData();
+        el.goldVal.textContent = fmt(state.gold);
+        el.gemsVal.textContent = fmt(state.gems);
+        el.cpsVal.textContent = fmt(getAutoIncome());
+        el.cpcVal.textContent = fmt(getClickPower());
+        el.comboVal.textContent = 'x' + getComboMult().toFixed(2);
+        el.playerLevel.textContent = 'Lv.' + levelData.level;
+        el.levelLabel.textContent = getLevelTitle(levelData.level) + ' • бонус +' + Math.round((getLevelBonusMult() - 1) * 100) + '%';
+        el.levelXpText.textContent = fmt(levelData.current) + ' / ' + fmt(levelData.need) + ' XP';
+        el.levelFill.style.width = Math.max(0, Math.min(100, levelData.current / levelData.need * 100)) + '%';
+        el.clickPlus.textContent = fmt(getClickPower());
+        ensureCollectionsUnlocks();
+        ensureDailyTasks();
+        el.bankDepVal.textContent = fmt(state.bankDep);
+        el.bankIncVal.textContent = fmt(getBankIncomePerMinute());
+        el.rankBadge.textContent = getRank();
+        el.comboChip.textContent = 'COMBO x' + getComboMult().toFixed(2);
+        el.comboChip.classList.toggle('hot', getComboMult() > 1.4);
+        const loc = getLoc();
+        el.locTitle.textContent = loc.name;
+        el.locDesc.textContent = loc.desc;
+        el.statLevel.textContent = String(levelData.level);
+        el.statClicks.textContent = fmt(state.totalClicks);
+        el.statGold.textContent = fmt(state.totalGold);
+        el.statBosses.textContent = String(state.bossesDefeated);
+        el.statChests.textContent = String(state.chestsOpened);
+        el.statRareChests.textContent = String(state.rareChestsOpened);
+        el.statQuests.textContent = String(state.questsCompleted);
+        el.statPrestige.textContent = String(state.prestige);
+        el.prestigeBonus.textContent = '+' + Math.floor(state.prestige * 12) + '%';
+        el.prestigeGain.textContent = String(getPrestigeGain());
+        el.prestigeNeed.textContent = fmt(Math.max(0, getNextPrestigeNeed() - state.runGold));
+        el.runGoldVal.textContent = fmt(state.runGold);
+        el.btnPrestige.disabled = getPrestigeGain() <= 0;
+        el.btnPrestige.textContent = getPrestigeGain() > 0 ? 'Переродиться • +' + getPrestigeGain() + '★' : 'Нужно ' + fmt(BASE_PRESTIGE_COST) + ' золота цикла';
+        el.btnDeposit.disabled = state.gold <= 0;
+        el.btnWithdraw.disabled = state.bankDep <= 0;
+        renderCoinTargets();
+        updateQuestUI();
+        renderDailyRewards();
+        renderDailyTasks();
+        renderCollections();
+        renderAchievements();
+        updateBossUI();
+      }
+
+      function saveGame() {
+        if (skipAutoSave) return;
+        state.lastSave = Date.now();
+        try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {}
+      }
+
+      function loadGame() {
+        try {
+          const raw = getSavedRaw();
+          if (!raw) { ensureQuest(true); return; }
+          const data = JSON.parse(raw);
+          Object.keys(state).forEach(key => { if (Object.prototype.hasOwnProperty.call(data, key)) state[key] = data[key]; });
+          if (!Array.isArray(state.ownedPets) || !state.ownedPets.length) state.ownedPets = ['pet_none'];
+          if (!Array.isArray(state.ownedThemes) || !state.ownedThemes.length) state.ownedThemes = ['theme_default'];
+          if (!Array.isArray(state.ownedCoinSkins) || !state.ownedCoinSkins.length) state.ownedCoinSkins = ['classic'];
+          if (!state.ownedPets.includes('pet_none')) state.ownedPets.unshift('pet_none');
+          if (!state.ownedThemes.includes('theme_default')) state.ownedThemes.unshift('theme_default');
+          if (!state.ownedCoinSkins.includes('classic')) state.ownedCoinSkins.unshift('classic');
+          if (!PETS.some(p => p.id === state.currentPet)) state.currentPet = 'pet_none';
+          if (!THEMES.some(t => t.id === state.currentTheme)) state.currentTheme = 'theme_default';
+          if (!COIN_SKINS.some(s => s.id === state.currentCoinSkin)) state.currentCoinSkin = 'classic';
+          if (!Number.isFinite(state.bossIdx) || state.bossIdx < 0 || state.bossIdx >= BOSSES.length) state.bossIdx = 0;
+          if (!Number.isFinite(state.combo) || state.combo < 1) state.combo = 1;
+          if (!Number.isFinite(state.comboExpire)) state.comboExpire = 0;
+          if (!Number.isFinite(state.runGold)) state.runGold = 0;
+          if (!Number.isFinite(state.bankLifetime)) state.bankLifetime = 0;
+          if (!Number.isFinite(state.questsCompleted)) state.questsCompleted = 0;
+          if (!Number.isFinite(state.questLevel)) state.questLevel = 0;
+          if (!Number.isFinite(state.rareChestsOpened)) state.rareChestsOpened = 0;
+          if (!Number.isFinite(state.dailyClaimedAt)) state.dailyClaimedAt = 0;
+          if (!Number.isFinite(state.dailyStreak)) state.dailyStreak = 0;
+          if (!Number.isFinite(state.dailyCycle)) state.dailyCycle = 0;
+          if (typeof state.achievementsClaimed !== 'object' || !state.achievementsClaimed) state.achievementsClaimed = {};
+          if (typeof state.bossBattleActive !== 'boolean') state.bossBattleActive = false;
+          if (!Number.isFinite(state.bossBattleEndsAt)) state.bossBattleEndsAt = 0;
+          if (!Number.isFinite(state.bossBattleStartedAt)) state.bossBattleStartedAt = 0;
+          if (typeof state.bossReviveAvailable !== 'boolean') state.bossReviveAvailable = false;
+          if (!Number.isFinite(state.bossReviveHp)) state.bossReviveHp = 0;
+          if (typeof state.bossReviveUsed !== 'boolean') state.bossReviveUsed = false;
+          if (typeof state.nextBossRewardDouble !== 'boolean') state.nextBossRewardDouble = false;
+          if (!Number.isFinite(state.bankBoostEnd)) state.bankBoostEnd = 0;
+          if (!Number.isFinite(state.autoClickBoostEnd)) state.autoClickBoostEnd = 0;
+          if (typeof state.dailyDoublePending !== 'boolean') state.dailyDoublePending = false;
+          if (typeof state.dailyStreakLost !== 'boolean') state.dailyStreakLost = false;
+          if (!Number.isFinite(state.lastBrokenStreak)) state.lastBrokenStreak = 0;
+          if (typeof state.dailyTasksDate !== 'string') state.dailyTasksDate = '';
+          if (!Array.isArray(state.dailyTasks)) state.dailyTasks = [];
+          if (typeof state.chestRerollAvailable !== 'boolean') state.chestRerollAvailable = false;
+          if (!Array.isArray(state.ownedBossCards)) state.ownedBossCards = [];
+          if (!Array.isArray(state.ownedFrames) || !state.ownedFrames.length) state.ownedFrames = ['frame_default'];
+          if (!Array.isArray(state.ownedTitles) || !state.ownedTitles.length) state.ownedTitles = ['title_novice'];
+          if (!state.ownedFrames.includes('frame_default')) state.ownedFrames.unshift('frame_default');
+          if (!state.ownedTitles.includes('title_novice')) state.ownedTitles.unshift('title_novice');
+          if (!PROFILE_FRAMES.some(item => item.id === state.currentFrame)) state.currentFrame = 'frame_default';
+          if (!PLAYER_TITLES.some(item => item.id === state.currentTitle)) state.currentTitle = 'title_novice';
+          if (!Number.isFinite(state.appLaunchCount)) state.appLaunchCount = 0;
+          if (!Number.isFinite(state.lastAppOpenAt)) state.lastAppOpenAt = 0;
+          if (!state.activeQuest || !state.activeQuest.type || !Number.isFinite(state.activeQuest.target)) ensureQuest(true);
+          syncDailyState();
+          if (state.bossIdx > getMaxUnlockedBossIdx()) state.bossIdx = getMaxUnlockedBossIdx();
+          const boss = BOSSES[state.bossIdx];
+          if (state.bossHp <= 0 || state.bossHp > boss.hp) state.bossHp = boss.hp;
+          if (state.bossBattleActive && state.bossBattleEndsAt <= Date.now()) resetBossBattle(false);
+          const elapsed = Math.min(Date.now() - (state.lastSave || Date.now()), 4 * 3600000);
+          const offline = Math.floor(getAutoIncome() * (elapsed / 1000) * 0.5);
+          if (elapsed > 30000 && offline > 0) { addGold(offline); setTimeout(() => showToast('Оффлайн: +' + fmt(offline) + ' монет'), 800); }
+        } catch (e) {
+          ensureQuest(true);
+        }
+      }
+
+      function bindEvents() {
+        document.addEventListener('click', initAudio, { once: true });
+        document.addEventListener('touchstart', initAudio, { once: true });
+        el.clickerBtn.addEventListener('click', handleClick);
+        el.clickerBtn.addEventListener('touchstart', initAudio, { passive: true, once: true });
+        el.btnQuestClaim.addEventListener('click', claimQuest);
+        el.btnDailyClaim.addEventListener('click', claimDailyReward);
+        el.btnDeposit.addEventListener('click', e => {
+          e.preventDefault();
+          if (state.gold <= 0) return;
+          state.bankDep += state.gold;
+          state.bankLifetime += state.gold;
+          state.gold = 0;
+          playSound('click'); updateUI(); saveGame(); showToast('Деньги вложены!');
+        });
+
+        el.btnWithdraw.addEventListener('click', e => {
+          e.preventDefault();
+          if (state.bankDep <= 0) return;
+          state.gold += state.bankDep;
+          state.bankDep = 0;
+          playSound('click'); updateUI(); saveGame(); showToast('Деньги сняты!');
+        });
+
+        el.shopContent.addEventListener('click', handleShopAction);
+
+        el.bossSprite.addEventListener('click', e => {
+          e.preventDefault();
+          checkBossBattleState();
+          if (bossCooldown) return;
+          if (!isBossUnlocked(state.bossIdx)) return showToast('Босс ещё закрыт');
+          if (!state.bossBattleActive || getBossRemainingMs() <= 0) {
+            startBossBattle(true);
+            showToast('Бой начался!');
+          }
+          bossCooldown = true;
+          setTimeout(() => { bossCooldown = false; }, 100);
+          const hit = getBossHitPayload();
+          if (hit.miss) {
+            showToast('Промах!');
+          } else {
+            state.bossHp -= hit.dmg;
+          }
+          el.bossSprite.classList.add('hit');
+          setTimeout(() => el.bossSprite.classList.remove('hit'), 100);
+          playSound('hit');
+          if (state.bossHp <= 0) {
+            const boss = BOSSES[state.bossIdx];
+            const rewardMult = state.nextBossRewardDouble ? 2 : 1;
+            const timeBonus = Math.max(0, Math.ceil(getBossRemainingMs() / 1000) * Math.max(1, Math.floor(boss.reward * 0.6)) * rewardMult);
+            addGems(boss.reward * rewardMult);
+            if (timeBonus > 0) addGold(timeBonus);
+            state.bossesDefeated += 1;
+            const cardId = 'boss_' + state.bossIdx;
+            if (!state.ownedBossCards.includes(cardId)) state.ownedBossCards.push(cardId);
+            state.nextBossRewardDouble = false;
+            state.bossBattleActive = false;
+            state.bossBattleEndsAt = 0;
+            state.bossBattleStartedAt = 0;
+            state.bossReviveAvailable = false;
+            state.bossReviveHp = 0;
+            state.bossHp = boss.hp;
+            playSound('reward');
+            showToast('Босс побеждён! +' + (boss.reward * rewardMult) + '💎' + (timeBonus > 0 ? ' и +' + fmt(timeBonus) + '$' : ''));
+            maybeShowInterstitial('boss');
+          } else if (hit.blocked === 'vulnerable') {
+            showToast('Сейчас босс неуязвим!');
+          } else if (hit.blocked === 'shield') {
+            showToast('Щит поглощает удар!');
+          } else if (hit.blocked === 'storm') {
+            showToast('Шторм снижает урон!');
+          } else if (hit.crit) {
+            showToast('Критический удар!');
+          } else if (!hit.miss && isBossEnraged()) {
+            showToast('Босс в ярости!');
+          }
+          renderShop(); updateUI(); saveGame();
+        });
+
+        el.btnPrevBoss.addEventListener('click', e => {
+          e.preventDefault();
+          if (state.bossIdx <= 0) return;
+          state.bossIdx -= 1;
+          state.bossBattleActive = false;
+          state.bossBattleEndsAt = 0;
+          state.bossHp = BOSSES[state.bossIdx].hp;
+          updateUI();
+        });
+
+        el.btnNextBoss.addEventListener('click', e => {
+          e.preventDefault();
+          const next = state.bossIdx + 1;
+          if (next >= BOSSES.length) return;
+          if (!isBossUnlocked(next)) return showToast('Нужно заработать ' + fmt(BOSSES[next].unlockGold) + ' общего золота');
+          state.bossIdx = next;
+          state.bossBattleActive = false;
+          state.bossBattleEndsAt = 0;
+          state.bossHp = BOSSES[state.bossIdx].hp;
+          updateUI();
+        });
+
+        el.btnStartBoss.addEventListener('click', e => {
+          e.preventDefault();
+          if (!isBossUnlocked(state.bossIdx)) return;
+          startBossBattle(true);
+          updateUI();
+          showToast('Таймер пошёл!');
+        });
+
+        el.chestAnim.addEventListener('click', e => { e.preventDefault(); openChest(); });
+        el.btnCloseReward.addEventListener('click', e => { e.preventDefault(); el.rewardModal.classList.remove('show'); });
+        el.adBtn1.addEventListener('click', e => { e.preventDefault(); giveBonus('x2'); });
+        el.adBtn2.addEventListener('click', e => { e.preventDefault(); giveBonus('gems'); });
+        el.adBtn3.addEventListener('click', e => { e.preventDefault(); giveBonus('offline'); });
+        el.bonusContent.addEventListener('click', e => {
+          const btn = e.target.closest('[data-reward-button]');
+          if (!btn || btn.id === 'adBtn1' || btn.id === 'adBtn2' || btn.id === 'adBtn3') return;
+          e.preventDefault();
+          triggerRewardAction(btn.getAttribute('data-reward-button'));
+        });
+        el.bonusContent.addEventListener('click', e => {
+          const btn = e.target.closest('[data-daily-task]');
+          if (!btn) return;
+          e.preventDefault();
+          claimDailyTask(btn.getAttribute('data-daily-task'));
+        });
+        el.btnPrestige.addEventListener('click', doPrestige);
+
+        el.profileContent.addEventListener('click', e => {
+          const btn = e.target.closest('[data-achievement]');
+          if (!btn) return;
+          claimAchievement(btn.getAttribute('data-achievement'));
+        });
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+          item.addEventListener('click', e => {
+            e.preventDefault();
+            const page = item.dataset.page;
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.tab-page').forEach(p => {
+              p.classList.remove('active');
+              p.scrollTop = 0;
+            });
+            item.classList.add('active');
+            const target = document.getElementById('page-' + page);
+            if (target) {
+              target.classList.add('active');
+              target.scrollTop = 0;
+            }
+            const shell = document.querySelector('.pages-shell');
+            if (shell) shell.scrollTop = 0;
+            if (page === 'shop') renderShop();
+          });
+        });
+
+        el.btnReset.addEventListener('click', e => {
+          e.preventDefault();
+          if (!confirm('Сбросить весь прогресс?')) return;
+            clearSavedProgressStorage();
+          const fresh = getDefaultState();
+          Object.keys(state).forEach(key => { delete state[key]; });
+          Object.assign(state, fresh);
+          state.activeQuest = null;
+          ensureQuest(true);
+          applyTheme(state.currentTheme);
+          renderShop();
+          updateUI();
+          saveGame();
+          showToast('Прогресс сброшен');
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            appHiddenAt = Date.now();
+            saveGame();
+            return;
+          }
+
+          if (appHiddenAt) {
+            const pauseMs = Date.now() - appHiddenAt;
+            appHiddenAt = 0;
+            if (pauseMs >= ADSGRAM_CONFIG.pauseInterstitialMinMs) {
+              setTimeout(() => maybeShowInterstitial('pause'), 900);
+            }
+          }
+        });
+        window.addEventListener('beforeunload', saveGame);
+      }
+
+      function hideLoading() { el.loadingScreen.classList.add('hidden'); }
+
+      function init() {
+        try { if (TELEGRAM_WEBAPP && typeof TELEGRAM_WEBAPP.ready === 'function') TELEGRAM_WEBAPP.ready(); } catch (e) {}
+        cacheElements();
+        loadGame();
+        const previousAppOpenAt = state.lastAppOpenAt || 0;
+        state.appLaunchCount = (state.appLaunchCount || 0) + 1;
+        state.lastAppOpenAt = Date.now();
+        bindEvents();
+        bindAdsgramTask();
+        ensureQuest();
+        if (state.bossIdx > getMaxUnlockedBossIdx()) state.bossIdx = getMaxUnlockedBossIdx();
+        const boss = BOSSES[state.bossIdx];
+        if (state.bossHp <= 0 || state.bossHp > boss.hp) state.bossHp = boss.hp;
+        applyTheme(state.currentTheme);
+        renderShop();
+        updateUI();
+        saveGame();
+
+        if (shouldShowLaunchInterstitial()) {
+          setTimeout(() => showAdsgramInterstitial('launch'), 900);
+        }
+
+        setInterval(() => {
+          const income = getAutoIncome();
+          if (income > 0) addGold(income);
+          if (Date.now() > state.comboExpire && state.combo !== 1) state.combo = 1;
+          updateUI();
+        }, 1000);
+
+        setInterval(() => {
+          checkBossBattleState();
+          updateBossUI();
+        }, 250);
+
+        setInterval(() => {
+          if (state.bankDep > 0) {
+            const interest = getBankIncomePerMinute();
+            if (interest > 0) addGold(interest);
+          }
+          updateUI();
+        }, 60000);
+
+        setInterval(saveGame, 30000);
+        setTimeout(hideLoading, 500);
+        setTimeout(hideLoading, 2000);
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0159bdc8b01f4d8',t:'MTc3OTcyMzMxNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
