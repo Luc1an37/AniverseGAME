@@ -75,6 +75,26 @@
     .quest-btn{width:100%;margin-top:10px;padding:10px;border-radius:10px;background:rgba(91,138,255,.14);color:#aac1ff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px}
     .quest-btn.ready{background:linear-gradient(135deg,#22c55e,#16a34a);color:#05140a}
     .quest-btn:disabled,.bank-btn:disabled,.shop-item-btn:disabled,.boss-nav-btn:disabled,.prestige-btn:disabled,.ad-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .goals-card{padding:14px 14px 12px;border-radius:16px;background:linear-gradient(180deg,rgba(22,28,48,.84),rgba(13,17,30,.88));border:1px solid rgba(255,255,255,.05);box-shadow:0 12px 28px rgba(0,0,0,.14)}
+    .goals-title{font-size:13px;font-weight:900;color:#fff;letter-spacing:.4px}
+    .goals-subtitle{margin-top:4px;font-size:11px;line-height:1.45;color:rgba(255,255,255,.38)}
+    .goals-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+    .goal-mini{padding:10px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.05)}
+    .goal-mini span{display:block;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.34)}
+    .goal-mini b{display:block;margin-top:5px;font-size:12px;color:#fff;font-weight:900;line-height:1.2}
+    .goal-mini small{display:block;margin-top:4px;font-size:10px;line-height:1.35;color:rgba(255,255,255,.38)}
+    .roadmap-title{margin-top:12px;font-size:11px;font-weight:900;letter-spacing:1px;color:#a5b4fc;text-transform:uppercase}
+    .roadmap-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .roadmap-step{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+    .roadmap-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .roadmap-name{font-size:12px;font-weight:800;color:#fff}
+    .roadmap-hint{margin-top:3px;font-size:10px;line-height:1.4;color:rgba(255,255,255,.34)}
+    .roadmap-eta{padding:4px 8px;border-radius:999px;background:rgba(99,102,241,.14);color:#c7d2fe;font-size:9px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+    .roadmap-progress{height:7px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+    .roadmap-progress-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#60a5fa,#8b5cf6)}
+    .roadmap-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:rgba(255,255,255,.42)}
+    .roadmap-complete{color:#86efac;font-weight:800}
+    .goals-content{padding:12px 14px 18px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;overscroll-behavior:contain}
     .clicker-section{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(16px,4vw,24px) 0 clamp(12px,3vw,20px);min-height:min(46vh,420px);overflow:hidden}
     .clicker-section:before{content:'';position:absolute;width:clamp(260px,68vw,360px);height:clamp(260px,68vw,360px);border-radius:50%;background:radial-gradient(circle,rgba(91,138,255,.16),transparent 66%);filter:blur(8px);top:50%;left:50%;transform:translate(-50%,-54%);pointer-events:none}
     .clicker-wrap{position:relative;width:var(--clicker-wrap-size);height:var(--clicker-wrap-size);display:flex;align-items:center;justify-content:center}
@@ -257,19 +277,86 @@
     .collection-item span{display:block;font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.34)}
     .collection-item b{display:block;margin-top:5px;font-size:13px;font-weight:900;color:#fff}
     .collection-note{margin-top:8px;font-size:10px;line-height:1.4;color:rgba(255,255,255,.34)}
+    .prestige-hero{padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(56,189,248,.14),rgba(124,58,237,.14));border:1px solid rgba(255,255,255,.06);margin-bottom:10px;box-shadow:0 10px 24px rgba(0,0,0,.14)}
+    .prestige-hero-title{font-size:13px;font-weight:900;color:#fff}
+    .prestige-hero-desc{margin-top:5px;font-size:11px;line-height:1.45;color:rgba(255,255,255,.44)}
+    .prestige-bonus-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+    .prestige-bonus-item{padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05)}
+    .prestige-bonus-item span{display:block;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.34)}
+    .prestige-bonus-item b{display:block;margin-top:4px;font-size:13px;color:#fff;font-weight:900}
+    .album-list,.talent-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+    .tree-section{position:relative;padding:18px 14px 14px;border-radius:18px;background:rgba(18,22,40,.42);border:1px solid rgba(255,255,255,.05);margin-bottom:10px;overflow:hidden}
+    .tree-section:before{content:'';position:absolute;left:50%;top:72px;bottom:18px;width:2px;background:linear-gradient(180deg,rgba(96,165,250,.32),rgba(168,85,247,.18),transparent);transform:translateX(-50%)}
+    .tree-core{position:relative;width:118px;height:118px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,#4338ca,#1e1b4b);border:2px solid rgba(129,140,248,.34);box-shadow:0 0 28px rgba(99,102,241,.28), inset 0 0 26px rgba(255,255,255,.05)}
+    .tree-core span{font-size:40px;line-height:1}
+    .tree-core-label{margin-top:10px;text-align:center;font-size:11px;font-weight:900;letter-spacing:.8px;color:#c4b5fd;text-transform:uppercase}
+    .tree-row{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .tree-row:last-child{margin-bottom:0}
+    .tree-row:before{content:'';position:absolute;left:20%;right:20%;top:-12px;height:2px;background:linear-gradient(90deg,transparent,rgba(148,163,184,.16),transparent)}
+    .tree-row:first-of-type:before{display:none}
+    .album-card,.talent-card,.role-card{background:rgba(18,22,40,.58);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:12px}
+    .talent-card{position:relative;box-shadow:0 10px 22px rgba(0,0,0,.12)}
+    .talent-card:before{content:'';position:absolute;top:-12px;left:50%;width:2px;height:12px;background:rgba(148,163,184,.16);transform:translateX(-50%)}
+    .tree-row:first-of-type .talent-card:before{display:none}
+    .talent-icon,.account-icon,.role-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(255,255,255,.05);font-size:18px;flex-shrink:0}
+    .talent-headline{display:flex;align-items:center;gap:10px}
+    .album-top,.talent-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .album-title,.talent-name{font-size:12px;font-weight:900;color:#fff}
+    .album-desc,.talent-desc{margin-top:4px;font-size:10px;line-height:1.4;color:rgba(255,255,255,.36)}
+    .album-badge,.rarity-chip{padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+    .rarity-common{background:rgba(255,255,255,.08);color:#cbd5e1}
+    .rarity-rare{background:rgba(56,189,248,.14);color:#7dd3fc}
+    .rarity-epic{background:rgba(168,85,247,.16);color:#d8b4fe}
+    .rarity-legendary{background:rgba(245,158,11,.16);color:#fcd34d}
+    .talent-card.rarity-epic,.role-card.rarity-epic,.album-card.rarity-epic{box-shadow:0 0 0 1px rgba(168,85,247,.12) inset,0 12px 28px rgba(91,33,182,.15)}
+    .talent-card.rarity-legendary,.role-card.rarity-legendary,.album-card.rarity-legendary{box-shadow:0 0 0 1px rgba(245,158,11,.14) inset,0 14px 30px rgba(245,158,11,.14)}
+    .album-progress{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+    .album-progress-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#60a5fa,#8b5cf6)}
+    .album-foot,.talent-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:rgba(255,255,255,.42)}
+    .set-complete{color:#86efac;font-weight:800}
+    .missing-one{color:#fcd34d;font-weight:800}
+    .talent-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .talent-level{font-size:10px;color:#ffd700;font-weight:900}
+    .talent-cost{font-size:10px;color:#a5b4fc;font-weight:800}
+    .talent-btn,.role-btn{padding:8px 10px;border:none;border-radius:9px;background:linear-gradient(135deg,#38bdf8,#6366f1);color:#fff;font-size:10px;font-weight:900;text-transform:uppercase;font-family:inherit;cursor:pointer}
+    .talent-btn:disabled,.role-btn:disabled{opacity:.45;cursor:not-allowed}
+    .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+    .role-card.active{border-color:rgba(255,215,0,.24);box-shadow:0 0 0 1px rgba(255,215,0,.08) inset}
+    .role-meta{font-size:10px;color:rgba(255,255,255,.36);line-height:1.45;margin-top:4px}
+    .essence-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(168,85,247,.14);color:#d8b4fe;font-size:10px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;margin-top:10px}
     .ad-btn{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.5px}
     .ad-btn.loading{display:flex;align-items:center;justify-content:center;gap:8px}
     .btn-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.28);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
     .modal-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:200}
     .modal-overlay.show{display:flex}
     .modal-box{max-width:85%;padding:26px;border-radius:16px;background:rgba(18,22,40,.95);border:1px solid rgba(255,215,0,.2);text-align:center;animation:pop .28s cubic-bezier(.34,1.56,.64,1)}
+    .modal-box.reward-common{border-color:rgba(255,255,255,.18)}
+    .modal-box.reward-rare{border-color:rgba(56,189,248,.4);box-shadow:0 0 24px rgba(56,189,248,.16)}
+    .modal-box.reward-epic{border-color:rgba(168,85,247,.4);box-shadow:0 0 28px rgba(168,85,247,.18)}
+    .modal-box.reward-legendary{border-color:rgba(245,158,11,.55);box-shadow:0 0 36px rgba(245,158,11,.22)}
+    .reward-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
+    .reward-spark{position:absolute;width:8px;height:8px;border-radius:50%;opacity:0;animation:sparkFly 1.6s ease-out forwards}
+    .reward-rare .reward-spark{background:#7dd3fc;box-shadow:0 0 10px #7dd3fc}
+    .reward-epic .reward-spark{background:#d8b4fe;box-shadow:0 0 12px #d8b4fe}
+    .reward-legendary .reward-spark{background:#fcd34d;box-shadow:0 0 14px #fcd34d}
+    @keyframes sparkFly{0%{opacity:0;transform:translate(0,0) scale(.2)}15%{opacity:1}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(1.35)}}
+    .reward-header-icon{font-size:42px;line-height:1;display:none;margin-bottom:4px;position:relative;z-index:2}
+    .reward-header-icon.show{display:block}
+    .reward-title{color:#ffd700;font-size:17px;margin-bottom:10px;font-family:inherit}
     @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+    .reward-common .reward-text{color:#fff}
+    .reward-rare .reward-text{color:#7dd3fc;animation:rewardPulseRare 1.1s ease-in-out 2}
+    .reward-epic .reward-text{color:#d8b4fe;animation:rewardPulseEpic 1.1s ease-in-out 2}
+    .reward-legendary .reward-text{color:#fcd34d;animation:rewardPulseLegend 1.1s ease-in-out 3}
+    @keyframes rewardPulseRare{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+    @keyframes rewardPulseEpic{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.08) rotate(-1deg)}}
+    @keyframes rewardPulseLegend{0%,100%{transform:scale(1)}25%{transform:scale(1.06) translateY(-2px)}75%{transform:scale(1.1) translateY(-4px)}}
     .chest-anim{font-size:72px;cursor:pointer;animation:shake .5s infinite}
     .chest-anim.rare{filter:drop-shadow(0 0 18px rgba(96,165,250,.5))}
     .chest-anim.legendary{filter:drop-shadow(0 0 22px rgba(250,204,21,.65));animation-duration:.35s}
     @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
     .chest-hint{margin-top:10px;color:rgba(255,255,255,.42);font-size:12px;line-height:1.35}
-    .reward-text{font-size:32px;line-height:1.2;margin:14px 0}
+    .reward-text{font-size:32px;line-height:1.2;margin:14px 0;white-space:pre-line;position:relative;z-index:2}
     .toast{position:fixed;top:max(20px,env(safe-area-inset-top,20px));left:50%;transform:translateX(-50%) translateY(-120px);background:rgba(18,22,40,.96);border:1px solid rgba(255,215,0,.2);padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:300;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;pointer-events:none}
     .toast.show{transform:translateX(-50%) translateY(0)}
     .loading-screen{position:fixed;inset:0;background:#0a0f1e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease,visibility .4s ease}
@@ -424,17 +511,52 @@
           <div class="profile-row"><span>Престиж</span><b id="statPrestige">0</b></div>
         </div>
 
+        <div class="prestige-hero">
+          <div class="prestige-hero-title">Путь перерождения</div>
+          <div class="prestige-hero-desc">Развивайте аккаунт через престиж: собирайте эссенцию, открывайте роли и усиливайте фундаментальные характеристики навсегда.</div>
+          <div class="prestige-bonus-grid">
+            <div class="prestige-bonus-item"><span>Клик</span><b id="prestigeHeroClick">+0%</b></div>
+            <div class="prestige-bonus-item"><span>Банк</span><b id="prestigeHeroBank">+0%</b></div>
+            <div class="prestige-bonus-item"><span>Боссы</span><b id="prestigeHeroBoss">+0%</b></div>
+            <div class="prestige-bonus-item"><span>Лут</span><b id="prestigeHeroRare">+0%</b></div>
+          </div>
+        </div>
+
         <div class="shop-section-title">Перерождение</div>
         <div class="profile-card">
           <div class="profile-row"><span>Бонус престижа</span><b id="prestigeBonus">+0%</b></div>
           <div class="profile-row"><span>Доступно звёзд</span><b id="prestigeGain">0</b></div>
+          <div class="profile-row"><span>Эссенция перерождения</span><b id="prestigeEssence">0</b></div>
           <div class="profile-row"><span>До следующей звезды</span><b id="prestigeNeed">500K</b></div>
           <div class="profile-row"><span>Золото текущего цикла</span><b id="runGoldVal">0</b></div>
-          <div class="profile-note">Перерождение сбрасывает монеты, улучшения, банк и босса, но сохраняет кристаллы, темы, питомцев, скины, достижения и ежедневную серию.</div>
+          <div class="profile-note">После перерождения вы получаете постоянные бонусы: +5% к клику, +3% к банку, +4% к наградам боссов и +1% к редкому луту за каждую звезду престижа. Эссенция тратится на дерево талантов и глобальные улучшения.</div>
+          <div class="essence-chip">✦ Эссенция аккаунта: <span id="essenceChipVal">0</span></div>
           <button class="prestige-btn" id="btnPrestige" type="button" disabled>Переродиться</button>
         </div>
 
-        <div class="shop-section-title">Коллекции</div>
+        <div class="shop-section-title">Дерево талантов престижа</div>
+        <div class="talent-list" id="prestigeTalentList"></div>
+
+        <div class="shop-section-title">Глобальные улучшения аккаунта</div>
+        <div class="talent-list" id="accountUpgradeList"></div>
+
+        <div class="shop-section-title">Классы / роли</div>
+        <div class="role-grid" id="roleGrid"></div>
+
+        <div class="collection-card">
+          <div class="collection-note">Коллекции перенесены в отдельную вкладку: там удобнее смотреть альбомы, редкость и бонусы за полные наборы.</div>
+        </div>
+
+        <div class="shop-section-title">Достижения</div>
+        <div class="achievement-list" id="achievementsList"></div>
+
+        <button class="btn-reset" id="btnReset" type="button">Сбросить весь прогресс</button>
+      </div>
+    </div>
+
+    <div class="tab-page" id="page-collection">
+      <div class="profile-content" id="collectionContent">
+        <div class="shop-section-title" style="margin-top:0">Коллекции</div>
         <div class="collection-card">
           <div class="collection-grid">
             <div class="collection-item"><span>Скины монет</span><b id="colCoinSkins">0/0</b></div>
@@ -444,13 +566,28 @@
             <div class="collection-item"><span>Титулы</span><b id="colTitles">0/0</b></div>
             <div class="collection-item"><span>Текущий титул</span><b id="colCurrentTitle">—</b></div>
           </div>
-          <div class="collection-note">Собирайте коллекции, чтобы усиливать вовлечённость: монеты, питомцы, карточки боссов, рамки и титулы открываются по прогрессу.</div>
+          <div class="collection-note">Собирайте коллекции и закрывайте альбомы. Полные наборы дают постоянные бонусы, а если не хватает 1 предмета — игра отдельно покажет это.</div>
         </div>
+        <div class="album-list" id="albumList"></div>
+      </div>
+    </div>
 
-        <div class="shop-section-title">Достижения</div>
-        <div class="achievement-list" id="achievementsList"></div>
-
-        <button class="btn-reset" id="btnReset" type="button">Сбросить весь прогресс</button>
+    <div class="tab-page" id="page-goals">
+      <div class="goals-content">
+        <div class="goals-card">
+          <div class="goals-title">Долгосрочные цели</div>
+          <div class="goals-subtitle">Отдельное меню показывает, что откроется дальше: новая локация, класс, альбом, рамка, редкость и целевая дорожка на ближайшие дни.</div>
+          <div class="goals-grid">
+            <div class="goal-mini"><span>След. локация</span><b id="goalNextLoc">—</b><small id="goalNextLocMeta">—</small></div>
+            <div class="goal-mini"><span>След. класс</span><b id="goalNextRole">—</b><small id="goalNextRoleMeta">—</small></div>
+            <div class="goal-mini"><span>След. альбом</span><b id="goalNextAlbum">—</b><small id="goalNextAlbumMeta">—</small></div>
+            <div class="goal-mini"><span>След. рамка</span><b id="goalNextFrame">—</b><small id="goalNextFrameMeta">—</small></div>
+            <div class="goal-mini"><span>След. редкость</span><b id="goalNextRarity">—</b><small id="goalNextRarityMeta">—</small></div>
+            <div class="goal-mini"><span>Цель недели</span><b id="goalWeekFocus">—</b><small id="goalWeekFocusMeta">—</small></div>
+          </div>
+          <div class="roadmap-title">Целевая дорожка</div>
+          <div class="roadmap-list" id="goalRoadmap"></div>
+        </div>
       </div>
     </div>
 
@@ -508,6 +645,8 @@
       <div class="nav-item active" data-page="home"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg></div><span class="nav-label">Главная</span></div>
       <div class="nav-item" data-page="shop"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"></path></svg></div><span class="nav-label">Магазин</span></div>
       <div class="nav-item" data-page="bosses"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"></path></svg></div><span class="nav-label">Боссы</span></div>
+      <div class="nav-item" data-page="goals"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M5 4h14v3H5zm0 6h10v3H5zm0 6h14v3H5z"></path></svg></div><span class="nav-label">Цели</span></div>
+      <div class="nav-item" data-page="collection"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zm2 2v8h12V8zm2-4h8v2H8z"></path></svg></div><span class="nav-label">Коллекции</span></div>
       <div class="nav-item" data-page="profile"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg></div><span class="nav-label">Профиль</span></div>
       <div class="nav-item" data-page="bonus"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"></path></svg></div><span class="nav-label">Бонусы</span></div>
     </nav>
@@ -522,8 +661,10 @@
   </div>
 
   <div class="modal-overlay" id="rewardModal">
-    <div class="modal-box">
-      <h2 style="color:#ffd700;font-size:17px;margin-bottom:10px">Награда!</h2>
+    <div class="modal-box reward-common" id="rewardBox">
+      <div class="reward-particles" id="rewardParticles"></div>
+      <div class="reward-header-icon" id="rewardIcon"></div>
+      <h2 class="reward-title" id="rewardTitle">Награда!</h2>
       <div class="reward-text" id="rewardContent"></div>
       <button class="bank-btn" id="btnCloseReward" type="button" style="width:100%;padding:12px">Забрать</button>
     </div>
@@ -603,6 +744,11 @@
           dailyTasksDate: '',
           dailyTasks: [],
           chestRerollAvailable: false,
+          prestigeEssence: 0,
+          prestigeTalents: { t_click: 0, t_bank: 0, t_boss: 0, t_rare: 0 },
+          accountUpgrades: { a_global: 0, a_gems: 0, a_auto: 0 },
+          currentRole: 'role_adventurer',
+          seenUnlocks: {},
           ownedBossCards: [],
           ownedFrames: ['frame_default'],
           currentFrame: 'frame_default',
@@ -640,11 +786,11 @@
       const ALL_UPGRADES = CLICK_UPGRADES.concat(AUTO_UPGRADES);
 
       const PETS = [
-        { id: 'pet_none', name: 'Нет', icon: '🚫', cost: 0, effect: 1 },
-        { id: 'pet_hamster', name: 'Хомяк', icon: '🐹', cost: 50, effect: 1.3 },
-        { id: 'pet_robot', name: 'Робот', icon: '🤖', cost: 200, effect: 1.6 },
-        { id: 'pet_dragon', name: 'Дракон', icon: '🐉', cost: 1000, effect: 2.0 },
-        { id: 'pet_ghost', name: 'Призрак', icon: '👻', cost: 5000, effect: 3.0 }
+        { id: 'pet_none', name: 'Нет', icon: '🚫', cost: 0, effect: 1, rarity: 'common' },
+        { id: 'pet_hamster', name: 'Хомяк', icon: '🐹', cost: 50, effect: 1.3, rarity: 'common' },
+        { id: 'pet_robot', name: 'Робот', icon: '🤖', cost: 200, effect: 1.6, rarity: 'rare' },
+        { id: 'pet_dragon', name: 'Дракон', icon: '🐉', cost: 1000, effect: 2.0, rarity: 'epic' },
+        { id: 'pet_ghost', name: 'Призрак', icon: '👻', cost: 5000, effect: 3.0, rarity: 'legendary' }
       ];
 
       const THEMES = [
@@ -655,12 +801,12 @@
       ];
 
       const COIN_SKINS = [
-        { id: 'classic', name: 'Классика', mark: '$', cost: 0, desc: 'Базовая монета империи.', reqBosses: 0, reqPrestige: 0 },
-        { id: 'ruby', name: 'Рубин', mark: '♦', cost: 35, desc: 'Багровый блеск для коллекции.', reqBosses: 0, reqPrestige: 0 },
-        { id: 'emerald', name: 'Изумруд', mark: '✦', cost: 90, desc: 'Редкий зелёный скин.', reqBosses: 3, reqPrestige: 0 },
-        { id: 'imperial', name: 'Империя', mark: '♛', cost: 220, desc: 'Королевский стиль с золотой аурой.', reqBosses: 10, reqPrestige: 0 },
-        { id: 'sunfire', name: 'Солнечный жар', mark: '☀', cost: 600, desc: 'Раскалённая монета для late game.', reqBosses: 25, reqPrestige: 1 },
-        { id: 'void', name: 'Пустота', mark: '◈', cost: 1200, desc: 'Тёмный эндгейм-скин для перерождённых.', reqBosses: 40, reqPrestige: 2 }
+        { id: 'classic', name: 'Классика', mark: '$', cost: 0, desc: 'Базовая монета империи.', reqBosses: 0, reqPrestige: 0, rarity: 'common' },
+        { id: 'ruby', name: 'Рубин', mark: '♦', cost: 35, desc: 'Багровый блеск для коллекции.', reqBosses: 0, reqPrestige: 0, rarity: 'common' },
+        { id: 'emerald', name: 'Изумруд', mark: '✦', cost: 90, desc: 'Редкий зелёный скин.', reqBosses: 3, reqPrestige: 0, rarity: 'rare' },
+        { id: 'imperial', name: 'Империя', mark: '♛', cost: 220, desc: 'Королевский стиль с золотой аурой.', reqBosses: 10, reqPrestige: 0, rarity: 'epic' },
+        { id: 'sunfire', name: 'Солнечный жар', mark: '☀', cost: 600, desc: 'Раскалённая монета для late game.', reqBosses: 25, reqPrestige: 1, rarity: 'legendary' },
+        { id: 'void', name: 'Пустота', mark: '◈', cost: 1200, desc: 'Тёмный эндгейм-скин для перерождённых.', reqBosses: 40, reqPrestige: 2, rarity: 'legendary' }
       ];
 
       const BOSSES = [
@@ -731,16 +877,46 @@
 
       const LEVEL_TITLES = ['Ученик монет', 'Сборщик налогов', 'Казначей', 'Банкир', 'Магнат', 'Имперский лорд', 'Повелитель золота', 'Хранитель звёзд'];
       const PROFILE_FRAMES = [
-        { id: 'frame_default', name: 'Стандарт' },
-        { id: 'frame_silver', name: 'Серебряная', unlockLevel: 5 },
-        { id: 'frame_gold', name: 'Золотая', unlockBosses: 10 },
-        { id: 'frame_void', name: 'Пустотная', unlockPrestige: 3 }
+        { id: 'frame_default', name: 'Стандарт', rarity: 'common' },
+        { id: 'frame_silver', name: 'Серебряная', unlockLevel: 5, rarity: 'rare' },
+        { id: 'frame_gold', name: 'Золотая', unlockBosses: 10, rarity: 'epic' },
+        { id: 'frame_void', name: 'Пустотная', unlockPrestige: 3, rarity: 'legendary' }
       ];
       const PLAYER_TITLES = [
-        { id: 'title_novice', name: 'Новичок Империи' },
-        { id: 'title_hunter', name: 'Охотник на боссов', unlockBosses: 5 },
-        { id: 'title_collector', name: 'Коллекционер редкостей', unlockSkins: 3 },
-        { id: 'title_legend', name: 'Легенда перерождений', unlockPrestige: 5 }
+        { id: 'title_novice', name: 'Новичок Империи', rarity: 'common' },
+        { id: 'title_hunter', name: 'Охотник на боссов', unlockBosses: 5, rarity: 'rare' },
+        { id: 'title_collector', name: 'Коллекционер редкостей', unlockSkins: 3, rarity: 'epic' },
+        { id: 'title_legend', name: 'Легенда перерождений', unlockPrestige: 5, rarity: 'legendary' }
+      ];
+      const RARITY_META = {
+        common: { label: 'Обычный', emoji: '⚪', className: 'rarity-common' },
+        rare: { label: 'Редкий', emoji: '🔵', className: 'rarity-rare' },
+        epic: { label: 'Эпический', emoji: '🟣', className: 'rarity-epic' },
+        legendary: { label: 'Легендарный', emoji: '🟠', className: 'rarity-legendary' }
+      };
+      const PRESTIGE_TALENTS = [
+        { id: 't_click', name: 'Удар Империи', baseCost: 1, growth: 1, desc: '+4% к силе клика за уровень', rarity: 'rare' },
+        { id: 't_bank', name: 'Казна Императора', baseCost: 1, growth: 1, desc: '+3% к банковому доходу за уровень', rarity: 'rare' },
+        { id: 't_boss', name: 'Охота на титанов', baseCost: 2, growth: 1, desc: '+4% к наградам боссов за уровень', rarity: 'epic' },
+        { id: 't_rare', name: 'Шанс редкости', baseCost: 2, growth: 1, desc: '+1% к редкому луту за уровень', rarity: 'legendary' }
+      ];
+      const ACCOUNT_UPGRADES = [
+        { id: 'a_global', name: 'Ядро аккаунта', baseCost: 2, growth: 2, desc: '+2% ко всем талантам клика/банка/боссов за уровень', rarity: 'epic' },
+        { id: 'a_gems', name: 'Кристальный резонанс', baseCost: 2, growth: 2, desc: '+2% к получаемым кристаллам и +1% к редкому луту', rarity: 'legendary' },
+        { id: 'a_auto', name: 'Автоматон', baseCost: 1, growth: 2, desc: '+5% к автодоходу за уровень', rarity: 'rare' }
+      ];
+      const ROLE_OPTIONS = [
+        { id: 'role_adventurer', name: 'Искатель', reqPrestige: 0, desc: 'Сбалансированный стиль без штрафов.', clickPct: 0, bankPct: 0, bossPct: 0, rarePct: 0 },
+        { id: 'role_warrior', name: 'Воитель', reqPrestige: 1, desc: 'Давит кликом и наградами за боссов.', clickPct: 10, bankPct: -3, bossPct: 8, rarePct: 0 },
+        { id: 'role_treasurer', name: 'Казначей', reqPrestige: 1, desc: 'Лучше монетизирует банк и пассивный доход.', clickPct: -4, bankPct: 12, bossPct: 0, rarePct: 2 },
+        { id: 'role_hunter', name: 'Охотник', reqPrestige: 2, desc: 'Ловит редкий лут и усиливает босса-фарм.', clickPct: 2, bankPct: 0, bossPct: 6, rarePct: 8 },
+        { id: 'role_archmage', name: 'Архимаг', reqPrestige: 3, desc: 'Сильный универсал для поздней игры.', clickPct: 6, bankPct: 4, bossPct: 4, rarePct: 4 }
+      ];
+      const COLLECTION_ALBUMS = [
+        { id: 'album_coin', name: 'Монетный альбом', desc: 'Соберите все скины монет.', total: () => COIN_SKINS.length, owned: state => state.ownedCoinSkins.length, bonus: '+5% к клику', rarityMix: ['common','rare','epic','legendary'], completeBonus: { clickPct: 5 } },
+        { id: 'album_pets', name: 'Зверинец', desc: 'Соберите всех питомцев.', total: () => PETS.length - 1, owned: state => state.ownedPets.filter(id => id !== 'pet_none').length, bonus: '+8% к автодоходу', rarityMix: ['common','rare','epic','legendary'], completeBonus: { autoPct: 8 } },
+        { id: 'album_boss', name: 'Трофеи боссов', desc: 'Получите все карточки боссов.', total: () => BOSSES.length, owned: state => state.ownedBossCards.length, bonus: '+10% к наградам боссов', rarityMix: ['common','rare','epic','legendary'], completeBonus: { bossPct: 10 } },
+        { id: 'album_style', name: 'Наследие героя', desc: 'Откройте все рамки и титулы.', total: () => PROFILE_FRAMES.length + PLAYER_TITLES.length, owned: state => state.ownedFrames.length + state.ownedTitles.length, bonus: '+3% к редкому луту', rarityMix: ['common','rare','epic','legendary'], completeBonus: { rarePct: 3 } }
       ];
       // Распределение reward-действий по 3 placement'ам AdsGram:
       // 31328 -> боевые усиления
@@ -781,14 +957,14 @@
           goldVal: document.getElementById('goldVal'), gemsVal: document.getElementById('gemsVal'), rankBadge: document.getElementById('rankBadge'),
           cpsVal: document.getElementById('cpsVal'), cpcVal: document.getElementById('cpcVal'), comboVal: document.getElementById('comboVal'),
           playerLevel: document.getElementById('playerLevel'), levelLabel: document.getElementById('levelLabel'), levelXpText: document.getElementById('levelXpText'), levelFill: document.getElementById('levelFill'),
-          locTitle: document.getElementById('locTitle'), locDesc: document.getElementById('locDesc'), clickPlus: document.getElementById('clickPlus'), clickerBtn: document.getElementById('clickerBtn'), comboChip: document.getElementById('comboChip'),
+          locTitle: document.getElementById('locTitle'), locDesc: document.getElementById('locDesc'), clickPlus: document.getElementById('clickPlus'), clickerBtn: document.getElementById('clickerBtn'), comboChip: document.getElementById('comboChip'), goalNextLoc: document.getElementById('goalNextLoc'), goalNextLocMeta: document.getElementById('goalNextLocMeta'), goalNextRole: document.getElementById('goalNextRole'), goalNextRoleMeta: document.getElementById('goalNextRoleMeta'), goalNextAlbum: document.getElementById('goalNextAlbum'), goalNextAlbumMeta: document.getElementById('goalNextAlbumMeta'), goalNextFrame: document.getElementById('goalNextFrame'), goalNextFrameMeta: document.getElementById('goalNextFrameMeta'), goalNextRarity: document.getElementById('goalNextRarity'), goalNextRarityMeta: document.getElementById('goalNextRarityMeta'), goalWeekFocus: document.getElementById('goalWeekFocus'), goalWeekFocusMeta: document.getElementById('goalWeekFocusMeta'), goalRoadmap: document.getElementById('goalRoadmap'),
           bankDepVal: document.getElementById('bankDepVal'), bankIncVal: document.getElementById('bankIncVal'), btnDeposit: document.getElementById('btnDeposit'), btnWithdraw: document.getElementById('btnWithdraw'),
           shopContent: document.getElementById('shopContent'),
           bossName: document.getElementById('bossName'), bossReq: document.getElementById('bossReq'), bossReward: document.getElementById('bossReward'), bossCard: document.getElementById('bossCard'), bossSprite: document.getElementById('bossSprite'), bossHpFill: document.getElementById('bossHpFill'), bossHp: document.getElementById('bossHp'), bossMaxHp: document.getElementById('bossMaxHp'), bossState: document.getElementById('bossState'), bossTimerText: document.getElementById('bossTimerText'), bossTimerFill: document.getElementById('bossTimerFill'), bossArmor: document.getElementById('bossArmor'), bossRage: document.getElementById('bossRage'), bossDuration: document.getElementById('bossDuration'), bossHintText: document.getElementById('bossHintText'), btnStartBoss: document.getElementById('btnStartBoss'), btnPrevBoss: document.getElementById('btnPrevBoss'), btnNextBoss: document.getElementById('btnNextBoss'),
-          profileContent: document.getElementById('profileContent'), statLevel: document.getElementById('statLevel'), statClicks: document.getElementById('statClicks'), statGold: document.getElementById('statGold'), statBosses: document.getElementById('statBosses'), statChests: document.getElementById('statChests'), statRareChests: document.getElementById('statRareChests'), statQuests: document.getElementById('statQuests'), statPrestige: document.getElementById('statPrestige'), prestigeBonus: document.getElementById('prestigeBonus'), prestigeGain: document.getElementById('prestigeGain'), prestigeNeed: document.getElementById('prestigeNeed'), runGoldVal: document.getElementById('runGoldVal'), achievementsList: document.getElementById('achievementsList'), colCoinSkins: document.getElementById('colCoinSkins'), colPets: document.getElementById('colPets'), colBossCards: document.getElementById('colBossCards'), colFrames: document.getElementById('colFrames'), colTitles: document.getElementById('colTitles'), colCurrentTitle: document.getElementById('colCurrentTitle'), btnPrestige: document.getElementById('btnPrestige'), btnReset: document.getElementById('btnReset'),
+          profileContent: document.getElementById('profileContent'), statLevel: document.getElementById('statLevel'), statClicks: document.getElementById('statClicks'), statGold: document.getElementById('statGold'), statBosses: document.getElementById('statBosses'), statChests: document.getElementById('statChests'), statRareChests: document.getElementById('statRareChests'), statQuests: document.getElementById('statQuests'), statPrestige: document.getElementById('statPrestige'), prestigeBonus: document.getElementById('prestigeBonus'), prestigeGain: document.getElementById('prestigeGain'), prestigeEssence: document.getElementById('prestigeEssence'), essenceChipVal: document.getElementById('essenceChipVal'), prestigeNeed: document.getElementById('prestigeNeed'), runGoldVal: document.getElementById('runGoldVal'), prestigeHeroClick: document.getElementById('prestigeHeroClick'), prestigeHeroBank: document.getElementById('prestigeHeroBank'), prestigeHeroBoss: document.getElementById('prestigeHeroBoss'), prestigeHeroRare: document.getElementById('prestigeHeroRare'), prestigeTalentList: document.getElementById('prestigeTalentList'), accountUpgradeList: document.getElementById('accountUpgradeList'), roleGrid: document.getElementById('roleGrid'), achievementsList: document.getElementById('achievementsList'), colCoinSkins: document.getElementById('colCoinSkins'), colPets: document.getElementById('colPets'), colBossCards: document.getElementById('colBossCards'), colFrames: document.getElementById('colFrames'), colTitles: document.getElementById('colTitles'), colCurrentTitle: document.getElementById('colCurrentTitle'), albumList: document.getElementById('albumList'), btnPrestige: document.getElementById('btnPrestige'), btnReset: document.getElementById('btnReset'),
           dailyStatus: document.getElementById('dailyStatus'), dailyDays: document.getElementById('dailyDays'), btnDailyClaim: document.getElementById('btnDailyClaim'), dailyTasksList: document.getElementById('dailyTasksList'), dailyTasksTimer: document.getElementById('dailyTasksTimer'), bonusCooldownText: document.getElementById('bonusCooldownText'), nextRareChestText: document.getElementById('nextRareChestText'), bonusContent: document.getElementById('bonusContent'),
           adBtn1: document.getElementById('adBtn1'), adBtn2: document.getElementById('adBtn2'), adBtn3: document.getElementById('adBtn3'),
-          toast: document.getElementById('toast'), chestModal: document.getElementById('chestModal'), chestAnim: document.getElementById('chestAnim'), chestHint: document.getElementById('chestHint'), rewardModal: document.getElementById('rewardModal'), rewardContent: document.getElementById('rewardContent'), btnCloseReward: document.getElementById('btnCloseReward'), loadingScreen: document.getElementById('loadingScreen'), bgParticles: document.getElementById('bgParticles'),
+          toast: document.getElementById('toast'), chestModal: document.getElementById('chestModal'), chestAnim: document.getElementById('chestAnim'), chestHint: document.getElementById('chestHint'), rewardModal: document.getElementById('rewardModal'), rewardBox: document.getElementById('rewardBox'), rewardParticles: document.getElementById('rewardParticles'), rewardIcon: document.getElementById('rewardIcon'), rewardTitle: document.getElementById('rewardTitle'), rewardContent: document.getElementById('rewardContent'), btnCloseReward: document.getElementById('btnCloseReward'), loadingScreen: document.getElementById('loadingScreen'), bgParticles: document.getElementById('bgParticles'),
           questTier: document.getElementById('questTier'), questReward: document.getElementById('questReward'), questTitle: document.getElementById('questTitle'), questFill: document.getElementById('questFill'), questText: document.getElementById('questText'), btnQuestClaim: document.getElementById('btnQuestClaim'),
           topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark')
         });
@@ -925,22 +1101,66 @@
 
       function addGems(amount) {
         amount = Math.floor(Number(amount) || 0);
-        if (amount > 0) state.gems += amount;
+        if (amount > 0) {
+          const bonus = getPrestigePassiveBonuses().gemPct || 0;
+          state.gems += Math.max(1, Math.floor(amount * (1 + bonus / 100)));
+        }
       }
 
       function getPetMult() { return (PETS.find(p => p.id === state.currentPet) || PETS[0]).effect; }
-      function getPrestigeMult() { return 1 + state.prestige * 0.12; }
+      function getTalentLevel(id) { return (state.prestigeTalents && state.prestigeTalents[id]) || 0; }
+      function getAccountUpgradeLevel(id) { return (state.accountUpgrades && state.accountUpgrades[id]) || 0; }
+      function getRole() { return ROLE_OPTIONS.find(role => role.id === state.currentRole) || ROLE_OPTIONS[0]; }
+      function getCollectionBonuses() {
+        let clickPct = 0, autoPct = 0, bossPct = 0, rarePct = 0;
+        COLLECTION_ALBUMS.forEach(album => {
+          const total = album.total();
+          const owned = album.owned(state);
+          if (owned >= total) {
+            clickPct += album.completeBonus.clickPct || 0;
+            autoPct += album.completeBonus.autoPct || 0;
+            bossPct += album.completeBonus.bossPct || 0;
+            rarePct += album.completeBonus.rarePct || 0;
+          }
+        });
+        return { clickPct, autoPct, bossPct, rarePct };
+      }
+      function getPrestigePassiveBonuses() {
+        const role = getRole();
+        const collection = getCollectionBonuses();
+        const globalLvl = getAccountUpgradeLevel('a_global');
+        return {
+          clickPct: state.prestige * 5 + getTalentLevel('t_click') * 4 + globalLvl * 2 + collection.clickPct + (role.clickPct || 0),
+          bankPct: state.prestige * 3 + getTalentLevel('t_bank') * 3 + globalLvl * 2 + (role.bankPct || 0),
+          bossPct: state.prestige * 4 + getTalentLevel('t_boss') * 4 + globalLvl * 2 + collection.bossPct + (role.bossPct || 0),
+          rarePct: state.prestige * 1 + getTalentLevel('t_rare') * 1 + getAccountUpgradeLevel('a_gems') * 1 + collection.rarePct + (role.rarePct || 0),
+          autoPct: getAccountUpgradeLevel('a_auto') * 5 + globalLvl * 2 + collection.autoPct,
+          gemPct: getAccountUpgradeLevel('a_gems') * 2
+        };
+      }
+      function getPrestigeMult() { return 1 + getPrestigePassiveBonuses().clickPct / 100; }
       function getX2Mult() { return Date.now() < state.x2End ? 2 : 1; }
       function getComboMult() { return Date.now() > state.comboExpire ? 1 : Math.min(1 + (Math.max(1, state.combo) - 1) * 0.04, 2.2); }
-      function getClickPower() { return Math.max(1, Math.floor(state.clickPower * getPetMult() * getPrestigeMult() * getX2Mult() * getComboMult() * getLevelBonusMult())); }
+      function getClickPower() {
+        const role = getRole();
+        return Math.max(1, Math.floor(state.clickPower * getPetMult() * (1 + getPrestigePassiveBonuses().clickPct / 100) * getX2Mult() * getComboMult() * getLevelBonusMult()));
+      }
       function getAutoIncome() {
         const base = state.autoClick;
         const boost = Date.now() < state.autoClickBoostEnd ? Math.max(10, Math.floor(state.clickPower * 0.5 + state.autoClick * 0.35)) : 0;
-        return Math.max(0, Math.floor((base + boost) * getPetMult() * getPrestigeMult() * getX2Mult() * getLevelBonusMult()));
+        const bonuses = getPrestigePassiveBonuses();
+        return Math.max(0, Math.floor((base + boost) * getPetMult() * (1 + bonuses.autoPct / 100) * getX2Mult() * getLevelBonusMult()));
       }
       function getBankIncomePerMinute() {
         const boostMult = Date.now() < state.bankBoostEnd ? 3 : 1;
-        return Math.floor(state.bankDep * 0.1 / 60 * boostMult);
+        const bonuses = getPrestigePassiveBonuses();
+        return Math.floor(state.bankDep * 0.1 / 60 * boostMult * (1 + bonuses.bankPct / 100));
+      }
+      function getBossRewardMultiplier() {
+        return 1 + getPrestigePassiveBonuses().bossPct / 100;
+      }
+      function getRareLootBonusPct() {
+        return getPrestigePassiveBonuses().rarePct;
       }
       function getBossDmg() { return Math.max(1, Math.floor(getClickPower() * 10)); }
 
@@ -1558,22 +1778,179 @@
         return !state.achievementsClaimed[ach.id] && getAchievementMetric(ach) >= ach.target;
       }
 
+      function getRarityMeta(rarity) {
+        return RARITY_META[rarity] || RARITY_META.common;
+      }
+
+      function announceCollectible(name, rarity, contextLabel) {
+        const meta = getRarityMeta(rarity);
+        playSound('reward');
+        showReward(contextLabel + '\n' + name + '\n' + meta.label, { rarity, icon: meta.emoji, title: 'Новое открытие!' });
+      }
+
+      function markUnlock(key, name, rarity, contextLabel) {
+        if (state.seenUnlocks[key]) return false;
+        state.seenUnlocks[key] = true;
+        announceCollectible(name, rarity, contextLabel);
+        return true;
+      }
+
       function ensureCollectionsUnlocks() {
         const level = getLevelData().level;
         PROFILE_FRAMES.forEach(frame => {
           if (frame.unlockLevel && level < frame.unlockLevel) return;
           if (frame.unlockBosses && state.bossesDefeated < frame.unlockBosses) return;
           if (frame.unlockPrestige && state.prestige < frame.unlockPrestige) return;
-          if (!state.ownedFrames.includes(frame.id)) state.ownedFrames.push(frame.id);
+          if (!state.ownedFrames.includes(frame.id)) {
+            state.ownedFrames.push(frame.id);
+            markUnlock('frame:' + frame.id, frame.name, frame.rarity || 'common', 'Новая рамка');
+          }
         });
         PLAYER_TITLES.forEach(title => {
           if (title.unlockBosses && state.bossesDefeated < title.unlockBosses) return;
           if (title.unlockPrestige && state.prestige < title.unlockPrestige) return;
           if (title.unlockSkins && state.ownedCoinSkins.length < title.unlockSkins) return;
-          if (!state.ownedTitles.includes(title.id)) state.ownedTitles.push(title.id);
+          if (!state.ownedTitles.includes(title.id)) {
+            state.ownedTitles.push(title.id);
+            markUnlock('title:' + title.id, title.name, title.rarity || 'common', 'Новый титул');
+          }
         });
         state.currentFrame = state.ownedFrames[state.ownedFrames.length - 1] || 'frame_default';
         state.currentTitle = state.ownedTitles[state.ownedTitles.length - 1] || 'title_novice';
+      }
+
+      function getAlbumProgress(album) {
+        const total = album.total();
+        const owned = album.owned(state);
+        return { total, owned, complete: owned >= total, missing: Math.max(0, total - owned) };
+      }
+
+      function getNextLocationGoal() {
+        return LOCS.find(loc => state.totalGold < loc.req) || null;
+      }
+
+      function getNextRoleGoal() {
+        return ROLE_OPTIONS.find(role => state.prestige < role.reqPrestige) || null;
+      }
+
+      function getNextFrameGoal() {
+        return PROFILE_FRAMES.find(frame => !state.ownedFrames.includes(frame.id)) || null;
+      }
+
+      function getNextAlbumGoal() {
+        for (const album of COLLECTION_ALBUMS) {
+          const prog = getAlbumProgress(album);
+          if (!prog.complete) return { album, progress: prog };
+        }
+        return null;
+      }
+
+      function getRarityOwnedCounts() {
+        const counts = { common: 0, rare: 0, epic: 0, legendary: 0 };
+        const pushRarity = rarity => { if (counts[rarity] !== undefined) counts[rarity] += 1; };
+        COIN_SKINS.filter(item => state.ownedCoinSkins.includes(item.id)).forEach(item => pushRarity(item.rarity || 'common'));
+        PETS.filter(item => item.id !== 'pet_none' && state.ownedPets.includes(item.id)).forEach(item => pushRarity(item.rarity || 'common'));
+        PROFILE_FRAMES.filter(item => state.ownedFrames.includes(item.id)).forEach(item => pushRarity(item.rarity || 'common'));
+        PLAYER_TITLES.filter(item => state.ownedTitles.includes(item.id)).forEach(item => pushRarity(item.rarity || 'common'));
+        state.ownedBossCards.forEach(id => {
+          const idx = Number(String(id).split('_')[1] || 0);
+          const rarity = idx <= 0 ? 'common' : idx === 1 ? 'rare' : idx === 2 ? 'epic' : 'legendary';
+          pushRarity(rarity);
+        });
+        return counts;
+      }
+
+      function getNextRarityGoal() {
+        const counts = getRarityOwnedCounts();
+        const tiers = ['common', 'rare', 'epic', 'legendary'];
+        for (const tier of tiers) {
+          if (counts[tier] === 0) {
+            const fromSkin = COIN_SKINS.find(item => item.rarity === tier && !state.ownedCoinSkins.includes(item.id));
+            const fromPet = PETS.find(item => item.rarity === tier && item.id !== 'pet_none' && !state.ownedPets.includes(item.id));
+            return { rarity: tier, source: fromSkin ? fromSkin.name : fromPet ? fromPet.name : 'Новый предмет' };
+          }
+        }
+        return { rarity: 'legendary', source: 'Все редкости открыты' };
+      }
+
+      function getProgressRatio(current, target) {
+        if (!target || target <= 0) return 1;
+        return Math.max(0, Math.min(1, current / target));
+      }
+
+      function getGoalEtaLabel(progressRatio) {
+        if (progressRatio >= 0.9) return 'Сегодня';
+        if (progressRatio >= 0.6) return '1–3 дня';
+        if (progressRatio >= 0.3) return 'Неделя';
+        return 'Долгосрочно';
+      }
+
+      function renderLongTermGoals() {
+        const nextLoc = getNextLocationGoal();
+        const nextRole = getNextRoleGoal();
+        const nextAlbum = getNextAlbumGoal();
+        const nextFrame = getNextFrameGoal();
+        const nextRarity = getNextRarityGoal();
+
+        if (nextLoc) {
+          const ratio = getProgressRatio(state.totalGold, nextLoc.req);
+          el.goalNextLoc.textContent = nextLoc.name.replace('ЛОКАЦИЯ: ', '');
+          el.goalNextLocMeta.textContent = fmt(state.totalGold) + ' / ' + fmt(nextLoc.req) + ' • ' + getGoalEtaLabel(ratio);
+        } else {
+          el.goalNextLoc.textContent = 'Все локации открыты';
+          el.goalNextLocMeta.textContent = 'Остаётся усиливать альбомы и престиж';
+        }
+
+        if (nextRole) {
+          const ratio = getProgressRatio(state.prestige, nextRole.reqPrestige);
+          el.goalNextRole.textContent = nextRole.name;
+          el.goalNextRoleMeta.textContent = 'Престиж ' + state.prestige + ' / ' + nextRole.reqPrestige + ' • ' + getGoalEtaLabel(ratio);
+        } else {
+          el.goalNextRole.textContent = 'Все роли открыты';
+          el.goalNextRoleMeta.textContent = 'Попробуйте собрать полный альбом';
+        }
+
+        if (nextAlbum) {
+          const ratio = getProgressRatio(nextAlbum.progress.owned, nextAlbum.progress.total);
+          el.goalNextAlbum.textContent = nextAlbum.album.name;
+          el.goalNextAlbumMeta.textContent = nextAlbum.progress.owned + ' / ' + nextAlbum.progress.total + ' • ' + getGoalEtaLabel(ratio);
+        } else {
+          el.goalNextAlbum.textContent = 'Все альбомы закрыты';
+          el.goalNextAlbumMeta.textContent = 'Коллекции завершены';
+        }
+
+        if (nextFrame) {
+          const ratio = nextFrame.unlockLevel ? getProgressRatio(getLevelData().level, nextFrame.unlockLevel) : nextFrame.unlockBosses ? getProgressRatio(state.bossesDefeated, nextFrame.unlockBosses) : nextFrame.unlockPrestige ? getProgressRatio(state.prestige, nextFrame.unlockPrestige) : 1;
+          el.goalNextFrame.textContent = nextFrame.name;
+          const meta = nextFrame.unlockLevel ? 'Уровень ' + getLevelData().level + ' / ' + nextFrame.unlockLevel : nextFrame.unlockBosses ? 'Боссы ' + state.bossesDefeated + ' / ' + nextFrame.unlockBosses : 'Престиж ' + state.prestige + ' / ' + nextFrame.unlockPrestige;
+          el.goalNextFrameMeta.textContent = meta + ' • ' + getGoalEtaLabel(ratio);
+        } else {
+          el.goalNextFrame.textContent = 'Все рамки открыты';
+          el.goalNextFrameMeta.textContent = 'Можно охотиться за легендарным лутом';
+        }
+
+        el.goalNextRarity.textContent = getRarityMeta(nextRarity.rarity).label;
+        el.goalNextRarityMeta.textContent = nextRarity.source;
+
+        const roadmap = [];
+        if (nextLoc) roadmap.push({ name: 'Откройте новую локацию', hint: nextLoc.name, progress: getProgressRatio(state.totalGold, nextLoc.req), current: fmt(state.totalGold), target: fmt(nextLoc.req) });
+        if (nextRole) roadmap.push({ name: 'Разблокируйте новый класс', hint: nextRole.name, progress: getProgressRatio(state.prestige, nextRole.reqPrestige), current: state.prestige, target: nextRole.reqPrestige });
+        if (nextAlbum) roadmap.push({ name: 'Закройте ближайший альбом', hint: nextAlbum.album.name, progress: getProgressRatio(nextAlbum.progress.owned, nextAlbum.progress.total), current: nextAlbum.progress.owned, target: nextAlbum.progress.total });
+        if (nextFrame) roadmap.push({ name: 'Получите новую рамку', hint: nextFrame.name, progress: nextFrame.unlockBosses ? getProgressRatio(state.bossesDefeated, nextFrame.unlockBosses) : nextFrame.unlockLevel ? getProgressRatio(getLevelData().level, nextFrame.unlockLevel) : getProgressRatio(state.prestige, nextFrame.unlockPrestige), current: nextFrame.unlockBosses ? state.bossesDefeated : nextFrame.unlockLevel ? getLevelData().level : state.prestige, target: nextFrame.unlockBosses || nextFrame.unlockLevel || nextFrame.unlockPrestige });
+        roadmap.push({ name: 'Охота за следующей редкостью', hint: nextRarity.source, progress: nextRarity.rarity === 'common' ? 1 : nextRarity.rarity === 'rare' ? 0.35 : nextRarity.rarity === 'epic' ? 0.65 : 0.85, current: getRarityMeta(nextRarity.rarity).label, target: 'открыть' });
+
+        const weekFocus = roadmap[0] || { name: 'Усиливайте престиж', hint: 'Накопите эссенцию', progress: 0.5, current: '—', target: '—' };
+        el.goalWeekFocus.textContent = weekFocus.name;
+        el.goalWeekFocusMeta.textContent = weekFocus.hint;
+
+        el.goalRoadmap.innerHTML = roadmap.map(step => {
+          const pct = Math.max(0, Math.min(100, step.progress * 100));
+          return '<div class="roadmap-step">'
+            + '<div class="roadmap-top"><div><div class="roadmap-name">' + step.name + '</div><div class="roadmap-hint">' + step.hint + '</div></div><div class="roadmap-eta">' + getGoalEtaLabel(step.progress) + '</div></div>'
+            + '<div class="roadmap-progress"><div class="roadmap-progress-fill" style="width:' + pct + '%"></div></div>'
+            + '<div class="roadmap-meta"><span>' + step.current + '</span><span>' + step.target + '</span></div>'
+            + '</div>';
+        }).join('');
       }
 
       function renderCollections() {
@@ -1585,6 +1962,80 @@
         el.colTitles.textContent = state.ownedTitles.length + '/' + PLAYER_TITLES.length;
         const titleObj = PLAYER_TITLES.find(item => item.id === state.currentTitle);
         el.colCurrentTitle.textContent = titleObj ? titleObj.name : '—';
+        let albumHtml = '';
+        COLLECTION_ALBUMS.forEach(album => {
+          const prog = getAlbumProgress(album);
+          const pct = Math.max(0, Math.min(100, prog.owned / prog.total * 100));
+          albumHtml += '<div class="album-card">';
+          albumHtml += '<div class="album-top"><div><div class="album-title">' + album.name + '</div><div class="album-desc">' + album.desc + '</div></div><div class="album-badge ' + (prog.complete ? 'rarity-legendary' : 'rarity-rare') + '">' + prog.owned + '/' + prog.total + '</div></div>';
+          albumHtml += '<div class="album-progress"><div class="album-progress-fill" style="width:' + pct + '%"></div></div>';
+          albumHtml += '<div class="album-foot"><span>' + album.bonus + '</span><span class="' + (prog.complete ? 'set-complete' : prog.missing === 1 ? 'missing-one' : '') + '">' + (prog.complete ? 'Набор закрыт' : prog.missing === 1 ? 'Не хватает 1 предмета' : 'Осталось ' + prog.missing) + '</span></div>';
+          albumHtml += '</div>';
+        });
+        el.albumList.innerHTML = albumHtml;
+      }
+
+      function getTalentCost(def, level) {
+        return def.baseCost + level * def.growth;
+      }
+
+      function renderTalentTree() {
+        let html = '<div class="tree-section"><div class="tree-core"><span>✦</span></div><div class="tree-core-label">Ядро престижа</div><div class="tree-constellation">';
+        const talentIcons = { t_click: '⚔️', t_bank: '🏦', t_boss: '👑', t_rare: '💠' };
+        html += '<div class="tree-row">';
+        PRESTIGE_TALENTS.slice(0, 2).forEach(def => {
+          const lvl = getTalentLevel(def.id);
+          const cost = getTalentCost(def, lvl);
+          const rarity = getRarityMeta(def.rarity);
+          html += '<div class="talent-card ' + rarity.className + '">';
+          html += '<div class="talent-top"><div class="talent-headline"><div class="talent-icon">' + (talentIcons[def.id] || '✦') + '</div><div><div class="talent-name">' + def.name + '</div><div class="talent-desc">' + def.desc + '</div></div></div><div class="rarity-chip ' + rarity.className + '">' + rarity.label + '</div></div>';
+          html += '<div class="talent-foot"><span class="talent-level">Lv.' + lvl + '</span><span class="talent-cost">' + cost + ' ✦</span></div>';
+          html += '<button class="talent-btn" data-talent-id="' + def.id + '" ' + (state.prestigeEssence >= cost ? '' : 'disabled') + '>Улучшить</button>';
+          html += '</div>';
+        });
+        html += '</div><div class="tree-row">';
+        PRESTIGE_TALENTS.slice(2).forEach(def => {
+          const lvl = getTalentLevel(def.id);
+          const cost = getTalentCost(def, lvl);
+          const rarity = getRarityMeta(def.rarity);
+          html += '<div class="talent-card ' + rarity.className + '">';
+          html += '<div class="talent-top"><div class="talent-headline"><div class="talent-icon">' + (talentIcons[def.id] || '✦') + '</div><div><div class="talent-name">' + def.name + '</div><div class="talent-desc">' + def.desc + '</div></div></div><div class="rarity-chip ' + rarity.className + '">' + rarity.label + '</div></div>';
+          html += '<div class="talent-foot"><span class="talent-level">Lv.' + lvl + '</span><span class="talent-cost">' + cost + ' ✦</span></div>';
+          html += '<button class="talent-btn" data-talent-id="' + def.id + '" ' + (state.prestigeEssence >= cost ? '' : 'disabled') + '>Улучшить</button>';
+          html += '</div>';
+        });
+        html += '</div></div></div>';
+        el.prestigeTalentList.innerHTML = html;
+
+        let accHtml = '';
+        const accIcons = { a_global: '🌌', a_gems: '💎', a_auto: '🤖' };
+        ACCOUNT_UPGRADES.forEach(def => {
+          const lvl = getAccountUpgradeLevel(def.id);
+          const cost = getTalentCost(def, lvl);
+          const rarity = getRarityMeta(def.rarity);
+          accHtml += '<div class="talent-card ' + rarity.className + '">';
+          accHtml += '<div class="talent-top"><div class="talent-headline"><div class="account-icon">' + (accIcons[def.id] || '✦') + '</div><div><div class="talent-name">' + def.name + '</div><div class="talent-desc">' + def.desc + '</div></div></div><div class="rarity-chip ' + rarity.className + '">' + rarity.label + '</div></div>';
+          accHtml += '<div class="talent-foot"><span class="talent-level">Lv.' + lvl + '</span><span class="talent-cost">' + cost + ' ✦</span></div>';
+          accHtml += '<button class="talent-btn" data-account-id="' + def.id + '" ' + (state.prestigeEssence >= cost ? '' : 'disabled') + '>Улучшить</button>';
+          accHtml += '</div>';
+        });
+        el.accountUpgradeList.innerHTML = accHtml;
+      }
+
+      function renderRoles() {
+        let html = '';
+        const roleIcons = { role_adventurer: '🧭', role_warrior: '🛡️', role_treasurer: '💰', role_hunter: '🏹', role_archmage: '🔮' };
+        ROLE_OPTIONS.forEach(role => {
+          const active = state.currentRole === role.id;
+          const unlocked = state.prestige >= role.reqPrestige;
+          const rarityClass = role.reqPrestige >= 3 ? 'rarity-legendary' : role.reqPrestige >= 2 ? 'rarity-epic' : role.reqPrestige >= 1 ? 'rarity-rare' : 'rarity-common';
+          html += '<div class="role-card ' + rarityClass + (active ? ' active' : '') + '">';
+          html += '<div class="talent-top"><div class="talent-headline"><div class="role-icon">' + (roleIcons[role.id] || '✦') + '</div><div><div class="talent-name">' + role.name + '</div><div class="role-meta">' + role.desc + '</div></div></div><div class="album-badge ' + (unlocked ? rarityClass : 'rarity-common') + '">' + (unlocked ? 'Открыто' : 'Престиж ' + role.reqPrestige) + '</div></div>';
+          html += '<div class="talent-desc">Клик +' + role.clickPct + '% • Банк ' + role.bankPct + '% • Боссы +' + role.bossPct + '% • Лут +' + role.rarePct + '%</div>';
+          html += '<button class="role-btn" data-role-id="' + role.id + '" ' + (unlocked && !active ? '' : 'disabled') + '>' + (active ? 'Выбрано' : (unlocked ? 'Выбрать' : 'Недоступно')) + '</button>';
+          html += '</div>';
+        });
+        el.roleGrid.innerHTML = html;
       }
 
       function renderAchievements() {
@@ -1606,25 +2057,46 @@
         el.achievementsList.innerHTML = html;
       }
 
-      function sanitizeName(name) {
-        name = String(name || '').replace(/\s+/g, ' ').trim();
-        if (!name) return 'Игрок';
-        return name.slice(0, 20);
-      }
-      function saveCurrentRecord() { return false; }
-
-      function renderLeaderboard() {}
-
       function getChestDropType() {
         const roll = Math.random();
         const bonus = getLevelData().level >= 10 ? 0.01 : 0;
-        if (roll < 0.015 + bonus * 0.5) return 'legendary';
-        if (roll < 0.1 + bonus) return 'rare';
+        const rareLuck = getRareLootBonusPct();
+        const legendaryChance = Math.min(0.12, 0.015 + bonus * 0.5 + rareLuck * 0.0012);
+        const rareChance = Math.min(0.4, 0.1 + bonus + rareLuck * 0.003);
+        if (roll < legendaryChance) return 'legendary';
+        if (roll < rareChance) return 'rare';
         return 'common';
       }
 
-      function showReward(text) {
+      function spawnRewardParticles(rarity) {
+        if (!el.rewardParticles) return;
+        el.rewardParticles.innerHTML = '';
+        if (rarity !== 'epic' && rarity !== 'legendary') return;
+        const count = rarity === 'legendary' ? 18 : 12;
+        for (let i = 0; i < count; i++) {
+          const s = document.createElement('span');
+          s.className = 'reward-spark';
+          s.style.left = (50 + (Math.random() * 28 - 14)) + '%';
+          s.style.top = (42 + (Math.random() * 18 - 9)) + '%';
+          s.style.setProperty('--tx', (Math.random() * 240 - 120) + 'px');
+          s.style.setProperty('--ty', (Math.random() * 160 - 80) + 'px');
+          s.style.animationDelay = (Math.random() * 0.25) + 's';
+          el.rewardParticles.appendChild(s);
+        }
+      }
+
+      function showReward(text, options = {}) {
+        const rarity = options.rarity || 'common';
+        const icon = options.icon || '';
+        const title = options.title || 'Награда!';
+        if (el.rewardBox) el.rewardBox.className = 'modal-box reward-' + rarity;
+        if (el.rewardIcon) {
+          el.rewardIcon.textContent = icon;
+          el.rewardIcon.classList.toggle('show', !!icon);
+        }
+        if (el.rewardTitle) el.rewardTitle.textContent = title;
         el.rewardContent.textContent = text;
+        spawnRewardParticles(rarity);
         el.rewardModal.classList.add('show');
       }
 
@@ -1737,7 +2209,7 @@
         for (const pet of PETS) {
           const owned = state.ownedPets.includes(pet.id);
           const active = state.currentPet === pet.id;
-          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Питомец</span><span class="shop-item-price">x' + pet.effect + '</span></div><div class="shop-item-icon">' + pet.icon + '</div><div class="shop-item-name">' + pet.name + '</div><div class="shop-item-desc">x' + pet.effect + ' ко всему доходу</div>';
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Питомец</span><span class="shop-item-price">' + getRarityMeta(pet.rarity || 'common').label + '</span></div><div class="shop-item-icon">' + pet.icon + '</div><div class="shop-item-name">' + pet.name + '</div><div class="shop-item-desc">x' + pet.effect + ' ко всему доходу</div>';
           if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Выбрано</button>';
           else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="equipPet" data-id="' + pet.id + '">Выбрать</button>';
           else html += '<button class="shop-item-btn shop-btn-buy" data-action="buyPet" data-id="' + pet.id + '" data-cost="' + pet.cost + '">' + pet.cost + ' 💎</button>';
@@ -1762,7 +2234,7 @@
           const owned = state.ownedCoinSkins.includes(skin.id);
           const active = state.currentCoinSkin === skin.id;
           const allowed = canAccessCoinSkin(skin);
-          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Скин</span><span class="shop-item-price">' + fmt(skin.cost) + ' 💎</span></div><div class="shop-item-icon">' + coinPreviewMarkup(skin.id) + '</div><div class="shop-item-name">' + skin.name + '</div><div class="shop-item-desc">' + skin.desc + '<br>' + getCoinRequirementText(skin) + '</div>';
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Скин</span><span class="shop-item-price">' + getRarityMeta(skin.rarity || 'common').label + '</span></div><div class="shop-item-icon">' + coinPreviewMarkup(skin.id) + '</div><div class="shop-item-name">' + skin.name + '</div><div class="shop-item-desc">' + skin.desc + '<br>' + getCoinRequirementText(skin) + '</div>';
           if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Активно</button>';
           else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="selectCoinSkin" data-id="' + skin.id + '">Выбрать</button>';
           else if (!allowed) html += '<button class="shop-item-btn shop-btn-disabled" disabled>Закрыто</button>';
@@ -1812,7 +2284,7 @@
         }
         if (action === 'buyPet') {
           if (state.gems < cost) return showToast('Недостаточно кристаллов!');
-          state.gems -= cost; if (!state.ownedPets.includes(id)) state.ownedPets.push(id); state.currentPet = id;
+          state.gems -= cost; if (!state.ownedPets.includes(id)) { state.ownedPets.push(id); const pet = PETS.find(item => item.id === id); if (pet) markUnlock('pet:' + id, pet.name, pet.rarity || 'common', 'Новый питомец'); } state.currentPet = id;
           playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Питомец получен!');
           return;
         }
@@ -1834,7 +2306,7 @@
           const skin = getCoinSkin(id);
           if (!canAccessCoinSkin(skin)) return showToast('Скин пока закрыт!');
           if (state.gems < cost) return showToast('Недостаточно кристаллов!');
-          state.gems -= cost; if (!state.ownedCoinSkins.includes(id)) state.ownedCoinSkins.push(id); state.currentCoinSkin = id;
+          state.gems -= cost; if (!state.ownedCoinSkins.includes(id)) { state.ownedCoinSkins.push(id); const skin = COIN_SKINS.find(item => item.id === id); if (skin) markUnlock('coin:' + id, skin.name, skin.rarity || 'common', 'Новый скин монеты'); } state.currentCoinSkin = id;
           playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Скин монеты получен!');
           return;
         }
@@ -1980,14 +2452,55 @@
         });
       }
 
+      function buyPrestigeTalent(id) {
+        const def = PRESTIGE_TALENTS.find(item => item.id === id);
+        if (!def) return;
+        const lvl = getTalentLevel(id);
+        const cost = getTalentCost(def, lvl);
+        if (state.prestigeEssence < cost) return showToast('Недостаточно эссенции');
+        state.prestigeEssence -= cost;
+        state.prestigeTalents[id] = lvl + 1;
+        playSound('reward');
+        updateUI();
+        saveGame();
+        showToast(def.name + ' улучшен');
+      }
+
+      function buyAccountUpgrade(id) {
+        const def = ACCOUNT_UPGRADES.find(item => item.id === id);
+        if (!def) return;
+        const lvl = getAccountUpgradeLevel(id);
+        const cost = getTalentCost(def, lvl);
+        if (state.prestigeEssence < cost) return showToast('Недостаточно эссенции');
+        state.prestigeEssence -= cost;
+        state.accountUpgrades[id] = lvl + 1;
+        playSound('reward');
+        updateUI();
+        saveGame();
+        showToast(def.name + ' улучшен');
+      }
+
+      function selectRole(roleId) {
+        const role = ROLE_OPTIONS.find(item => item.id === roleId);
+        if (!role) return;
+        if (state.prestige < role.reqPrestige) return showToast('Роль пока недоступна');
+        state.currentRole = roleId;
+        playSound('reward');
+        updateUI();
+        saveGame();
+        showToast('Роль выбрана: ' + role.name);
+      }
+
       function doPrestige() {
         const gain = getPrestigeGain();
         if (gain <= 0) return showToast('Недостаточно золота цикла');
-        if (!confirm('Переродиться и получить +' + gain + '★? Это сбросит монеты, улучшения, банк и текущего босса.')) return;
+        const essenceGain = Math.max(1, gain * 3);
+        if (!confirm('Переродиться и получить +' + gain + '★ и +' + essenceGain + ' ✦? Это сбросит монеты, улучшения, банк и текущего босса.')) return;
         state.prestige += gain;
-        state.gold = 0; state.bankDep = 0; state.bankLifetime = 0; state.runGold = 0; state.clickPower = 1; state.autoClick = 0; state.bossIdx = 0; state.bossHp = BOSSES[0].hp; state.bossBattleActive = false; state.bossBattleEndsAt = 0; state.upgrades = {}; state.x2End = 0; state.combo = 1; state.comboExpire = 0; state.activeQuest = null;
+        state.prestigeEssence += essenceGain;
+        state.gold = 0; state.bankDep = 0; state.bankLifetime = 0; state.runGold = 0; state.clickPower = 1; state.autoClick = 0; state.bossIdx = 0; state.bossHp = BOSSES[0].hp; state.bossBattleActive = false; state.bossBattleEndsAt = 0; state.bossBattleStartedAt = 0; state.bossReviveAvailable = false; state.bossReviveHp = 0; state.bossReviveUsed = false; state.nextBossRewardDouble = false; state.bankBoostEnd = 0; state.autoClickBoostEnd = 0; state.dailyDoublePending = false; state.activeQuest = null; state.dailyTasksDate = ''; state.dailyTasks = []; state.chestRerollAvailable = false;
         ensureQuest(true);
-        playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Перерождение выполнено! +' + gain + '★');
+        playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Перерождение выполнено! +' + gain + '★ и +' + essenceGain + '✦');
         maybeShowInterstitial('prestige');
       }
 
@@ -2022,19 +2535,31 @@
         el.statRareChests.textContent = String(state.rareChestsOpened);
         el.statQuests.textContent = String(state.questsCompleted);
         el.statPrestige.textContent = String(state.prestige);
-        el.prestigeBonus.textContent = '+' + Math.floor(state.prestige * 12) + '%';
-        el.prestigeGain.textContent = String(getPrestigeGain());
+        const passive = getPrestigePassiveBonuses();
+        const nextPrestigeStars = getPrestigeGain();
+        const nextEssence = Math.max(1, nextPrestigeStars * 3);
+        el.prestigeBonus.textContent = '+клик ' + passive.clickPct + '% • банк ' + passive.bankPct + '% • босс ' + passive.bossPct + '% • лут ' + passive.rarePct + '%';
+        el.prestigeHeroClick.textContent = '+' + passive.clickPct + '%';
+        el.prestigeHeroBank.textContent = '+' + passive.bankPct + '%';
+        el.prestigeHeroBoss.textContent = '+' + passive.bossPct + '%';
+        el.prestigeHeroRare.textContent = '+' + passive.rarePct + '%';
+        el.prestigeGain.textContent = String(nextPrestigeStars);
+        el.prestigeEssence.textContent = fmt(state.prestigeEssence);
+        el.essenceChipVal.textContent = fmt(state.prestigeEssence);
         el.prestigeNeed.textContent = fmt(Math.max(0, getNextPrestigeNeed() - state.runGold));
         el.runGoldVal.textContent = fmt(state.runGold);
-        el.btnPrestige.disabled = getPrestigeGain() <= 0;
-        el.btnPrestige.textContent = getPrestigeGain() > 0 ? 'Переродиться • +' + getPrestigeGain() + '★' : 'Нужно ' + fmt(BASE_PRESTIGE_COST) + ' золота цикла';
+        el.btnPrestige.disabled = nextPrestigeStars <= 0;
+        el.btnPrestige.textContent = nextPrestigeStars > 0 ? 'Переродиться • +' + nextPrestigeStars + '★ и +' + nextEssence + '✦' : 'Нужно ' + fmt(BASE_PRESTIGE_COST) + ' золота цикла';
         el.btnDeposit.disabled = state.gold <= 0;
         el.btnWithdraw.disabled = state.bankDep <= 0;
         renderCoinTargets();
         updateQuestUI();
+        renderLongTermGoals();
         renderDailyRewards();
         renderDailyTasks();
         renderCollections();
+        renderTalentTree();
+        renderRoles();
         renderAchievements();
         updateBossUI();
       }
@@ -2087,6 +2612,10 @@
           if (typeof state.dailyTasksDate !== 'string') state.dailyTasksDate = '';
           if (!Array.isArray(state.dailyTasks)) state.dailyTasks = [];
           if (typeof state.chestRerollAvailable !== 'boolean') state.chestRerollAvailable = false;
+          if (!Number.isFinite(state.prestigeEssence)) state.prestigeEssence = 0;
+          if (typeof state.prestigeTalents !== 'object' || !state.prestigeTalents) state.prestigeTalents = { t_click: 0, t_bank: 0, t_boss: 0, t_rare: 0 };
+          if (typeof state.accountUpgrades !== 'object' || !state.accountUpgrades) state.accountUpgrades = { a_global: 0, a_gems: 0, a_auto: 0 };
+          if (typeof state.seenUnlocks !== 'object' || !state.seenUnlocks) state.seenUnlocks = {};
           if (!Array.isArray(state.ownedBossCards)) state.ownedBossCards = [];
           if (!Array.isArray(state.ownedFrames) || !state.ownedFrames.length) state.ownedFrames = ['frame_default'];
           if (!Array.isArray(state.ownedTitles) || !state.ownedTitles.length) state.ownedTitles = ['title_novice'];
@@ -2094,8 +2623,11 @@
           if (!state.ownedTitles.includes('title_novice')) state.ownedTitles.unshift('title_novice');
           if (!PROFILE_FRAMES.some(item => item.id === state.currentFrame)) state.currentFrame = 'frame_default';
           if (!PLAYER_TITLES.some(item => item.id === state.currentTitle)) state.currentTitle = 'title_novice';
+          if (!ROLE_OPTIONS.some(item => item.id === state.currentRole)) state.currentRole = 'role_adventurer';
           if (!Number.isFinite(state.appLaunchCount)) state.appLaunchCount = 0;
           if (!Number.isFinite(state.lastAppOpenAt)) state.lastAppOpenAt = 0;
+          PRESTIGE_TALENTS.forEach(item => { if (!Number.isFinite(state.prestigeTalents[item.id])) state.prestigeTalents[item.id] = 0; });
+          ACCOUNT_UPGRADES.forEach(item => { if (!Number.isFinite(state.accountUpgrades[item.id])) state.accountUpgrades[item.id] = 0; });
           if (!state.activeQuest || !state.activeQuest.type || !Number.isFinite(state.activeQuest.target)) ensureQuest(true);
           syncDailyState();
           if (state.bossIdx > getMaxUnlockedBossIdx()) state.bossIdx = getMaxUnlockedBossIdx();
@@ -2158,13 +2690,13 @@
           playSound('hit');
           if (state.bossHp <= 0) {
             const boss = BOSSES[state.bossIdx];
-            const rewardMult = state.nextBossRewardDouble ? 2 : 1;
+            const rewardMult = (state.nextBossRewardDouble ? 2 : 1) * getBossRewardMultiplier();
             const timeBonus = Math.max(0, Math.ceil(getBossRemainingMs() / 1000) * Math.max(1, Math.floor(boss.reward * 0.6)) * rewardMult);
             addGems(boss.reward * rewardMult);
             if (timeBonus > 0) addGold(timeBonus);
             state.bossesDefeated += 1;
             const cardId = 'boss_' + state.bossIdx;
-            if (!state.ownedBossCards.includes(cardId)) state.ownedBossCards.push(cardId);
+            if (!state.ownedBossCards.includes(cardId)) { state.ownedBossCards.push(cardId); const rarity = state.bossIdx <= 0 ? 'common' : state.bossIdx === 1 ? 'rare' : state.bossIdx === 2 ? 'epic' : 'legendary'; markUnlock(cardId, boss.name, rarity, 'Карточка босса'); }
             state.nextBossRewardDouble = false;
             state.bossBattleActive = false;
             state.bossBattleEndsAt = 0;
@@ -2173,7 +2705,7 @@
             state.bossReviveHp = 0;
             state.bossHp = boss.hp;
             playSound('reward');
-            showToast('Босс побеждён! +' + (boss.reward * rewardMult) + '💎' + (timeBonus > 0 ? ' и +' + fmt(timeBonus) + '$' : ''));
+            showToast('Босс побеждён! +' + fmt(boss.reward * rewardMult) + '💎' + (timeBonus > 0 ? ' и +' + fmt(timeBonus) + '$' : ''));
             maybeShowInterstitial('boss');
           } else if (hit.blocked === 'vulnerable') {
             showToast('Сейчас босс неуязвим!');
@@ -2239,9 +2771,25 @@
         el.btnPrestige.addEventListener('click', doPrestige);
 
         el.profileContent.addEventListener('click', e => {
-          const btn = e.target.closest('[data-achievement]');
-          if (!btn) return;
-          claimAchievement(btn.getAttribute('data-achievement'));
+          const achBtn = e.target.closest('[data-achievement]');
+          if (achBtn) {
+            claimAchievement(achBtn.getAttribute('data-achievement'));
+            return;
+          }
+          const talentBtn = e.target.closest('[data-talent-id]');
+          if (talentBtn) {
+            buyPrestigeTalent(talentBtn.getAttribute('data-talent-id'));
+            return;
+          }
+          const accountBtn = e.target.closest('[data-account-id]');
+          if (accountBtn) {
+            buyAccountUpgrade(accountBtn.getAttribute('data-account-id'));
+            return;
+          }
+          const roleBtn = e.target.closest('[data-role-id]');
+          if (roleBtn) {
+            selectRole(roleBtn.getAttribute('data-role-id'));
+          }
         });
 
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -2268,7 +2816,7 @@
         el.btnReset.addEventListener('click', e => {
           e.preventDefault();
           if (!confirm('Сбросить весь прогресс?')) return;
-            clearSavedProgressStorage();
+          clearSavedProgressStorage();
           const fresh = getDefaultState();
           Object.keys(state).forEach(key => { delete state[key]; });
           Object.assign(state, fresh);
