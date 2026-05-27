@@ -137,16 +137,21 @@
     .shop-hero-cell{padding:10px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.05)}
     .shop-hero-cell span{display:block;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.34)}
     .shop-hero-cell b{display:block;margin-top:5px;font-size:13px;font-weight:900;color:#fff}
-    .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .shop-item{position:relative;padding:12px;text-align:center;transition:border-color .2s,transform .15s ease,background .15s ease;background:linear-gradient(180deg,rgba(27,32,55,.9),rgba(15,19,34,.85));box-shadow:0 10px 24px rgba(0,0,0,.16)}
-    .shop-item:before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 40%);pointer-events:none}
-    .shop-item.owned{border-color:rgba(255,215,0,.28)}
-    .shop-item:hover{transform:translateY(-1px)}
-    .shop-item-btn{width:100%;padding:9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase}
-    .shop-btn-buy{background:linear-gradient(135deg,#e8c84a,#c4a535);color:#1a1d2e}
-    .shop-btn-select{background:rgba(255,215,0,.1);color:#ffd700;border:1px solid rgba(255,215,0,.2)}
-    .shop-btn-equipped{background:rgba(255,255,255,.05);color:rgba(255,255,255,.32);cursor:default}
-    .shop-btn-disabled{background:rgba(255,255,255,.03);color:rgba(255,255,255,.22);cursor:not-allowed}
+    .shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
+    .shop-item{position:relative;padding:16px;border-radius:18px;background:rgba(21,27,47,0.7);border:1px solid rgba(255,255,255,0.06);text-align:center;transition:all 0.15s ease;display:flex;flex-direction:column;justify-content:space-between;min-height:210px;box-shadow:0 8px 24px rgba(0,0,0,0.14)}
+    .shop-item:hover{transform:translateY(-2px);border-color:rgba(255,215,0,0.15);box-shadow:0 12px 30px rgba(0,0,0,0.22)}
+    .shop-item-top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+    .shop-item-badge{padding:4px 8px;border-radius:6px;font-size:9px;font-weight:900;letter-spacing:0.5px;text-transform:uppercase}
+    .shop-item-price{font-size:10px;font-weight:800;color:rgba(255,255,255,0.42);text-transform:uppercase}
+    .shop-item-icon{font-size:38px;line-height:1;margin:12px 0 8px 0;display:flex;align-items:center;justify-content:center}
+    .shop-item-name{font-size:12px;font-weight:900;color:#fff;margin-bottom:4px}
+    .shop-item-name .lvl{color:#e8c84a;font-weight:900;margin-left:4px}
+    .shop-item-desc{font-size:10px;line-height:1.4;color:rgba(255,255,255,0.38);min-height:30px;margin-bottom:12px}
+    .shop-item-btn{width:100%;padding:11px 0;border-radius:12px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.3px;border:none;cursor:pointer;transition:all 0.15s ease}
+    .shop-btn-buy{background:#e8c84a;color:#0a0f1e;box-shadow:0 4px 12px rgba(232,200,74,0.15)}
+    .shop-btn-buy:active{transform:scale(0.97)}
+    .shop-btn-equipped{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.28);cursor:default}
+    .shop-btn-disabled{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.18);cursor:not-allowed}
     .boss-content{padding:16px 14px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
     .boss-card{position:relative;isolation:isolate;overflow:hidden;width:100%;padding:18px;border-radius:20px;background:linear-gradient(180deg,rgba(27,18,27,.88),rgba(16,12,27,.9));border:1px solid rgba(255,255,255,.06);box-shadow:0 18px 40px rgba(0,0,0,.24);transition:background .3s ease,border-color .3s ease,box-shadow .3s ease,transform .3s ease}
     .boss-card:before,.boss-card:after{content:'';position:absolute;pointer-events:none;z-index:-1}
@@ -365,9 +370,37 @@
     @media(max-width:520px){.top-bar{gap:8px}.quest-progress-row{flex-direction:column;align-items:stretch}.quest-progress-text{text-align:left;min-width:0}.quest-strip,.bank-card,.boss-card,.profile-card,.collection-card,.ad-card{margin-left:var(--page-pad);margin-right:var(--page-pad)}.bank-top{flex-wrap:wrap}.bank-rate{margin-left:auto}.boss-content{padding:12px 0}.boss-state-row{flex-wrap:wrap;justify-content:center}.boss-meta-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.boss-meta{min-height:68px;padding:8px 6px}.boss-meta span{font-size:9px}.boss-meta b{font-size:14px}.bonus-card{flex-wrap:wrap}.bonus-card-side{width:100%;max-width:none;justify-content:stretch}.bonus-card-side .ad-btn{width:100%}.profile-row{flex-wrap:wrap}.profile-row b{width:100%;text-align:left}.collection-grid{grid-template-columns:1fr 1fr}.ad-content,.shop-content,.profile-content{padding:10px 0 12px}.shop-item{padding:11px}.shop-item-desc{min-height:auto}}
     @media(max-width:380px){.collection-grid{grid-template-columns:1fr}.boss-meta-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.boss-meta{min-height:64px;padding:8px 4px}.boss-meta span{font-size:8px;letter-spacing:.7px}.boss-meta b{font-size:12px}.bonus-card{flex-direction:column;align-items:center;text-align:center}.bonus-card-icon{margin:0 auto}.bonus-card-body{text-align:center}.bonus-card-side{width:100%}.ad-card{text-align:center}.bank-info{flex-direction:column;align-items:flex-start}.coins-val{max-width:32vw}.diamond-val{font-size:15px}.top-bar{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}.rank-badge{max-width:44vw}.bottom-nav{padding-left:0;padding-right:0}.nav-item{min-width:0;padding:6px 4px}.quest-title{font-size:11px}.boss-name{font-size:13px}}
     @media(max-width:340px){:root{--page-pad:12px;--clicker-wrap-size:162px}.shop-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:1fr;gap:8px}.coins-val{max-width:34vw}.daily-days{grid-template-columns:repeat(4,1fr)}.coin-main{width:78px;height:78px;font-size:31px}.level-top{gap:6px;align-items:flex-start}.top-left,.top-right{gap:6px}.rank-badge{max-width:46vw}}
+      .sub-tab-bar{display:flex;gap:10px;margin-bottom:15px;width:100%;max-width:400px;justify-content:center}
+    .sub-tab{flex:1;padding:8px 0;font-size:11px;font-weight:900;border-radius:10px;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02);color:rgba(255,255,255,.6);cursor:pointer;text-transform:uppercase;transition:all .2s ease}
+    .sub-tab.active{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.25);color:#ffd700}
+      .album-items-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+    .codex-item-card{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);text-align:center;transition:all .2s ease;min-height:74px}
+    .codex-item-card.locked{opacity:.45}
+    .codex-item-card .codex-emoji{font-size:22px;line-height:1;margin-bottom:4px;transition:all .2s ease}
+    .codex-item-card.locked .codex-emoji{filter:grayscale(1) brightness(0.15) blur(0.5px)}
+    .codex-item-card .codex-name{font-size:8px;font-weight:800;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-transform:uppercase}
+    .codex-item-card.locked .codex-name{color:rgba(255,255,255,.25)}
+    .reward-tiers-row{display:flex;justify-content:space-between;gap:6px;margin-top:12px;padding:6px;background:rgba(0,0,0,.2);border-radius:10px}
+    .reward-tier-btn{flex:1;padding:6px 0;font-size:9px;font-weight:900;border:none;border-radius:6px;cursor:pointer;transition:all .15s ease;text-align:center;text-transform:uppercase;letter-spacing:.3px}
+    .reward-tier-btn.locked{background:rgba(255,255,255,.03);color:rgba(255,255,255,.18);cursor:not-allowed}
+    .reward-tier-btn.ready{background:linear-gradient(135deg,#22c55e,#16a34a);color:#05140a;box-shadow:0 0 10px rgba(34,197,94,.2);animation:pulse-green 1.5s infinite}
+    .reward-tier-btn.claimed{background:rgba(34,197,94,.12);color:#86efac;cursor:default}
+    @keyframes pulse-green{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+      .lucky-glowing-coin{position:fixed;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff5cc,#ffd700 60%,#b38600);box-shadow:0 0 24px #ffd700,inset 0 4px 8px rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#5a3e00;cursor:pointer;z-index:1000;animation:luckyFloat 8s ease-out forwards}
+    @keyframes luckyFloat{0%{transform:scale(0) translateY(0);opacity:0}10%{transform:scale(1.15) translateY(-10px);opacity:1}90%{transform:scale(1) translateY(-60px);opacity:1}100%{transform:scale(0) translateY(-80px);opacity:0}}
+    .frenzy-overlay{position:fixed;inset:0;background:radial-gradient(circle,transparent 50%,rgba(255,215,0,.08));pointer-events:none;z-index:99;opacity:0;transition:opacity .5s ease}
+    .frenzy-overlay.active{opacity:1;animation:frenzyGlow 2s infinite ease-in-out}
+    @keyframes frenzyGlow{0%,100%{opacity:.45}50%{opacity:.95}}
+    .frenzy-timer-bar{position:fixed;top:calc(50px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:rgba(212,163,89,.95);border:1px solid #ffd700;box-shadow:0 0 15px rgba(255,215,0,.3);padding:6px 14px;border-radius:20px;font-size:10px;font-weight:900;color:#1e1a0a;z-index:1001;display:none;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.8px}
+    .frenzy-timer-bar.show{display:flex;animation:pop .2s cubic-bezier(.34,1.56,.64,1)}
   </style>
 </head>
 <body class="theme-default">
+  <div class="frenzy-overlay" id="frenzyOverlay"></div>
+  <div class="frenzy-timer-bar" id="frenzyTimerBar">
+    <span>⚡ Золотая лихорадка x5!</span>
+    <b id="frenzyTimerText">30с</b>
+  </div>
   <div class="loading-screen" id="loadingScreen">
     <div class="spinner"></div>
     <div class="loading-text">Загрузка...</div>
@@ -462,28 +495,58 @@
 
     <div class="tab-page" id="page-bosses">
       <div class="boss-content">
-        <div class="boss-card" id="bossCard">
-          <div class="boss-state-row">
-            <div class="boss-state-badge" id="bossState">Ожидание</div>
-            <div class="boss-timer-text" id="bossTimerText">00:00</div>
+        <div class="sub-tab-bar">
+          <button class="sub-tab active" id="btnSubTabNormal" type="button">Обычные боссы</button>
+          <button class="sub-tab" id="btnSubTabTower" type="button">Башня испытаний</button>
+        </div>
+        
+        <div id="boss-normal-section" style="width:100%;">
+          <div class="boss-card" id="bossCard">
+            <div class="boss-state-row">
+              <div class="boss-state-badge" id="bossState">Ожидание</div>
+              <div class="boss-timer-text" id="bossTimerText">00:00</div>
+            </div>
+            <div class="boss-name" id="bossName">СТРАЖ ПЕЩЕРЫ</div>
+            <div class="boss-req" id="bossReq">Открыт</div>
+            <div class="boss-reward">Награда: <b id="bossReward">5</b> 💎</div>
+            <div class="boss-meta-grid">
+              <div class="boss-meta"><span>Броня</span><b id="bossArmor">0</b></div>
+              <div class="boss-meta"><span>Режим</span><b id="bossRage">Спокойствие</b></div>
+              <div class="boss-meta"><span>Реген</span><b id="bossDuration">0/с</b></div>
+            </div>
+            <div class="boss-timer-bar"><div class="boss-timer-fill" id="bossTimerFill"></div></div>
+            <div class="boss-sprite" id="bossSprite">👹</div>
+            <div class="boss-hp-bar"><div class="boss-hp-fill" id="bossHpFill"></div></div>
+            <div class="boss-hp-text"><span id="bossHp">100</span> / <span id="bossMaxHp">100</span> HP</div>
+            <button class="boss-start-btn" id="btnStartBoss" type="button">Начать бой</button>
+            <div class="boss-warning" id="bossHintText">Нажмите «Начать бой», затем атакуйте босса до истечения таймера.</div>
+            <div class="boss-nav">
+              <button class="boss-nav-btn" id="btnPrevBoss" type="button">← Пред.</button>
+              <button class="boss-nav-btn" id="btnNextBoss" type="button">След. →</button>
+            </div>
           </div>
-          <div class="boss-name" id="bossName">СТРАЖ ПЕЩЕРЫ</div>
-          <div class="boss-req" id="bossReq">Открыт</div>
-          <div class="boss-reward">Награда: <b id="bossReward">5</b> 💎</div>
-          <div class="boss-meta-grid">
-            <div class="boss-meta"><span>Броня</span><b id="bossArmor">0</b></div>
-            <div class="boss-meta"><span>Режим</span><b id="bossRage">Спокойствие</b></div>
-            <div class="boss-meta"><span>Реген</span><b id="bossDuration">0/с</b></div>
-          </div>
-          <div class="boss-timer-bar"><div class="boss-timer-fill" id="bossTimerFill"></div></div>
-          <div class="boss-sprite" id="bossSprite">👹</div>
-          <div class="boss-hp-bar"><div class="boss-hp-fill" id="bossHpFill"></div></div>
-          <div class="boss-hp-text"><span id="bossHp">100</span> / <span id="bossMaxHp">100</span> HP</div>
-          <button class="boss-start-btn" id="btnStartBoss" type="button">Начать бой</button>
-          <div class="boss-warning" id="bossHintText">Нажмите «Начать бой», затем атакуйте босса до истечения таймера.</div>
-          <div class="boss-nav">
-            <button class="boss-nav-btn" id="btnPrevBoss" type="button">← Пред.</button>
-            <button class="boss-nav-btn" id="btnNextBoss" type="button">След. →</button>
+        </div>
+
+        <div id="boss-tower-section" style="width:100%;display:none;">
+          <div class="boss-card" id="towerCard">
+            <div class="boss-state-row">
+              <div class="boss-state-badge" id="towerState">Закрыта</div>
+              <div class="boss-timer-text" id="towerTimerText">00:15</div>
+            </div>
+            <div class="boss-name" id="towerName">БАШНЯ ИСПЫТАНИЙ</div>
+            <div class="boss-req" id="towerReq">Попыток сегодня: 1/1</div>
+            <div class="boss-reward" id="towerReward">Награда за этаж: —</div>
+            <div class="boss-meta-grid">
+              <div class="boss-meta"><span>Этаж</span><b id="towerFloorText">—</b></div>
+              <div class="boss-meta"><span>Рекорд</span><b id="towerRecordText">—</b></div>
+              <div class="boss-meta"><span>Реген</span><b id="towerDurationText">—</b></div>
+            </div>
+            <div class="boss-timer-bar"><div class="boss-timer-fill" id="towerTimerFill"></div></div>
+            <div class="boss-sprite" id="towerSprite">🏰</div>
+            <div class="boss-hp-bar"><div class="boss-hp-fill" id="towerHpFill"></div></div>
+            <div class="boss-hp-text"><span id="towerHp">0</span> / <span id="towerMaxHp">0</span> HP</div>
+            <button class="boss-start-btn" id="btnStartTower" type="button" style="background:linear-gradient(135deg,#a855f7,#7c3aed);">Войти в башню</button>
+            <div class="boss-warning" id="towerHintText">Пройдите как можно больше этажей за одну попытку! Время на этаж ограничено.</div>
           </div>
         </div>
       </div>
@@ -548,7 +611,7 @@
 
     <div class="tab-page" id="page-collection">
       <div class="profile-content" id="collectionContent">
-        <div class="shop-section-title" style="margin-top:0">Коллекции</div>
+        <div class="shop-section-title" style="margin-top:0">Коллекции и Кодекс</div>
         <div class="collection-card">
           <div class="collection-grid">
             <div class="collection-item"><span>Скины монет</span><b id="colCoinSkins">0/0</b></div>
@@ -558,8 +621,32 @@
             <div class="collection-item"><span>Титулы</span><b id="colTitles">0/0</b></div>
             <div class="collection-item"><span>Текущий титул</span><b id="colCurrentTitle">—</b></div>
           </div>
-          <div class="collection-note">Собирайте коллекции и закрывайте альбомы. Полные наборы дают постоянные бонусы, а если не хватает 1 предмета — игра отдельно покажет это.</div>
+          <div class="collection-note">Собирайте коллекции, открывайте новые предметы и забирайте промежуточные награды за заполнение альбомов!</div>
         </div>
+
+        <div class="shop-section-title">Фильтры Кодекса</div>
+        <div class="filter-bar" style="display:flex;flex-direction:column;gap:8px;margin-bottom:15px;padding:12px;background:rgba(255,255,255,.02);border-radius:12px;border:1px solid rgba(255,255,255,.05);">
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:10px;font-weight:900;color:rgba(255,255,255,.4);width:70px;text-transform:uppercase;">Статус:</span>
+            <div style="display:flex;gap:6px;flex:1;">
+              <button class="sub-tab active" id="btnFilterAll" type="button" style="padding:5px;font-size:9px;">Все</button>
+              <button class="sub-tab" id="btnFilterOwned" type="button" style="padding:5px;font-size:9px;">Открытые</button>
+              <button class="sub-tab" id="btnFilterLocked" type="button" style="padding:5px;font-size:9px;">Секретные</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <span style="font-size:10px;font-weight:900;color:rgba(255,255,255,.4);width:70px;text-transform:uppercase;">Редкость:</span>
+            <div style="display:flex;gap:6px;flex:1;flex-wrap:wrap;">
+              <button class="sub-tab active" id="btnRarityAll" type="button" style="padding:5px;font-size:9px;flex:none;min-width:45px;">Все</button>
+              <button class="sub-tab" id="btnRarityCommon" type="button" style="padding:5px;font-size:9px;flex:none;min-width:45px;">Обыч</button>
+              <button class="sub-tab" id="btnRarityRare" type="button" style="padding:5px;font-size:9px;flex:none;min-width:45px;">Редк</button>
+              <button class="sub-tab" id="btnRarityEpic" type="button" style="padding:5px;font-size:9px;flex:none;min-width:45px;">Эпик</button>
+              <button class="sub-tab" id="btnRarityLegendary" type="button" style="padding:5px;font-size:9px;flex:none;min-width:45px;">Лег</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="shop-section-title">Альбомы и Прогресс</div>
         <div class="album-list" id="albumList"></div>
       </div>
     </div>
@@ -746,6 +833,16 @@
           currentTitle: 'title_novice',
           appLaunchCount: 0,
           lastAppOpenAt: 0,
+          towerLastAttemptAt: 0,
+          towerMaxFloorReached: 0,
+          collectionRewardsClaimed: {},
+          roleLevels: {
+            role_adventurer: 1,
+            role_warrior: 1,
+            role_treasurer: 1,
+            role_hunter: 1,
+            role_archmage: 1
+          },
           lastSave: Date.now()
         };
       }
@@ -937,6 +1034,13 @@
       let rewardAdInProgress = false;
       let appHiddenAt = 0;
       let lastTaskRewardAt = 0;
+      let towerActiveRun = null;
+      let towerBossHp = 0;
+      let towerBossMaxHp = 0;
+      let towerCooldown = false;
+      let codexFilterStatus = 'all';
+      let codexFilterRarity = 'all';
+      let frenzyEnd = 0;
 
       function cacheElements() {
         Object.assign(el, {
@@ -951,7 +1055,39 @@
           dailyStatus: document.getElementById('dailyStatus'), dailyDays: document.getElementById('dailyDays'), btnDailyClaim: document.getElementById('btnDailyClaim'), dailyTasksList: document.getElementById('dailyTasksList'), dailyTasksTimer: document.getElementById('dailyTasksTimer'), bonusCooldownText: document.getElementById('bonusCooldownText'), nextRareChestText: document.getElementById('nextRareChestText'), bonusContent: document.getElementById('bonusContent'),
           adBtn1: document.getElementById('adBtn1'), adBtn2: document.getElementById('adBtn2'), adBtn3: document.getElementById('adBtn3'),
           toast: document.getElementById('toast'), chestModal: document.getElementById('chestModal'), chestAnim: document.getElementById('chestAnim'), chestHint: document.getElementById('chestHint'), rewardModal: document.getElementById('rewardModal'), rewardBox: document.getElementById('rewardBox'), rewardParticles: document.getElementById('rewardParticles'), rewardIcon: document.getElementById('rewardIcon'), rewardTitle: document.getElementById('rewardTitle'), rewardContent: document.getElementById('rewardContent'), btnCloseReward: document.getElementById('btnCloseReward'), loadingScreen: document.getElementById('loadingScreen'), bgParticles: document.getElementById('bgParticles'),
-          questTier: document.getElementById('questTier'), questReward: document.getElementById('questReward'), questTitle: document.getElementById('questTitle'), questFill: document.getElementById('questFill'), questText: document.getElementById('questText'), btnQuestClaim: document.getElementById('btnQuestClaim'),
+          questTier: document.getElementById('questTier'),
+          frenzyOverlay: document.getElementById('frenzyOverlay'),
+          frenzyTimerBar: document.getElementById('frenzyTimerBar'),
+          frenzyTimerText: document.getElementById('frenzyTimerText'), questReward: document.getElementById('questReward'), questTitle: document.getElementById('questTitle'), questFill: document.getElementById('questFill'), questText: document.getElementById('questText'), btnQuestClaim: document.getElementById('btnQuestClaim'),
+          btnSubTabNormal: document.getElementById('btnSubTabNormal'),
+          btnSubTabTower: document.getElementById('btnSubTabTower'),
+          bossNormalSection: document.getElementById('boss-normal-section'),
+          bossTowerSection: document.getElementById('boss-tower-section'),
+          towerCard: document.getElementById('towerCard'),
+          towerState: document.getElementById('towerState'),
+          towerTimerText: document.getElementById('towerTimerText'),
+          towerName: document.getElementById('towerName'),
+          towerReq: document.getElementById('towerReq'),
+          towerReward: document.getElementById('towerReward'),
+          towerFloorText: document.getElementById('towerFloorText'),
+          towerRecordText: document.getElementById('towerRecordText'),
+          towerDurationText: document.getElementById('towerDurationText'),
+          towerTimerFill: document.getElementById('towerTimerFill'),
+          towerSprite: document.getElementById('towerSprite'),
+          towerHpFill: document.getElementById('towerHpFill'),
+          collectionContent: document.getElementById('collectionContent'),
+          btnFilterAll: document.getElementById('btnFilterAll'),
+          btnFilterOwned: document.getElementById('btnFilterOwned'),
+          btnFilterLocked: document.getElementById('btnFilterLocked'),
+          btnRarityAll: document.getElementById('btnRarityAll'),
+          btnRarityCommon: document.getElementById('btnRarityCommon'),
+          btnRarityRare: document.getElementById('btnRarityRare'),
+          btnRarityEpic: document.getElementById('btnRarityEpic'),
+          btnRarityLegendary: document.getElementById('btnRarityLegendary'),
+          towerHp: document.getElementById('towerHp'),
+          towerMaxHp: document.getElementById('towerMaxHp'),
+          btnStartTower: document.getElementById('btnStartTower'),
+          towerHintText: document.getElementById('towerHintText'),
           topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark')
         });
       }
@@ -1111,16 +1247,87 @@
         });
         return { clickPct, autoPct, bossPct, rarePct };
       }
+      function getRoleBonus(roleId) {
+        const lvl = (state.roleLevels && state.roleLevels[roleId]) || 1;
+        const base = ROLE_OPTIONS.find(r => r.id === roleId) || ROLE_OPTIONS[0];
+
+        let clickPct = base.clickPct || 0;
+        let bankPct = base.bankPct || 0;
+        let bossPct = base.bossPct || 0;
+        let rarePct = base.rarePct || 0;
+        let autoPct = 0;
+        let coinSpawnPct = 0;
+
+        const extraLvl = lvl - 1;
+        if (roleId === 'role_adventurer') {
+          clickPct += extraLvl * 3;
+          bankPct += extraLvl * 3;
+          autoPct += extraLvl * 3;
+        } else if (roleId === 'role_warrior') {
+          clickPct += extraLvl * 12;
+          bossPct += extraLvl * 10;
+          bankPct -= extraLvl * 2;
+        } else if (roleId === 'role_treasurer') {
+          bankPct += extraLvl * 15;
+          autoPct += extraLvl * 8;
+          clickPct -= extraLvl * 2;
+        } else if (roleId === 'role_hunter') {
+          rarePct += extraLvl * 10;
+          coinSpawnPct += extraLvl * 8;
+          bossPct += extraLvl * 6;
+        } else if (roleId === 'role_archmage') {
+          clickPct += extraLvl * 6;
+          bankPct += extraLvl * 5;
+          bossPct += extraLvl * 5;
+          rarePct += extraLvl * 5;
+        }
+
+        return { clickPct, bankPct, bossPct, rarePct, autoPct, coinSpawnPct };
+      }
+
+      function upgradeRoleSpecialty(roleId) {
+        const lvl = (state.roleLevels && state.roleLevels[roleId]) || 1;
+        const goldCost = Math.floor(getClickPower() * 800 * lvl);
+        const gemCost = lvl * 12;
+
+        if (state.gold < goldCost) {
+          showToast('Недостаточно монет!');
+          return;
+        }
+        if (state.gems < gemCost) {
+          showToast('Недостаточно кристаллов!');
+          return;
+        }
+
+        state.gold -= goldCost;
+        state.gems -= gemCost;
+        state.roleLevels[roleId] = lvl + 1;
+
+        playSound('reward');
+        showToast('Специализация класса повышена до уровня ' + (lvl + 1) + '!');
+        updateUI();
+        saveGame();
+      }
+
+      function getGoldenCoinSpawnChances() {
+        const bonus = getRoleBonus(state.currentRole).coinSpawnPct || 0;
+        const multiplier = 1 + bonus / 100;
+        return {
+          clickChance: 0.015 * multiplier,
+          passiveChance: 0.006 * multiplier
+        };
+      }
+
       function getPrestigePassiveBonuses() {
-        const role = getRole();
+        const roleBonus = getRoleBonus(state.currentRole);
         const collection = getCollectionBonuses();
         const globalLvl = getAccountUpgradeLevel('a_global');
         return {
-          clickPct: state.prestige * 5 + getTalentLevel('t_click') * 4 + globalLvl * 2 + collection.clickPct + (role.clickPct || 0),
-          bankPct: state.prestige * 3 + getTalentLevel('t_bank') * 3 + globalLvl * 2 + (role.bankPct || 0),
-          bossPct: state.prestige * 4 + getTalentLevel('t_boss') * 4 + globalLvl * 2 + collection.bossPct + (role.bossPct || 0),
-          rarePct: state.prestige * 1 + getTalentLevel('t_rare') * 1 + getAccountUpgradeLevel('a_gems') * 1 + collection.rarePct + (role.rarePct || 0),
-          autoPct: getAccountUpgradeLevel('a_auto') * 5 + globalLvl * 2 + collection.autoPct,
+          clickPct: state.prestige * 5 + getTalentLevel('t_click') * 4 + globalLvl * 2 + collection.clickPct + (roleBonus.clickPct || 0),
+          bankPct: state.prestige * 3 + getTalentLevel('t_bank') * 3 + globalLvl * 2 + (roleBonus.bankPct || 0),
+          bossPct: state.prestige * 4 + getTalentLevel('t_boss') * 4 + globalLvl * 2 + collection.bossPct + (roleBonus.bossPct || 0),
+          rarePct: state.prestige * 1 + getTalentLevel('t_rare') * 1 + getAccountUpgradeLevel('a_gems') * 1 + collection.rarePct + (roleBonus.rarePct || 0),
+          autoPct: getAccountUpgradeLevel('a_auto') * 5 + globalLvl * 2 + collection.autoPct + (roleBonus.autoPct || 0),
           gemPct: getAccountUpgradeLevel('a_gems') * 2
         };
       }
@@ -1129,7 +1336,9 @@
       function getComboMult() { return Date.now() > state.comboExpire ? 1 : Math.min(1 + (Math.max(1, state.combo) - 1) * 0.04, 2.2); }
       function getClickPower() {
         const role = getRole();
-        return Math.max(1, Math.floor(state.clickPower * getPetMult() * (1 + getPrestigePassiveBonuses().clickPct / 100) * getX2Mult() * getComboMult() * getLevelBonusMult()));
+        const basePower = state.clickPower * getPetMult() * (1 + getPrestigePassiveBonuses().clickPct / 100);
+        const frenzyMult = Date.now() < frenzyEnd ? 5 : 1;
+        return Math.max(1, Math.floor(basePower * getX2Mult() * getComboMult() * getLevelBonusMult() * frenzyMult));
       }
       function getAutoIncome() {
         const base = state.autoClick;
@@ -1939,6 +2148,88 @@
         }).join('');
       }
 
+      function getAlbumItems(albumId) {
+        if (albumId === 'album_coin') {
+          return COIN_SKINS.map(s => ({ id: s.id, name: s.name, sprite: s.mark, rarity: s.rarity || 'common', owned: state.ownedCoinSkins.includes(s.id) }));
+        }
+        if (albumId === 'album_pets') {
+          return PETS.filter(p => p.id !== 'pet_none').map(p => ({ id: p.id, name: p.name, sprite: p.icon, rarity: p.rarity || 'common', owned: state.ownedPets.includes(p.id) }));
+        }
+        if (albumId === 'album_boss') {
+          return BOSSES.map((b, idx) => ({ id: 'boss_' + idx, name: b.name.replace('СТРАЖ ', ''), sprite: b.sprite, rarity: idx <= 0 ? 'common' : idx === 1 ? 'rare' : idx === 2 ? 'epic' : 'legendary', owned: state.ownedBossCards.includes('boss_' + idx) }));
+        }
+        if (albumId === 'album_style') {
+          const frames = PROFILE_FRAMES.map(f => ({ id: f.id, name: f.name, sprite: '🖼️', rarity: f.rarity || 'common', owned: state.ownedFrames.includes(f.id) }));
+          const titles = PLAYER_TITLES.map(t => ({ id: t.id, name: t.name, sprite: '📜', rarity: t.rarity || 'common', owned: state.ownedTitles.includes(t.id) }));
+          return frames.concat(titles);
+        }
+        return [];
+      }
+
+      function getCollectionTierReward(albumId, tier) {
+        const upgLvl = getClickPower();
+        if (tier === 25) {
+          return { gold: upgLvl * 250, gems: 0, label: fmt(upgLvl * 250) + ' $' };
+        } else if (tier === 50) {
+          return { gold: 0, gems: 15, label: '15 💎' };
+        } else if (tier === 75) {
+          return { gold: upgLvl * 1200, gems: 0, label: fmt(upgLvl * 1200) + ' $' };
+        } else {
+          return { gold: 0, gems: 50, label: '50 💎' };
+        }
+      }
+
+      function claimCollectionReward(albumId, tier) {
+        const rewardKey = albumId + '_' + tier;
+        if (state.collectionRewardsClaimed[rewardKey]) return;
+
+        const album = COLLECTION_ALBUMS.find(a => a.id === albumId);
+        if (!album) return;
+        const total = album.total();
+        const owned = album.owned(state);
+        const pct = total > 0 ? Math.floor((owned / total) * 100) : 0;
+
+        if (pct < tier) {
+          showToast('Нужно заполнить альбом на ' + tier + '%!');
+          return;
+        }
+
+        state.collectionRewardsClaimed[rewardKey] = true;
+        const reward = getCollectionTierReward(albumId, tier);
+        if (reward.gold > 0) addGold(reward.gold);
+        if (reward.gems > 0) addGems(reward.gems);
+
+        playSound('reward');
+
+        if (tier === 100) {
+          triggerFullAlbumCompletionAnimation(album);
+        } else {
+          showReward('За достижение ' + tier + '% прогресса в ' + album.name + '!\n\nПолучено: ' + reward.label);
+        }
+
+        updateUI();
+        saveGame();
+      }
+
+      function triggerFullAlbumCompletionAnimation(album) {
+        playSound('reward');
+        setTimeout(() => playSound('reward'), 150);
+        setTimeout(() => playSound('reward'), 300);
+
+        for (let i = 0; i < 25; i++) {
+          setTimeout(() => {
+            const x = window.innerWidth / 2 + (Math.random() * 200 - 100);
+            const y = window.innerHeight / 2 + (Math.random() * 200 - 100);
+            spawnFloat(x, y, '✨');
+          }, i * 60);
+        }
+
+        showReward('🎉 ПОЗДРАВЛЯЕМ! 🎉\n\nВы полностью собрали ' + album.name + '!\n\nПостоянный бонус активирован:\n🌟 ' + album.bonus + ' навсегда!\n\nНаграда за 100% прохождение:\n💎 +50 кристаллов!', {
+          rarity: 'legendary',
+          title: 'АЛЬБОМ ПОЛНОСТЬЮ ЗАВЕРШЁН!'
+        });
+      }
+
       function renderCollections() {
         ensureCollectionsUnlocks();
         el.colCoinSkins.textContent = state.ownedCoinSkins.length + '/' + COIN_SKINS.length;
@@ -1951,11 +2242,63 @@
         let albumHtml = '';
         COLLECTION_ALBUMS.forEach(album => {
           const prog = getAlbumProgress(album);
-          const pct = Math.max(0, Math.min(100, prog.owned / prog.total * 100));
-          albumHtml += '<div class="album-card">';
-          albumHtml += '<div class="album-top"><div><div class="album-title">' + album.name + '</div><div class="album-desc">' + album.desc + '</div></div><div class="album-badge ' + (prog.complete ? 'rarity-legendary' : 'rarity-rare') + '">' + prog.owned + '/' + prog.total + '</div></div>';
-          albumHtml += '<div class="album-progress"><div class="album-progress-fill" style="width:' + pct + '%"></div></div>';
-          albumHtml += '<div class="album-foot"><span>' + album.bonus + '</span><span class="' + (prog.complete ? 'set-complete' : prog.missing === 1 ? 'missing-one' : '') + '">' + (prog.complete ? 'Набор закрыт' : prog.missing === 1 ? 'Не хватает 1 предмета' : 'Осталось ' + prog.missing) + '</span></div>';
+          const pct = Math.max(0, Math.min(100, Math.floor(prog.owned / prog.total * 100)));
+
+          let items = getAlbumItems(album.id);
+          items = items.filter(item => {
+            const matchesStatus = codexFilterStatus === 'all' || (codexFilterStatus === 'owned' && item.owned) || (codexFilterStatus === 'locked' && !item.owned);
+            const matchesRarity = codexFilterRarity === 'all' || item.rarity === codexFilterRarity;
+            return matchesStatus && matchesRarity;
+          });
+
+          let gridHtml = '<div class="album-items-grid">';
+          if (items.length === 0) {
+            gridHtml += '<div style="grid-column: span 4; font-size: 10px; color: rgba(255,255,255,.2); text-align: center; padding: 10px 0;">Нет подходящих предметов в кодексе</div>';
+          } else {
+            items.forEach(item => {
+              const rarityTag = getRarityMeta(item.owned ? item.rarity : 'common');
+              const cardClass = 'codex-item-card ' + (item.owned ? rarityTag.className : 'locked');
+              const displayName = item.owned ? item.name : '???';
+              const displaySprite = item.owned ? item.sprite : '❓';
+              gridHtml += '<div class="' + cardClass + '">';
+              gridHtml += '<div class="codex-emoji">' + displaySprite + '</div>';
+              gridHtml += '<div class="codex-name">' + displayName + '</div>';
+              gridHtml += '</div>';
+            });
+          }
+          gridHtml += '</div>';
+
+          let rewardsHtml = '<div class="reward-tiers-row">';
+          [25, 50, 75, 100].forEach(tier => {
+            const rewardKey = album.id + '_' + tier;
+            const claimed = !!state.collectionRewardsClaimed[rewardKey];
+            const ready = pct >= tier && !claimed;
+
+            let btnClass = 'reward-tier-btn ';
+            let label = tier + '% ';
+            if (claimed) {
+              btnClass += 'claimed';
+              label += '✓';
+            } else if (ready) {
+              btnClass += 'ready';
+              label += '🎁';
+            } else {
+              btnClass += 'locked';
+              label += '🔒';
+            }
+
+            rewardsHtml += '<button class="' + btnClass + '" data-claim-album="' + album.id + '" data-claim-tier="' + tier + '" ' + (ready ? '' : 'disabled') + '>' + label + '</button>';
+          });
+          rewardsHtml += '</div>';
+
+          albumHtml += '<div class="album-card" style="margin-bottom:15px; padding:15px;">';
+          albumHtml += '<div class="album-top"><div><div class="album-title">' + album.name + '</div><div class="album-desc">' + album.desc + '</div></div><div class="album-badge ' + (prog.complete ? 'rarity-legendary' : 'rarity-rare') + '">' + prog.owned + '/' + prog.total + ' (' + pct + '%)' + '</div></div>';
+          albumHtml += '<div class="album-progress" style="margin-top:10px;"><div class="album-progress-fill" style="width:' + pct + '%"></div></div>';
+
+          albumHtml += rewardsHtml;
+          albumHtml += gridHtml;
+
+          albumHtml += '<div class="album-foot" style="margin-top:10px;"><span>' + album.bonus + '</span><span class="' + (prog.complete ? 'set-complete' : prog.missing === 1 ? 'missing-one' : '') + '">' + (prog.complete ? 'Набор закрыт' : prog.missing === 1 ? 'Не хватает 1 предмета' : 'Осталось ' + prog.missing) + '</span></div>';
           albumHtml += '</div>';
         });
         el.albumList.innerHTML = albumHtml;
@@ -2015,10 +2358,30 @@
           const active = state.currentRole === role.id;
           const unlocked = state.prestige >= role.reqPrestige;
           const rarityClass = role.reqPrestige >= 3 ? 'rarity-legendary' : role.reqPrestige >= 2 ? 'rarity-epic' : role.reqPrestige >= 1 ? 'rarity-rare' : 'rarity-common';
-          html += '<div class="role-card ' + rarityClass + (active ? ' active' : '') + '">';
-          html += '<div class="talent-top"><div class="talent-headline"><div class="role-icon">' + (roleIcons[role.id] || '✦') + '</div><div><div class="talent-name">' + role.name + '</div><div class="role-meta">' + role.desc + '</div></div></div><div class="album-badge ' + (unlocked ? rarityClass : 'rarity-common') + '">' + (unlocked ? 'Открыто' : 'Престиж ' + role.reqPrestige) + '</div></div>';
-          html += '<div class="talent-desc">Клик +' + role.clickPct + '% • Банк ' + role.bankPct + '% • Боссы +' + role.bossPct + '% • Лут +' + role.rarePct + '%</div>';
-          html += '<button class="role-btn" data-role-id="' + role.id + '" ' + (unlocked && !active ? '' : 'disabled') + '>' + (active ? 'Выбрано' : (unlocked ? 'Выбрать' : 'Недоступно')) + '</button>';
+
+          const lvl = (state.roleLevels && state.roleLevels[role.id]) || 1;
+          const bonus = getRoleBonus(role.id);
+          const goldCost = Math.floor(getClickPower() * 800 * lvl);
+          const gemCost = lvl * 12;
+          const canSpecUp = unlocked && state.gold >= goldCost && state.gems >= gemCost;
+
+          let bonusText = 'Клик +' + bonus.clickPct + '% • Банк ' + bonus.bankPct + '%';
+          if (bonus.bossPct) bonusText += ' • Боссы +' + bonus.bossPct + '%';
+          if (bonus.rarePct) bonusText += ' • Лут +' + bonus.rarePct + '%';
+          if (bonus.autoPct) bonusText += ' • Пассив +' + bonus.autoPct + '%';
+          if (bonus.coinSpawnPct) bonusText += ' • Монеты +' + bonus.coinSpawnPct + '%';
+
+          html += '<div class="role-card ' + rarityClass + (active ? ' active' : '') + '" style="margin-bottom:12px; padding:15px;">';
+          html += '<div class="talent-top"><div class="talent-headline"><div class="role-icon">' + (roleIcons[role.id] || '✦') + '</div><div><div class="talent-name">' + role.name + ' <span style="color:#ffd700;font-weight:900;">[Ур.' + lvl + ']</span></div><div class="role-meta">' + role.desc + '</div></div></div><div class="album-badge ' + (unlocked ? rarityClass : 'rarity-common') + '">' + (unlocked ? 'Открыто' : 'Престиж ' + role.reqPrestige) + '</div></div>';
+          html += '<div class="talent-desc" style="margin:8px 0; font-size:10px; color:rgba(255,255,255,.7);">' + bonusText + '</div>';
+
+          html += '<div style="display:flex;gap:8px;margin-top:10px;">';
+          html += '<button class="role-btn" data-role-id="' + role.id + '" style="flex:1;" ' + (unlocked && !active ? '' : 'disabled') + '>' + (active ? 'Выбрано' : (unlocked ? 'Выбрать' : 'Недоступно')) + '</button>';
+          if (unlocked) {
+            html += '<button class="role-btn" data-spec-role-id="' + role.id + '" style="flex:1.2; background: linear-gradient(135deg, #10b981, #059669); font-size:9px;" ' + (canSpecUp ? '' : 'disabled') + '>Усилить (' + fmt(goldCost) + '$ • ' + gemCost + '💎)</button>';
+          }
+          html += '</div>';
+
           html += '</div>';
         });
         el.roleGrid.innerHTML = html;
@@ -2171,18 +2534,29 @@
         return req.length ? 'Требования: ' + req.join(' • ') : 'Без требований';
       }
 
+      function getShopBadgeStyle(badge) {
+        const b = String(badge).toUpperCase();
+        if (b === 'Клик' || b === 'КЛИК') return 'background:rgba(129, 140, 248, 0.12); color:#818cf8;';
+        if (b === 'Доход' || b === 'ДОХОД') return 'background:rgba(56, 189, 248, 0.12); color:#38bdf8;';
+        if (b === 'Питомец' || b === 'ПИТОМЕЦ') return 'background:rgba(244, 63, 94, 0.12); color:#f43f5e;';
+        if (b === 'Тема' || b === 'ТЕМА') return 'background:rgba(245, 158, 11, 0.12); color:#f59e0b;';
+        if (b === 'Скин' || b === 'СКИН') return 'background:rgba(16, 185, 129, 0.12); color:#10b981;';
+        return 'background:rgba(99,102,241,0.12); color:#818cf8;';
+      }
+
       function renderUpgradeCard(upg, badge) {
         const lvl = state.upgrades[upg.id] || 0;
         const cost = Math.floor(upg.baseCost * Math.pow(upg.mult, lvl));
         const canBuy = state.gold >= cost;
+        const badgeStyle = getShopBadgeStyle(badge);
         return '<div class="shop-item">'
-          + '<div class="shop-item-top"><span class="shop-item-badge">' + badge + '</span><span class="shop-item-price">' + fmt(cost) + ' $</span></div>'
+          + '<div class="shop-item-top"><span class="shop-item-badge" style="' + badgeStyle + '">' + badge + '</span><span class="shop-item-price">' + fmt(cost) + ' $</span></div>'
           + '<div class="shop-item-icon">' + upg.icon + '</div>'
           + '<div class="shop-item-name">' + upg.name + ' <span class="lvl">Lv.' + lvl + '</span></div>'
           + '<div class="shop-item-desc">' + upg.desc + '</div>'
           + (canBuy
-            ? '<button class="shop-item-btn shop-btn-buy" data-action="buyUpgrade" data-id="' + upg.id + '" data-cost="' + cost + '">Купить за ' + fmt(cost) + ' $</button>'
-            : '<button class="shop-item-btn shop-btn-disabled" disabled>Нужно ' + fmt(cost) + ' $</button>')
+            ? '<button class="shop-item-btn shop-btn-buy" data-action="buyUpgrade" data-id="' + upg.id + '" data-cost="' + cost + '">' + fmt(cost) + ' $</button>'
+            : '<button class="shop-item-btn shop-btn-disabled" disabled>НУЖНО ' + fmt(cost) + ' $</button>')
           + '</div>';
       }
 
@@ -2195,11 +2569,27 @@
         for (const pet of PETS) {
           const owned = state.ownedPets.includes(pet.id);
           const active = state.currentPet === pet.id;
-          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Питомец</span><span class="shop-item-price">' + getRarityMeta(pet.rarity || 'common').label + '</span></div><div class="shop-item-icon">' + pet.icon + '</div><div class="shop-item-name">' + pet.name + '</div><div class="shop-item-desc">x' + pet.effect + ' ко всему доходу</div>';
-          if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Выбрано</button>';
-          else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="equipPet" data-id="' + pet.id + '">Выбрать</button>';
-          else html += '<button class="shop-item-btn shop-btn-buy" data-action="buyPet" data-id="' + pet.id + '" data-cost="' + pet.cost + '">' + pet.cost + ' 💎</button>';
-          html += '</div>';
+          const canBuy = state.gems >= pet.cost;
+          const badgeStyle = getShopBadgeStyle('ПИТОМЕЦ');
+
+          let btnHtml = '';
+          if (active) {
+            btnHtml = '<button class="shop-item-btn shop-btn-equipped" disabled>ВЫБРАНО</button>';
+          } else if (owned) {
+            btnHtml = '<button class="shop-item-btn shop-btn-buy" data-action="equipPet" data-id="' + pet.id + '">ВЫБРАТЬ</button>';
+          } else {
+            btnHtml = canBuy
+              ? '<button class="shop-item-btn shop-btn-buy" data-action="buyPet" data-id="' + pet.id + '" data-cost="' + pet.cost + '">' + pet.cost + ' 💎</button>'
+              : '<button class="shop-item-btn shop-btn-disabled" disabled>НУЖНО ' + pet.cost + ' 💎</button>';
+          }
+
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '">'
+            + '<div class="shop-item-top"><span class="shop-item-badge" style="' + badgeStyle + '">Питомец</span><span class="shop-item-price">' + getRarityMeta(pet.rarity || 'common').label + '</span></div>'
+            + '<div class="shop-item-icon">' + pet.icon + '</div>'
+            + '<div class="shop-item-name">' + pet.name + '</div>'
+            + '<div class="shop-item-desc">x' + pet.effect + ' ко всему доходу</div>'
+            + btnHtml
+            + '</div>';
         }
         html += '</div>';
 
@@ -2207,11 +2597,27 @@
         for (const theme of THEMES) {
           const owned = state.ownedThemes.includes(theme.id);
           const active = state.currentTheme === theme.id;
-          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Тема</span><span class="shop-item-price">' + fmt(theme.cost) + ' 💎</span></div><div class="shop-item-icon">' + theme.icon + '</div><div class="shop-item-name">' + theme.name + '</div><div class="shop-item-desc">Тема оформления</div>';
-          if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Активно</button>';
-          else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="selectTheme" data-id="' + theme.id + '">Выбрать</button>';
-          else html += '<button class="shop-item-btn shop-btn-buy" data-action="buyTheme" data-id="' + theme.id + '" data-cost="' + theme.cost + '">' + theme.cost + ' 💎</button>';
-          html += '</div>';
+          const canBuy = state.gems >= theme.cost;
+          const badgeStyle = getShopBadgeStyle('ТЕМА');
+
+          let btnHtml = '';
+          if (active) {
+            btnHtml = '<button class="shop-item-btn shop-btn-equipped" disabled>АКТИВНО</button>';
+          } else if (owned) {
+            btnHtml = '<button class="shop-item-btn shop-btn-buy" data-action="selectTheme" data-id="' + theme.id + '">ВЫБРАТЬ</button>';
+          } else {
+            btnHtml = canBuy
+              ? '<button class="shop-item-btn shop-btn-buy" data-action="buyTheme" data-id="' + theme.id + '" data-cost="' + theme.cost + '">' + theme.cost + ' 💎</button>'
+              : '<button class="shop-item-btn shop-btn-disabled" disabled>НУЖНО ' + theme.cost + ' 💎</button>';
+          }
+
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '">'
+            + '<div class="shop-item-top"><span class="shop-item-badge" style="' + badgeStyle + '">Тема</span><span class="shop-item-price">' + fmt(theme.cost) + ' 💎</span></div>'
+            + '<div class="shop-item-icon">' + theme.icon + '</div>'
+            + '<div class="shop-item-name">' + theme.name + '</div>'
+            + '<div class="shop-item-desc">Тема оформления</div>'
+            + btnHtml
+            + '</div>';
         }
         html += '</div>';
 
@@ -2220,12 +2626,29 @@
           const owned = state.ownedCoinSkins.includes(skin.id);
           const active = state.currentCoinSkin === skin.id;
           const allowed = canAccessCoinSkin(skin);
-          html += '<div class="shop-item' + (active ? ' owned' : '') + '"><div class="shop-item-top"><span class="shop-item-badge">Скин</span><span class="shop-item-price">' + getRarityMeta(skin.rarity || 'common').label + '</span></div><div class="shop-item-icon">' + coinPreviewMarkup(skin.id) + '</div><div class="shop-item-name">' + skin.name + '</div><div class="shop-item-desc">' + skin.desc + '<br>' + getCoinRequirementText(skin) + '</div>';
-          if (active) html += '<button class="shop-item-btn shop-btn-equipped" disabled>Активно</button>';
-          else if (owned) html += '<button class="shop-item-btn shop-btn-select" data-action="selectCoinSkin" data-id="' + skin.id + '">Выбрать</button>';
-          else if (!allowed) html += '<button class="shop-item-btn shop-btn-disabled" disabled>Закрыто</button>';
-          else html += '<button class="shop-item-btn shop-btn-buy" data-action="buyCoinSkin" data-id="' + skin.id + '" data-cost="' + skin.cost + '">' + skin.cost + ' 💎</button>';
-          html += '</div>';
+          const canBuy = state.gems >= skin.cost;
+          const badgeStyle = getShopBadgeStyle('СКИН');
+
+          let btnHtml = '';
+          if (active) {
+            btnHtml = '<button class="shop-item-btn shop-btn-equipped" disabled>АКТИВНО</button>';
+          } else if (owned) {
+            btnHtml = '<button class="shop-item-btn shop-btn-buy" data-action="selectCoinSkin" data-id="' + skin.id + '">ВЫБРАТЬ</button>';
+          } else if (!allowed) {
+            btnHtml = '<button class="shop-item-btn shop-btn-disabled" disabled>ЗАКРЫТО</button>';
+          } else {
+            btnHtml = canBuy
+              ? '<button class="shop-item-btn shop-btn-buy" data-action="buyCoinSkin" data-id="' + skin.id + '" data-cost="' + skin.cost + '">' + skin.cost + ' 💎</button>'
+              : '<button class="shop-item-btn shop-btn-disabled" disabled>НУЖНО ' + skin.cost + ' 💎</button>';
+          }
+
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '">'
+            + '<div class="shop-item-top"><span class="shop-item-badge" style="' + badgeStyle + '">Скин</span><span class="shop-item-price">' + getRarityMeta(skin.rarity || 'common').label + '</span></div>'
+            + '<div class="shop-item-icon">' + coinPreviewMarkup(skin.id) + '</div>'
+            + '<div class="shop-item-name">' + skin.name + '</div>'
+            + '<div class="shop-item-desc">' + skin.desc + '<br>' + getCoinRequirementText(skin) + '</div>'
+            + btnHtml
+            + '</div>';
         }
         html += '</div>';
         el.shopContent.innerHTML = html;
@@ -2241,6 +2664,10 @@
         state.comboExpire = now + 1400;
         const earned = getClickPower();
         addGold(earned);
+        const chances = getGoldenCoinSpawnChances();
+        if (Math.random() < chances.clickChance) {
+          spawnLuckyGoldenCoin();
+        }
         state.totalClicks += 1;
         playSound('click');
         let x = 0, y = 0;
@@ -2490,6 +2917,279 @@
         maybeShowInterstitial('prestige');
       }
 
+      function getTowerAttemptsLeft() {
+        if (state.towerLastAttemptAt === 0) return 1;
+        return getDayDiff(state.towerLastAttemptAt) >= 1 ? 1 : 0;
+      }
+
+      function getTowerBoss(floor) {
+        const bosses = [
+          { name: 'Скелет-воин', sprite: '💀', hpFactor: 1.0, armorFactor: 0.15, regenFactor: 0 },
+          { name: 'Пещерный паук', sprite: '🕷️', hpFactor: 1.4, armorFactor: 0.22, regenFactor: 0.2 },
+          { name: 'Болотный ящер', sprite: '🦎', hpFactor: 1.9, armorFactor: 0.32, regenFactor: 0.4 },
+          { name: 'Сгнивший зомби', sprite: '🧟', hpFactor: 2.5, armorFactor: 0.45, regenFactor: 1.0 },
+          { name: 'Бронированный орк', sprite: '🛡️', hpFactor: 3.5, armorFactor: 0.8, regenFactor: 1.5 },
+          { name: 'Вожак волков', sprite: '🐺', hpFactor: 4.8, armorFactor: 1.2, regenFactor: 2.5 },
+          { name: 'Грязный колдун', sprite: '🧙', hpFactor: 6.5, armorFactor: 1.6, regenFactor: 4.0 },
+          { name: 'Лорд Вампиров', sprite: '🧛', hpFactor: 8.8, armorFactor: 2.1, regenFactor: 7.0 },
+          { name: 'Пещерная сирена', sprite: '🧜', hpFactor: 12.0, armorFactor: 2.8, regenFactor: 12.0 },
+          { name: 'Стальной автоматон', sprite: '🤖', hpFactor: 17.0, armorFactor: 3.8, regenFactor: 20.0 },
+          { name: 'Проклятый грифон', sprite: '🦅', hpFactor: 24.0, armorFactor: 4.6, regenFactor: 35.0 },
+          { name: 'Морской змей', sprite: '🔱', hpFactor: 34.0, armorFactor: 5.5, regenFactor: 60.0 },
+          { name: 'Гигантский скорпион', sprite: '🦂', hpFactor: 48.0, armorFactor: 6.8, regenFactor: 100.0 },
+          { name: 'Огненный титан', sprite: '🔥', hpFactor: 68.0, armorFactor: 8.2, regenFactor: 180.0 },
+          { name: 'Тёмный властелин', sprite: '🐉', hpFactor: 100.0, armorFactor: 10.0, regenFactor: 350.0 }
+        ];
+
+        const b = bosses[Math.min(bosses.length - 1, floor - 1)];
+        const scalePower = Math.max(50, getClickPower() * 200);
+        const hp = Math.floor(scalePower * b.hpFactor);
+        const armor = Math.floor(getClickPower() * b.armorFactor);
+        const regen = Math.floor(getAutoIncome() * b.regenFactor * 0.1);
+
+        let goldReward = Math.floor(getClickPower() * 40 * floor);
+        let gemReward = 1 + Math.floor(floor * 0.5);
+        if (floor % 5 === 0) {
+          goldReward *= 2.5;
+          gemReward += 3 + Math.floor(floor / 5) * 2;
+        }
+
+        return {
+          name: 'Этаж ' + floor + ': ' + b.name,
+          sprite: b.sprite,
+          hp,
+          armor,
+          regen,
+          goldReward,
+          gemReward
+        };
+      }
+
+      function startTowerRun() {
+        if (getTowerAttemptsLeft() <= 0) {
+          showToast('Попытки на сегодня исчерпаны!');
+          return;
+        }
+        state.towerLastAttemptAt = Date.now();
+        towerActiveRun = {
+          floor: 1,
+          bossesDefeated: 0,
+          goldAccumulated: 0,
+          gemsAccumulated: 0,
+          state: 'pre-fight'
+        };
+        loadTowerFloorBoss();
+        updateUI();
+        saveGame();
+        showToast('Поход в башню начался!');
+      }
+
+      function loadTowerFloorBoss() {
+        if (!towerActiveRun) return;
+        const boss = getTowerBoss(towerActiveRun.floor);
+        towerBossHp = boss.hp;
+        towerBossMaxHp = boss.hp;
+        towerActiveRun.state = 'fighting';
+        towerActiveRun.battleEndsAt = Date.now() + 15000;
+        towerActiveRun.battleStartedAt = Date.now();
+        towerActiveRun.lastRegenAt = Date.now();
+      }
+
+      function checkTowerBattleState() {
+        if (!towerActiveRun || towerActiveRun.state !== 'fighting') return;
+        const remaining = Math.max(0, towerActiveRun.battleEndsAt - Date.now());
+        if (remaining <= 0) {
+          endTowerRun(false);
+          updateUI();
+          saveGame();
+          return;
+        }
+        const now = Date.now();
+        const elapsedSinceRegen = now - towerActiveRun.lastRegenAt;
+        if (elapsedSinceRegen >= 1000) {
+          const seconds = Math.floor(elapsedSinceRegen / 1000);
+          towerActiveRun.lastRegenAt += seconds * 1000;
+          const boss = getTowerBoss(towerActiveRun.floor);
+          if (boss.regen > 0 && towerBossHp > 0) {
+            towerBossHp = Math.min(towerBossMaxHp, towerBossHp + boss.regen * seconds);
+          }
+        }
+      }
+
+      function winTowerFloor() {
+        if (!towerActiveRun) return;
+        const boss = getTowerBoss(towerActiveRun.floor);
+        towerActiveRun.goldAccumulated += boss.goldReward;
+        towerActiveRun.gemsAccumulated += boss.gemReward;
+        towerActiveRun.bossesDefeated = towerActiveRun.floor;
+
+        if (towerActiveRun.floor >= 15) {
+          endTowerRun(true);
+        } else {
+          towerActiveRun.state = 'cleared';
+        }
+      }
+
+      function endTowerRun(completedSuccessfully = false) {
+        if (!towerActiveRun) return;
+        towerActiveRun.state = 'ended';
+
+        const gold = towerActiveRun.goldAccumulated;
+        const gems = towerActiveRun.gemsAccumulated;
+        const cleared = towerActiveRun.bossesDefeated;
+
+        if (cleared > state.towerMaxFloorReached) {
+          state.towerMaxFloorReached = cleared;
+        }
+
+        if (gold > 0) addGold(gold);
+        if (gems > 0) addGems(gems);
+
+        playSound('reward');
+        showReward('Вы зачистили этажей: ' + cleared + '\n\nИтоговая награда:\n💰 +' + fmt(gold) + ' монет\n💎 +' + gems + ' кристаллов', {
+          rarity: cleared >= 15 ? 'legendary' : cleared >= 10 ? 'epic' : cleared >= 5 ? 'rare' : 'common',
+          title: 'Поход в Башню завершён!'
+        });
+
+        towerActiveRun = null;
+        maybeShowInterstitial('boss');
+      }
+
+      function updateTowerUI() {
+        const attemptsLeft = getTowerAttemptsLeft();
+        const active = towerActiveRun && towerActiveRun.state === 'fighting';
+        const cleared = towerActiveRun && towerActiveRun.state === 'cleared';
+
+        el.towerRecordText.textContent = 'Этаж ' + state.towerMaxFloorReached;
+
+        if (towerActiveRun) {
+          const boss = getTowerBoss(towerActiveRun.floor);
+          el.towerName.textContent = boss.name;
+          el.towerSprite.textContent = boss.sprite;
+          el.towerFloorText.textContent = towerActiveRun.floor + ' / 15';
+          el.towerDurationText.textContent = boss.regen + '/с';
+          el.towerHp.textContent = fmt(towerBossHp);
+          el.towerMaxHp.textContent = fmt(towerBossMaxHp);
+          el.towerHpFill.style.width = Math.max(0, towerBossHp / towerBossMaxHp * 100) + '%';
+
+          el.towerReq.textContent = 'Текущий поход • Накоплено: ' + fmt(towerActiveRun.goldAccumulated) + ' $ • ' + towerActiveRun.gemsAccumulated + ' 💎';
+
+          if (active) {
+            el.towerState.textContent = 'Бой';
+            const remaining = Math.max(0, towerActiveRun.battleEndsAt - Date.now());
+            el.towerTimerText.textContent = fmtSeconds(Math.ceil(remaining / 1000));
+            el.towerTimerFill.style.width = Math.max(0, remaining / 15000 * 100) + '%';
+            el.btnStartTower.disabled = true;
+            el.btnStartTower.textContent = 'Атакуйте кликами!';
+            el.towerReward.textContent = 'Награда этажа: ' + fmt(boss.goldReward) + ' $ • ' + boss.gemReward + ' 💎';
+            el.towerHintText.textContent = 'Успейте победить босса до окончания таймера!';
+          } else if (cleared) {
+            el.towerState.textContent = 'Победа';
+            el.towerTimerText.textContent = '00:00';
+            el.towerTimerFill.style.width = '0%';
+            el.btnStartTower.disabled = false;
+            el.btnStartTower.textContent = 'Перейти на этаж ' + (towerActiveRun.floor + 1);
+            el.towerReward.textContent = 'Этаж ' + towerActiveRun.floor + ' зачищен!';
+            el.towerHintText.textContent = 'Нажмите кнопку выше, чтобы продолжить восхождение на следующий этаж.';
+          }
+        } else {
+          el.towerState.textContent = attemptsLeft > 0 ? 'Готова' : 'Ожидание';
+          el.towerTimerText.textContent = '00:15';
+          el.towerTimerFill.style.width = '100%';
+          el.towerName.textContent = 'БАШНЯ ИСПЫТАНИЙ';
+          el.towerSprite.textContent = '🏰';
+          el.towerFloorText.textContent = '—';
+          el.towerDurationText.textContent = '—';
+          el.towerHp.textContent = '0';
+          el.towerMaxHp.textContent = '0';
+          el.towerHpFill.style.width = '0%';
+          el.towerReward.textContent = 'Награда за этаж: Золото и Кристаллы';
+
+          if (attemptsLeft > 0) {
+            el.towerReq.textContent = 'Попыток сегодня: 1/1';
+            el.btnStartTower.disabled = false;
+            el.btnStartTower.textContent = 'Войти в башню';
+            el.towerHintText.textContent = 'Начните ежедневный поход в Башню Испытаний! Постарайтесь пройти как можно глубже.';
+          } else {
+            const nextDailyMs = Math.max(0, getDayStart(Date.now() + DAY_MS) - Date.now());
+            el.towerReq.textContent = 'Попытки исчерпаны';
+            el.btnStartTower.disabled = true;
+            el.btnStartTower.textContent = 'Доступно завтра';
+            el.towerHintText.textContent = 'Вы уже израсходовали сегодняшнюю попытку. Возвращайтесь завтра для нового восхождения!';
+          }
+        }
+      }
+
+      function spawnLuckyGoldenCoin() {
+        if (document.querySelector('.lucky-glowing-coin')) return;
+
+        const coin = document.createElement('div');
+        coin.className = 'lucky-glowing-coin';
+        coin.textContent = '🪙';
+
+        const x = 50 + (Math.random() * (window.innerWidth - 100));
+        const y = 120 + (Math.random() * (window.innerHeight - 270));
+
+        coin.style.left = Math.max(20, Math.min(window.innerWidth - 80, x)) + 'px';
+        coin.style.top = Math.max(120, Math.min(window.innerHeight - 150, y)) + 'px';
+
+        coin.addEventListener('click', e => {
+          e.preventDefault();
+          coin.remove();
+          claimLuckyGoldenCoin(e.clientX || x, e.clientY || y);
+        });
+
+        document.body.appendChild(coin);
+
+        setTimeout(() => {
+          if (coin.parentNode) coin.remove();
+        }, 8000);
+      }
+
+      function claimLuckyGoldenCoin(x, y) {
+        playSound('reward');
+        setTimeout(() => playSound('reward'), 100);
+
+        const roll = Math.random();
+        let message = '';
+
+        if (roll < 0.45) {
+          const gold = Math.max(getClickPower() * 600, Math.floor(getAutoIncome() * 150) + 100);
+          addGold(gold);
+          message = '💰 ЗОЛОТОЙ ДОЖДЬ!\n+' + fmt(gold) + ' монет!';
+          spawnFloat(x, y, '+' + fmt(gold));
+        } else if (roll < 0.75) {
+          const gems = Math.floor(Math.random() * 8) + 6;
+          addGems(gems);
+          message = '💎 КРИСТАЛЬНАЯ ВОЛНА!\n+' + gems + ' кристаллов!';
+          spawnFloat(x, y, '+' + gems + '💎');
+        } else {
+          frenzyEnd = Date.now() + 30000;
+          message = '⚡ ЗОЛОТАЯ ЛИХОРАДКА!\nКлик x5 на 30 секунд!';
+          spawnFloat(x, y, 'FRENZY x5!');
+        }
+
+        showReward(message, {
+          rarity: 'epic',
+          title: 'НЕОЖИДАННАЯ УДАЧА!'
+        });
+
+        updateUI();
+        saveGame();
+      }
+
+      function updateFrenzyUI() {
+        const remaining = Math.max(0, frenzyEnd - Date.now());
+        if (remaining > 0) {
+          el.frenzyOverlay.classList.add('active');
+          el.frenzyTimerBar.classList.add('show');
+          el.frenzyTimerText.textContent = Math.ceil(remaining / 1000) + 'с';
+        } else {
+          el.frenzyOverlay.classList.remove('active');
+          el.frenzyTimerBar.classList.remove('show');
+        }
+      }
+
       function updateUI() {
         checkBossBattleState();
         const levelData = getLevelData();
@@ -2548,6 +3248,7 @@
         renderRoles();
         renderAchievements();
         updateBossUI();
+        updateTowerUI();
       }
 
       function saveGame() {
@@ -2612,6 +3313,15 @@
           if (!ROLE_OPTIONS.some(item => item.id === state.currentRole)) state.currentRole = 'role_adventurer';
           if (!Number.isFinite(state.appLaunchCount)) state.appLaunchCount = 0;
           if (!Number.isFinite(state.lastAppOpenAt)) state.lastAppOpenAt = 0;
+          if (!Number.isFinite(state.towerLastAttemptAt)) state.towerLastAttemptAt = 0;
+          if (!Number.isFinite(state.towerMaxFloorReached)) state.towerMaxFloorReached = 0;
+          if (typeof state.collectionRewardsClaimed !== 'object' || !state.collectionRewardsClaimed) state.collectionRewardsClaimed = {};
+          if (typeof state.roleLevels !== 'object' || !state.roleLevels) {
+            state.roleLevels = { role_adventurer: 1, role_warrior: 1, role_treasurer: 1, role_hunter: 1, role_archmage: 1 };
+          }
+          ROLE_OPTIONS.forEach(role => {
+            if (!Number.isFinite(state.roleLevels[role.id])) state.roleLevels[role.id] = 1;
+          });
           PRESTIGE_TALENTS.forEach(item => { if (!Number.isFinite(state.prestigeTalents[item.id])) state.prestigeTalents[item.id] = 0; });
           ACCOUNT_UPGRADES.forEach(item => { if (!Number.isFinite(state.accountUpgrades[item.id])) state.accountUpgrades[item.id] = 0; });
           if (!state.activeQuest || !state.activeQuest.type || !Number.isFinite(state.activeQuest.target)) ensureQuest(true);
@@ -2729,6 +3439,67 @@
           updateUI();
         });
 
+        el.btnSubTabNormal.addEventListener('click', e => {
+          e.preventDefault();
+          el.bossNormalSection.style.display = 'block';
+          el.bossTowerSection.style.display = 'none';
+          el.btnSubTabNormal.classList.add('active');
+          el.btnSubTabTower.classList.remove('active');
+        });
+
+        el.btnSubTabTower.addEventListener('click', e => {
+          e.preventDefault();
+          el.bossNormalSection.style.display = 'none';
+          el.bossTowerSection.style.display = 'block';
+          el.btnSubTabNormal.classList.remove('active');
+          el.btnSubTabTower.classList.add('active');
+          updateTowerUI();
+        });
+
+        el.btnStartTower.addEventListener('click', e => {
+          e.preventDefault();
+          if (towerActiveRun) {
+            if (towerActiveRun.state === 'cleared') {
+              towerActiveRun.floor += 1;
+              loadTowerFloorBoss();
+              updateUI();
+              showToast('Этаж ' + towerActiveRun.floor + ' начался!');
+            }
+          } else {
+            startTowerRun();
+          }
+        });
+
+        el.towerSprite.addEventListener('click', e => {
+          e.preventDefault();
+          if (!towerActiveRun || towerActiveRun.state !== 'fighting') return;
+          if (towerCooldown) return;
+          towerCooldown = true;
+          setTimeout(() => { towerCooldown = false; }, 80);
+
+          const hit = getBossHitPayload();
+          if (hit.miss) {
+            showToast('Промах!');
+          } else {
+            const boss = getTowerBoss(towerActiveRun.floor);
+            const base = getBossDmg();
+            const raw = hit.crit ? Math.floor(base * 1.8) : base;
+            const dmg = Math.max(1, raw - boss.armor);
+            towerBossHp -= dmg;
+          }
+
+          el.towerSprite.classList.add('hit');
+          setTimeout(() => el.towerSprite.classList.remove('hit'), 100);
+          playSound('hit');
+
+          if (towerBossHp <= 0) {
+            winTowerFloor();
+            playSound('reward');
+            showToast('Этаж ' + towerActiveRun.bossesDefeated + ' зачищен!');
+          }
+          updateUI();
+        });
+
         el.btnStartBoss.addEventListener('click', e => {
           e.preventDefault();
           if (!isBossUnlocked(state.bossIdx)) return;
@@ -2756,6 +3527,34 @@
         });
         el.btnPrestige.addEventListener('click', doPrestige);
 
+        function toggleFilterButton(type, btn) {
+          if (type === 'status') {
+            [el.btnFilterAll, el.btnFilterOwned, el.btnFilterLocked].forEach(b => b.classList.remove('active'));
+          } else {
+            [el.btnRarityAll, el.btnRarityCommon, el.btnRarityRare, el.btnRarityEpic, el.btnRarityLegendary].forEach(b => b.classList.remove('active'));
+          }
+          btn.classList.add('active');
+        }
+
+        el.btnFilterAll.addEventListener('click', e => { e.preventDefault(); codexFilterStatus = 'all'; toggleFilterButton('status', el.btnFilterAll); updateUI(); });
+        el.btnFilterOwned.addEventListener('click', e => { e.preventDefault(); codexFilterStatus = 'owned'; toggleFilterButton('status', el.btnFilterOwned); updateUI(); });
+        el.btnFilterLocked.addEventListener('click', e => { e.preventDefault(); codexFilterStatus = 'locked'; toggleFilterButton('status', el.btnFilterLocked); updateUI(); });
+
+        el.btnRarityAll.addEventListener('click', e => { e.preventDefault(); codexFilterRarity = 'all'; toggleFilterButton('rarity', el.btnRarityAll); updateUI(); });
+        el.btnRarityCommon.addEventListener('click', e => { e.preventDefault(); codexFilterRarity = 'common'; toggleFilterButton('rarity', el.btnRarityCommon); updateUI(); });
+        el.btnRarityRare.addEventListener('click', e => { e.preventDefault(); codexFilterRarity = 'rare'; toggleFilterButton('rarity', el.btnRarityRare); updateUI(); });
+        el.btnRarityEpic.addEventListener('click', e => { e.preventDefault(); codexFilterRarity = 'epic'; toggleFilterButton('rarity', el.btnRarityEpic); updateUI(); });
+        el.btnRarityLegendary.addEventListener('click', e => { e.preventDefault(); codexFilterRarity = 'legendary'; toggleFilterButton('rarity', el.btnRarityLegendary); updateUI(); });
+
+        el.collectionContent.addEventListener('click', e => {
+          const btn = e.target.closest('[data-claim-album]');
+          if (!btn) return;
+          e.preventDefault();
+          const albumId = btn.getAttribute('data-claim-album');
+          const tier = Number(btn.getAttribute('data-claim-tier'));
+          claimCollectionReward(albumId, tier);
+        });
+
         el.profileContent.addEventListener('click', e => {
           const achBtn = e.target.closest('[data-achievement]');
           if (achBtn) {
@@ -2775,6 +3574,11 @@
           const roleBtn = e.target.closest('[data-role-id]');
           if (roleBtn) {
             selectRole(roleBtn.getAttribute('data-role-id'));
+            return;
+          }
+          const specBtn = e.target.closest('[data-spec-role-id]');
+          if (specBtn) {
+            upgradeRoleSpecialty(specBtn.getAttribute('data-spec-role-id'));
           }
         });
 
@@ -2861,12 +3665,19 @@
           const income = getAutoIncome();
           if (income > 0) addGold(income);
           if (Date.now() > state.comboExpire && state.combo !== 1) state.combo = 1;
+          const chances = getGoldenCoinSpawnChances();
+          if (Math.random() < chances.passiveChance) {
+            spawnLuckyGoldenCoin();
+          }
           updateUI();
         }, 1000);
 
         setInterval(() => {
           checkBossBattleState();
+          checkTowerBattleState();
           updateBossUI();
+          updateTowerUI();
+          updateFrenzyUI();
         }, 250);
 
         setInterval(() => {
