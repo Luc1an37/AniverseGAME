@@ -142,13 +142,6 @@
     .shop-item:before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 40%);pointer-events:none}
     .shop-item.owned{border-color:rgba(255,215,0,.28)}
     .shop-item:hover{transform:translateY(-1px)}
-    .shop-item-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-    .shop-item-badge{padding:4px 8px;border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;background:rgba(91,138,255,.14);color:#a8c1ff}
-    .shop-item-price{font-size:10px;font-weight:900;color:rgba(255,255,255,.55)}
-    .shop-item-icon{font-size:26px;min-height:42px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
-    .shop-item-name{font-size:11px;font-weight:800;margin-bottom:2px}
-    .shop-item-name .lvl{color:rgba(255,215,0,.56)}
-    .shop-item-desc{font-size:9px;line-height:1.42;color:rgba(255,255,255,.32);min-height:32px;margin-bottom:10px}
     .shop-item-btn{width:100%;padding:9px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase}
     .shop-btn-buy{background:linear-gradient(135deg,#e8c84a,#c4a535);color:#1a1d2e}
     .shop-btn-select{background:rgba(255,215,0,.1);color:#ffd700;border:1px solid rgba(255,215,0,.2)}
@@ -185,8 +178,7 @@
     .boss-sprite.storming{filter:hue-rotate(20deg) drop-shadow(0 0 18px rgba(56,189,248,.75))}
     .boss-sprite.enraged{filter:drop-shadow(0 0 22px rgba(239,68,68,.9)) saturate(1.2)}
     .boss-sprite.invulnerable{opacity:.78;filter:drop-shadow(0 0 18px rgba(168,85,247,.75))}
-    .boss-timer-bar{width:100%;height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:10px 0 8px}
-    .boss-timer-fill{height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,#38bdf8,#8b5cf6);transition:width .18s linear,background .25s ease}
+    .boss-timer-bar"><div class="boss-timer-fill" id="bossTimerFill"></div></div>
     .boss-hp-bar{width:100%;margin:12px 0 6px}
     .boss-hp-fill{background:linear-gradient(90deg,#ef4444,#dc2626);transition:width .18s linear,background .25s ease}
     .boss-hp-text{font-size:12px;color:rgba(255,255,255,.42);font-weight:700}
@@ -691,8 +683,6 @@
       };
       const TELEGRAM_WEBAPP = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
       const adsControllers = {};
-      // Reward URL настраивается только в кабинете AdsGram.
-      // Для server-side reward confirm используй https GET endpoint с [userId].
 
       function getDefaultState() {
         return {
@@ -918,10 +908,6 @@
         { id: 'album_boss', name: 'Трофеи боссов', desc: 'Получите все карточки боссов.', total: () => BOSSES.length, owned: state => state.ownedBossCards.length, bonus: '+10% к наградам боссов', rarityMix: ['common','rare','epic','legendary'], completeBonus: { bossPct: 10 } },
         { id: 'album_style', name: 'Наследие героя', desc: 'Откройте все рамки и титулы.', total: () => PROFILE_FRAMES.length + PLAYER_TITLES.length, owned: state => state.ownedFrames.length + state.ownedTitles.length, bonus: '+3% к редкому луту', rarityMix: ['common','rare','epic','legendary'], completeBonus: { rarePct: 3 } }
       ];
-      // Распределение reward-действий по 3 placement'ам AdsGram:
-      // 31328 -> боевые усиления
-      // 31361 -> gem / daily бонусы
-      // 31362 -> экономические бонусы
       const REWARD_ACTION_PLACEMENTS = {
         x2: 'x2',
         gems: 'gems',
@@ -2900,6 +2886,5 @@
       else init();
     })();
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
