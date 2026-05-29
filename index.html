@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109494281', 'ym');
+      ym(109494281, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/109494281" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0a0f1e">
@@ -891,6 +903,14 @@
   <script>
     (() => {
       'use strict';
+
+      const YANDEX_METRICA_ID = 109494281;
+
+      function trackYandexGoal(goalName) {
+        if (typeof ym === 'function') {
+          ym(YANDEX_METRICA_ID, 'reachGoal', goalName);
+        }
+      }
 
       const SAVE_KEY = 'goldEmp_v13';
       const LOAD_KEYS = ['goldEmp_v13', 'goldEmp_v12', 'goldEmp_v10'];
@@ -3020,9 +3040,11 @@
           addGold(bonus); showToast('+' + fmt(bonus) + ' монет!');
         }
         playSound('reward'); updateUI(); saveGame();
+        trackYandexGoal('ad_watch_success');
       }
 
       function grantRewardAction(action) {
+        trackYandexGoal('ad_watch_success');
         if (action === 'bossRevive') {
           if (!state.bossReviveAvailable) return showToast('Сначала проиграйте бой по таймеру, чтобы появилось возрождение');
           if (reviveBossBattle()) {
@@ -3116,6 +3138,7 @@
           lastTaskRewardAt = now;
           addGems(20);
           playSound('reward');
+          trackYandexGoal('task_reward');
           updateUI();
           saveGame();
           showReward('💎 +20 кристаллов');
@@ -3180,6 +3203,7 @@
         if (!confirm('Переродиться и получить +' + gain + '★ и +' + essenceGain + ' ✦? Это сбросит монеты, улучшения, банк и текущего босса.')) return;
         state.prestige += gain;
         state.prestigeEssence += essenceGain;
+        trackYandexGoal('prestige');
         state.gold = 0; state.bankDep = 0; state.bankLifetime = 0; state.runGold = 0; state.clickPower = 1; state.autoClick = 0; state.bossIdx = 0; state.bossHp = BOSSES[0].hp; state.bossBattleActive = false; state.bossBattleEndsAt = 0; state.bossBattleStartedAt = 0; state.bossReviveAvailable = false; state.bossReviveHp = 0; state.bossReviveUsed = false; state.nextBossRewardDouble = false; state.bankBoostEnd = 0; state.autoClickBoostEnd = 0; state.dailyDoublePending = false; state.activeQuest = null; state.dailyTasksDate = ''; state.dailyTasks = []; state.chestRerollAvailable = false;
         ensureQuest(true);
         playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Перерождение выполнено! +' + gain + '★ и +' + essenceGain + '✦');
@@ -3302,31 +3326,7 @@
         el.forgeContent.innerHTML = html;
       }
 
-      function rollBossEgg(bossIdx) {
-        const roll = Math.random();
-        if (bossIdx <= 1) {
-          return roll < 0.06 ? 'common' : null;
-        } else if (bossIdx <= 3) {
-          if (roll < 0.03) return 'rare';
-          if (roll < 0.12) return 'common';
-        } else {
-          if (roll < 0.05) return 'legendary';
-          if (roll < 0.18) return 'rare';
-        }
-        return null;
-      }
 
-      function rollTowerEgg(floor) {
-        const roll = Math.random();
-        if (floor === 5) {
-          return roll < 0.35 ? 'common' : null;
-        } else if (floor === 10) {
-          return roll < 0.5 ? 'rare' : null;
-        } else if (floor === 15) {
-          return 'legendary';
-        }
-        return null;
-      }
 
       function startEggHatching(eggType) {
         if (state.hatchingEggType !== null) return;
@@ -3450,6 +3450,7 @@
         state.gemMineStorage = 0;
         state.gemMineLastClaimAt = Date.now();
         addGems(count);
+        trackYandexGoal('claim_gem_mine');
 
         playSound('reward');
         showToast('Собрано ' + count + ' 💎 из Шахты!');
@@ -3643,9 +3644,6 @@
           oreAccumulated: 0,
           crystalAccumulated: 0,
           scaleAccumulated: 0,
-          commonEggsAccum: 0,
-          rareEggsAccum: 0,
-          legendaryEggsAccum: 0,
           state: 'pre-fight'
         };
         loadTowerFloorBoss();
@@ -3725,11 +3723,8 @@
         towerActiveRun.oreAccumulated += drop.ore;
         towerActiveRun.crystalAccumulated += drop.crystal;
         towerActiveRun.scaleAccumulated += drop.scale;
-
-        const eggDrop = rollTowerEgg(towerActiveRun.floor);
-        if (eggDrop === 'common') towerActiveRun.commonEggsAccum += 1;
-        if (eggDrop === 'rare') towerActiveRun.rareEggsAccum += 1;
-        if (eggDrop === 'legendary') towerActiveRun.legendaryEggsAccum += 1;
+        
+        trackYandexGoal('tower_floor_win');
 
         if (towerActiveRun.floor >= 15) {
           endTowerRun(true);
@@ -4202,14 +4197,8 @@
             if (drop.ore > 0) { state.materials.ore += drop.ore; dropMsg += ' 🪙+' + drop.ore; }
             if (drop.crystal > 0) { state.materials.crystal += drop.crystal; dropMsg += ' 🔮+' + drop.crystal; }
             if (drop.scale > 0) { state.materials.scale += drop.scale; dropMsg += ' 🐉+' + drop.scale; }
-
-            const eggDrop = rollBossEgg(state.bossIdx);
-            if (eggDrop) {
-              state.petEggs[eggDrop] += 1;
-              const eggNames = { common: 'Обычное', rare: 'Редкое', legendary: 'Легендарное' };
-              const eggEmojis = { common: '🥚', rare: '🔮', legendary: '🐉' };
-              dropMsg += ' ' + eggEmojis[eggDrop] + eggNames[eggDrop] + ' яйцо x1';
-            }
+            
+            trackYandexGoal('boss_win');
 
             const cardId = 'boss_' + state.bossIdx;
             if (!state.ownedBossCards.includes(cardId)) { state.ownedBossCards.push(cardId); const rarity = state.bossIdx <= 0 ? 'common' : state.bossIdx === 1 ? 'rare' : state.bossIdx === 2 ? 'epic' : 'legendary'; markUnlock(cardId, boss.name, rarity, 'Карточка босса'); }
@@ -4517,5 +4506,5 @@
       else init();
     })();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0348d55bf498d66',t:'MTc4MDA0Nzc3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
