@@ -730,6 +730,18 @@
         <div class="shop-section-title">Достижения</div>
         <div class="achievement-list" id="achievementsList"></div>
 
+        <div class="shop-section-title">Настройки игры</div>
+        <div class="profile-card" style="padding: 14px; margin-bottom: 12px; background: rgba(30, 27, 45, 0.5);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span style="font-size:12px; font-weight:800; color:rgba(255,255,255,0.7);">Звуковые эффекты</span>
+            <button class="ad-btn" id="btnToggleSound" type="button" style="width:100px; padding:6px 0; font-size:10px; margin:0; border:1px solid rgba(255,255,255,0.04);">Вкл</button>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; font-weight:800; color:rgba(255,255,255,0.7);">Вибрация (Тактильный отклик)</span>
+            <button class="ad-btn" id="btnToggleVibration" type="button" style="width:100px; padding:6px 0; font-size:10px; margin:0; border:1px solid rgba(255,255,255,0.04);">Вкл</button>
+          </div>
+        </div>
+
         <button class="btn-reset" id="btnReset" type="button">Сбросить весь прогресс</button>
       </div>
     </div>
@@ -1008,11 +1020,6 @@
           gemMineLevel: 0,
           gemMineStorage: 0,
           gemMineLastClaimAt: 0,
-          petEggs: { common: 0, rare: 0, legendary: 0 },
-          hatchingEggType: null,
-          hatchingEndsAt: 0,
-          petLevels: { pet_hamster: 1, pet_robot: 1, pet_dragon: 1, pet_ghost: 1, pet_phoenix: 1 },
-          petDuplicates: { pet_hamster: 0, pet_robot: 0, pet_dragon: 0, pet_ghost: 0, pet_phoenix: 0 },
           lastSave: Date.now()
         };
       }
@@ -1288,7 +1295,9 @@
           btnUpgradeMine: document.getElementById('btnUpgradeMine'),
           btnBoostMine: document.getElementById('btnBoostMine'),
           towerHintText: document.getElementById('towerHintText'),
-          topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark')
+          topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark'),
+          btnToggleSound: document.getElementById('btnToggleSound'),
+          btnToggleVibration: document.getElementById('btnToggleVibration')
         });
       }
 
@@ -1340,6 +1349,7 @@
       }
 
       function playSound(type) {
+        if (!state.soundEnabled) return;
         if (!audioCtx) return;
         if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
         const now = audioCtx.currentTime;
@@ -2927,6 +2937,7 @@
         if (Math.random() < chances.clickChance) {
           spawnLuckyGoldenCoin();
         }
+        triggerHaptic('light');
         state.totalClicks += 1;
         playSound('click');
         
@@ -2978,6 +2989,7 @@
         if (action === 'buyUpgrade') {
           if (!spendGold(cost)) return;
           state.upgrades[id] = (state.upgrades[id] || 0) + 1;
+          triggerHaptic('heavy');
           const upg = ALL_UPGRADES.find(item => item.id === id);
           if (upg) upg.type === 'click' ? state.clickPower += upg.val : state.autoClick += upg.val;
           playSound('reward');
@@ -2991,7 +3003,7 @@
           return;
         }
         if (action === 'equipPet') {
-          state.currentPet = id; playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Питомец выбран!');
+          state.currentPet = id; triggerHaptic('heavy'); playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Питомец выбран!');
           return;
         }
         if (action === 'buyTheme') {
@@ -3001,7 +3013,7 @@
           return;
         }
         if (action === 'selectTheme') {
-          state.currentTheme = id; applyTheme(id); playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Тема выбрана!');
+          state.currentTheme = id; triggerHaptic('heavy'); applyTheme(id); playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Тема выбрана!');
           return;
         }
         if (action === 'buyCoinSkin') {
@@ -3013,7 +3025,7 @@
           return;
         }
         if (action === 'selectCoinSkin') {
-          state.currentCoinSkin = id; playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Скин монеты выбран!');
+          state.currentCoinSkin = id; triggerHaptic('heavy'); playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Скин монеты выбран!');
         }
       }
 
@@ -3204,7 +3216,9 @@
         state.prestige += gain;
         state.prestigeEssence += essenceGain;
         trackYandexGoal('prestige');
+        triggerHaptic('heavy');
         state.gold = 0; state.bankDep = 0; state.bankLifetime = 0; state.runGold = 0; state.clickPower = 1; state.autoClick = 0; state.bossIdx = 0; state.bossHp = BOSSES[0].hp; state.bossBattleActive = false; state.bossBattleEndsAt = 0; state.bossBattleStartedAt = 0; state.bossReviveAvailable = false; state.bossReviveHp = 0; state.bossReviveUsed = false; state.nextBossRewardDouble = false; state.bankBoostEnd = 0; state.autoClickBoostEnd = 0; state.dailyDoublePending = false; state.activeQuest = null; state.dailyTasksDate = ''; state.dailyTasks = []; state.chestRerollAvailable = false;
+        state.upgrades = {};
         ensureQuest(true);
         playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Перерождение выполнено! +' + gain + '★ и +' + essenceGain + '✦');
         maybeShowInterstitial('prestige');
@@ -3328,88 +3342,7 @@
 
 
 
-      function startEggHatching(eggType) {
-        if (state.hatchingEggType !== null) return;
-        if ((state.petEggs[eggType] || 0) <= 0) return;
 
-        state.petEggs[eggType] -= 1;
-        state.hatchingEggType = eggType;
-        const dur = eggType === 'common' ? 3600000 : eggType === 'rare' ? 14400000 : 28800000;
-        state.hatchingEndsAt = Date.now() + dur;
-
-        playSound('click');
-        showToast('Яйцо успешно помещено в инкубатор!');
-        updateUI();
-        saveGame();
-      }
-
-      function boostHatchingTimer() {
-        if (state.hatchingEggType === null) return;
-        showAdsgramReward('offline', () => {
-          state.hatchingEndsAt = Math.max(Date.now(), state.hatchingEndsAt - 7200000); // Reduce by 2 hours
-          showToast('Инкубатор ускорен на 2 часа!');
-          updateUI();
-          saveGame();
-        }, 'hatchBoost');
-      }
-
-      function finishHatching() {
-        if (state.hatchingEggType === null) return;
-        if (state.hatchingEndsAt > Date.now()) return;
-
-        const eggType = state.hatchingEggType;
-        state.hatchingEggType = null;
-        state.hatchingEndsAt = 0;
-
-        // Roll pet
-        const roll = Math.random();
-        let petId = 'pet_hamster';
-        if (eggType === 'common') {
-          petId = roll < 0.75 ? 'pet_hamster' : 'pet_robot';
-        } else if (eggType === 'rare') {
-          petId = roll < 0.6 ? 'pet_robot' : (roll < 0.9 ? 'pet_dragon' : 'pet_ghost');
-        } else {
-          petId = roll < 0.5 ? 'pet_dragon' : (roll < 0.85 ? 'pet_ghost' : 'pet_phoenix');
-        }
-
-        const pet = PETS.find(p => p.id === petId);
-        const owned = state.ownedPets.includes(petId);
-
-        let msg = '';
-        if (owned) {
-          state.petDuplicates[petId] = (state.petDuplicates[petId] || 0) + 1;
-          msg = 'Вы получили дубликат: ' + pet.icon + ' ' + pet.name + '!\\nДубликат добавлен в Кузницу для Слияния.';
-        } else {
-          state.ownedPets.push(petId);
-          msg = 'Поздравляем! Вы вырастили нового питомца:\\n' + pet.icon + ' ' + pet.name + '!';
-          markUnlock('pet:' + petId, pet.name, pet.rarity || 'common', 'Новый питомец');
-        }
-
-        playSound('reward');
-        showReward(msg, { rarity: pet.rarity, title: 'ИНКУБАТОР ИМПЕРИИ' });
-        updateUI();
-        saveGame();
-      }
-
-      function fuseDuplicatePet(petId) {
-        if (!state.ownedPets.includes(petId)) return;
-        const lvl = (state.petLevels && state.petLevels[petId]) || 1;
-        const dup = (state.petDuplicates && state.petDuplicates[petId]) || 0;
-        const req = lvl;
-
-        if (dup < req) {
-          showToast('Недостаточно дубликатов для слияния!');
-          return;
-        }
-
-        state.petDuplicates[petId] -= req;
-        state.petLevels[petId] = lvl + 1;
-
-        playSound('reward');
-        showToast('Слияние успешно! Уровень питомца повышен до ' + (lvl + 1));
-        updateUI();
-        saveGame();
-      }
 
       function getGemMineConfig(lvl) {
         const configs = [
@@ -3896,12 +3829,49 @@
         }
       }
 
+      function triggerHaptic(style = 'light') {
+        if (state.vibrationEnabled && TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.HapticFeedback) {
+          try {
+            TELEGRAM_WEBAPP.HapticFeedback.impactOccurred(style);
+          } catch (e) {}
+        } else if (state.vibrationEnabled && navigator.vibrate) {
+          try {
+            navigator.vibrate(15);
+          } catch (e) {}
+        }
+      }
+
+      function updateSettingsUI() {
+        if (!el.btnToggleSound || !el.btnToggleVibration) return;
+
+        if (state.soundEnabled) {
+          el.btnToggleSound.textContent = 'ВКЛ 🔊';
+          el.btnToggleSound.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          el.btnToggleSound.style.color = '#fff';
+        } else {
+          el.btnToggleSound.textContent = 'ВЫКЛ 🔇';
+          el.btnToggleSound.style.background = 'rgba(255,255,255,0.03)';
+          el.btnToggleSound.style.color = 'rgba(255,255,255,0.25)';
+        }
+
+        if (state.vibrationEnabled) {
+          el.btnToggleVibration.textContent = 'ВКЛ 📳';
+          el.btnToggleVibration.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          el.btnToggleVibration.style.color = '#fff';
+        } else {
+          el.btnToggleVibration.textContent = 'ВЫКЛ 📴';
+          el.btnToggleVibration.style.background = 'rgba(255,255,255,0.03)';
+          el.btnToggleVibration.style.color = 'rgba(255,255,255,0.25)';
+        }
+      }
+
       function claimAchievement(id) {
         const ach = ACHIEVEMENTS.find(a => a.id === id);
         if (!ach || state.achievementsClaimed[id]) return;
         if (!canClaimAchievement(ach)) return;
 
         state.achievementsClaimed[id] = true;
+        triggerHaptic('heavy');
         if (ach.rewardGold) addGold(ach.rewardGold);
         if (ach.rewardGems) addGems(ach.rewardGems);
 
@@ -3971,6 +3941,7 @@
         renderRoles();
         renderAchievements();
         updateBossUI();
+        updateSettingsUI();
         updateTowerUI();
         renderGemMine();
       }
@@ -4053,21 +4024,13 @@
           if (!Number.isFinite(state.gemMineLevel)) state.gemMineLevel = 0;
           if (!Number.isFinite(state.gemMineStorage)) state.gemMineStorage = 0;
           if (!Number.isFinite(state.gemMineLastClaimAt)) state.gemMineLastClaimAt = Date.now();
-          if (typeof state.petEggs !== 'object' || !state.petEggs) {
-            state.petEggs = { common: 0, rare: 0, legendary: 0 };
-          }
-          if (typeof state.petLevels !== 'object' || !state.petLevels) {
-            state.petLevels = { pet_hamster: 1, pet_robot: 1, pet_dragon: 1, pet_ghost: 1, pet_phoenix: 1 };
-          }
-          if (typeof state.petDuplicates !== 'object' || !state.petDuplicates) {
-            state.petDuplicates = { pet_hamster: 0, pet_robot: 0, pet_dragon: 0, pet_ghost: 0, pet_phoenix: 0 };
-          }
-          if (state.hatchingEggType === undefined) state.hatchingEggType = null;
-          if (!Number.isFinite(state.hatchingEndsAt)) state.hatchingEndsAt = 0;
+
           if (typeof state.equippedGear !== 'object' || !state.equippedGear) {
             state.equippedGear = { weapon: null, armor: null, amulet: null };
           }
           if (!Number.isFinite(state.towerExtraAttempts)) state.towerExtraAttempts = 0;
+          if (state.soundEnabled === undefined) state.soundEnabled = true;
+          if (state.vibrationEnabled === undefined) state.vibrationEnabled = true;
           PRESTIGE_TALENTS.forEach(item => { if (!Number.isFinite(state.prestigeTalents[item.id])) state.prestigeTalents[item.id] = 0; });
           ACCOUNT_UPGRADES.forEach(item => { if (!Number.isFinite(state.accountUpgrades[item.id])) state.accountUpgrades[item.id] = 0; });
           if (!state.activeQuest || !state.activeQuest.type || !Number.isFinite(state.activeQuest.target)) ensureQuest(true);
@@ -4180,6 +4143,7 @@
           } else {
             state.bossHp -= hit.dmg;
           }
+          triggerHaptic('medium');
           el.bossSprite.classList.add('boss-hit-flash');
           setTimeout(() => el.bossSprite.classList.remove('boss-hit-flash'), 120);
           playSound('hit');
@@ -4297,6 +4261,7 @@
             towerBossHp -= dmg;
           }
 
+          triggerHaptic('medium');
           el.towerSprite.classList.add('tower-hit-flash');
           setTimeout(() => el.towerSprite.classList.remove('tower-hit-flash'), 120);
           playSound('hit');
@@ -4410,6 +4375,23 @@
             if (shell) shell.scrollTop = 0;
             if (page === 'shop') renderShop();
           });
+        });
+
+        el.btnToggleSound.addEventListener('click', e => {
+          e.preventDefault();
+          state.soundEnabled = !state.soundEnabled;
+          triggerHaptic('light');
+          playSound('click');
+          updateUI();
+          saveGame();
+        });
+
+        el.btnToggleVibration.addEventListener('click', e => {
+          e.preventDefault();
+          state.vibrationEnabled = !state.vibrationEnabled;
+          triggerHaptic('light');
+          updateUI();
+          saveGame();
         });
 
         el.btnReset.addEventListener('click', e => {
