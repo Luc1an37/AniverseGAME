@@ -2802,6 +2802,48 @@
         html += '<div class="shop-section-title">Сила клика</div><div class="shop-grid">' + CLICK_UPGRADES.map(item => renderUpgradeCard(item, 'Клик')).join('') + '</div>';
         html += '<div class="shop-section-title">Автодоход</div><div class="shop-grid">' + AUTO_UPGRADES.map(item => renderUpgradeCard(item, 'Доход')).join('') + '</div>';
 
+        let starsHtml = '<div class="shop-section-title">Магазин Звёзд (Telegram Stars)</div>';
+        starsHtml += '<div class="collection-card" style="padding:15px; margin-bottom:15px; background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(217, 119, 6, 0.15)); border: 1px solid rgba(245, 158, 11, 0.25); box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08);">';
+        starsHtml += '<h3 style="color:#f59e0b; font-size:14px; margin:0 0 4px 0;">🌟 Покупки за Звёзды (Telegram Stars)</h3>';
+        starsHtml += '<p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px;">Приобретайте премиум-ресурсы официально и безопасно через нативные счета Telegram!</p>';
+        starsHtml += '<div style="display:grid; grid-template-columns:1fr; gap:8px;">';
+
+        starsHtml += '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); border-radius:12px;">'
+          + '<div style="display:flex; align-items:center; gap:8px;">'
+          + '<span style="font-size:20px;">💎</span>'
+          + '<div><div style="font-size:12px; font-weight:900;">Малый пак кристаллов</div><div style="font-size:9px; color:rgba(255,255,255,0.4);">Получите +100 💎 мгновенно</div></div>'
+          + '</div>'
+          + '<button class="ad-btn shop-btn-buy" style="width:75px; padding:6px 0; font-size:11px; background:#f59e0b; color:#0a0f1e;" data-action-stars="gems_100">50 ⭐</button>'
+          + '</div>';
+
+        starsHtml += '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); border-radius:12px;">'
+          + '<div style="display:flex; align-items:center; gap:8px;">'
+          + '<span style="font-size:20px;">💎</span>'
+          + '<div><div style="font-size:12px; font-weight:900; color:#ffd700;">Большой пак кристаллов</div><div style="font-size:9px; color:rgba(255,255,255,0.4);">Получите +500 💎 (Выгодно!)</div></div>'
+          + '</div>'
+          + '<button class="ad-btn shop-btn-buy" style="width:75px; padding:6px 0; font-size:11px; background:#f59e0b; color:#0a0f1e;" data-action-stars="gems_500">200 ⭐</button>'
+          + '</div>';
+
+        const goldVal = Math.max(getClickPower() * 5000, getAutoIncome() * 1200);
+        starsHtml += '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); border-radius:12px;">'
+          + '<div style="display:flex; align-items:center; gap:8px;">'
+          + '<span style="font-size:20px;">💰</span>'
+          + '<div><div style="font-size:12px; font-weight:900;">Мешок золота Империи</div><div style="font-size:9px; color:rgba(255,255,255,0.4);">Получите +' + fmt(goldVal) + ' монет</div></div>'
+          + '</div>'
+          + '<button class="ad-btn shop-btn-buy" style="width:75px; padding:6px 0; font-size:11px; background:#f59e0b; color:#0a0f1e;" data-action-stars="gold_pack">25 ⭐</button>'
+          + '</div>';
+
+        starsHtml += '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); border-radius:12px;">'
+          + '<div style="display:flex; align-items:center; gap:8px;">'
+          + '<span style="font-size:20px;">🏰</span>'
+          + '<div><div style="font-size:12px; font-weight:900;">Билет в Башню Испытаний</div><div style="font-size:9px; color:rgba(255,255,255,0.4);">Куплено попыток: ' + (state.towerExtraAttempts || 0) + '</div></div>'
+          + '</div>'
+          + '<button class="ad-btn shop-btn-buy" style="width:75px; padding:6px 0; font-size:11px; background:#f59e0b; color:#0a0f1e;" data-action-stars="tower_ticket">15 ⭐</button>'
+          + '</div>';
+
+        starsHtml += '</div></div>';
+        html = starsHtml + html;
+
         html += '<div class="shop-section-title">Питомцы</div><div class="shop-grid">';
         for (const pet of PETS) {
           const owned = state.ownedPets.includes(pet.id);
@@ -3579,8 +3621,8 @@
       }
 
       function getTowerAttemptsLeft() {
-        if (state.towerLastAttemptAt === 0) return 1;
-        return getDayDiff(state.towerLastAttemptAt) >= 1 ? 1 : 0;
+        const base = state.towerLastAttemptAt === 0 || getDayDiff(state.towerLastAttemptAt) >= 1 ? 1 : 0;
+        return base + (state.towerExtraAttempts || 0);
       }
 
       function getTowerBoss(floor) {
@@ -3627,11 +3669,16 @@
       }
 
       function startTowerRun() {
-        if (getTowerAttemptsLeft() <= 0) {
-          showToast('Попытки на сегодня исчерпаны!');
-          return;
+        const base = state.towerLastAttemptAt === 0 || getDayDiff(state.towerLastAttemptAt) >= 1 ? 1 : 0;
+        if (base === 0) {
+          if ((state.towerExtraAttempts || 0) <= 0) {
+            showToast('Попытки на сегодня исчерпаны!');
+            return;
+          }
+          state.towerExtraAttempts -= 1;
+        } else {
+          state.towerLastAttemptAt = Date.now();
         }
-        state.towerLastAttemptAt = Date.now();
         towerActiveRun = {
           floor: 1,
           bossesDefeated: 0,
@@ -3897,6 +3944,65 @@
         }
       }
 
+      function buyWithTelegramStars(packId) {
+        if (!TELEGRAM_WEBAPP) {
+          const mockConfirm = confirm('[ТЕСТОВЫЙ РЕЖИМ] Вы хотите имитировать покупку ' + packId + ' за Telegram Stars?');
+          if (mockConfirm) {
+            grantStarsPurchase(packId);
+          }
+          return;
+        }
+
+        showToast('Создаем счет на оплату...');
+
+        fetch(`https://your-bot-backend.pages.dev/create-stars-invoice?pack=${packId}&userId=${TELEGRAM_WEBAPP.initDataUnsafe.user ? TELEGRAM_WEBAPP.initDataUnsafe.user.id : 0}`)
+          .then(response => {
+            if (!response.ok) throw new Error('Network error');
+            return response.json();
+          })
+          .then(data => {
+            if (data && data.invoiceLink) {
+              TELEGRAM_WEBAPP.openInvoice(data.invoiceLink, function(status) {
+                if (status === 'paid') {
+                  grantStarsPurchase(packId);
+                } else if (status === 'cancelled') {
+                  showToast('Оплата отменена.');
+                } else {
+                  showToast('Ошибка платежа.');
+                }
+              });
+            } else {
+              showToast('Не удалось сгенерировать инвойс.');
+            }
+          })
+          .catch(err => {
+            const mockConfirm = confirm('Бэкенд сервера оплаты не настроен. Желаете имитировать успешную покупку ' + packId + ' в целях тестирования?');
+            if (mockConfirm) {
+              grantStarsPurchase(packId);
+            }
+          });
+      }
+
+      function grantStarsPurchase(packId) {
+        playSound('reward');
+        if (packId === 'gems_100') {
+          addGems(100);
+          showReward('🔮 ПОКУПКА УСПЕШНА! 🔮\\n\\nВам начислено +100 кристаллов 💎!', { rarity: 'rare', title: 'ОПЛАТА СОВЕРШЕНА' });
+        } else if (packId === 'gems_500') {
+          addGems(500);
+          showReward('🔮 ПОКУПКА УСПЕШНА! 🔮\\n\\nВам начислено +500 кристаллов 💎!', { rarity: 'legendary', title: 'ОПЛАТА СОВЕРШЕНА' });
+        } else if (packId === 'gold_pack') {
+          const goldVal = Math.max(getClickPower() * 5000, getAutoIncome() * 1200);
+          addGold(goldVal);
+          showReward('💰 ПОКУПКА УСПЕШНА! 💰\\n\\nВам начислено +' + fmt(goldVal) + ' монет!', { rarity: 'rare', title: 'ОПЛАТА СОВЕРШЕНА' });
+        } else if (packId === 'tower_ticket') {
+          state.towerExtraAttempts = (state.towerExtraAttempts || 0) + 1;
+          showReward('🏰 ПОКУПКА УСПЕШНА! 🏰\\n\\nВы получили 1 дополнительный билет в Башню Испытаний!', { rarity: 'epic', title: 'ОПЛАТА СОВЕРШЕНА' });
+        }
+        updateUI();
+        saveGame();
+      }
+
       function updateUI() {
         checkBossBattleState();
         const levelData = getLevelData();
@@ -4051,6 +4157,7 @@
           if (typeof state.equippedGear !== 'object' || !state.equippedGear) {
             state.equippedGear = { weapon: null, armor: null, amulet: null };
           }
+          if (!Number.isFinite(state.towerExtraAttempts)) state.towerExtraAttempts = 0;
           PRESTIGE_TALENTS.forEach(item => { if (!Number.isFinite(state.prestigeTalents[item.id])) state.prestigeTalents[item.id] = 0; });
           ACCOUNT_UPGRADES.forEach(item => { if (!Number.isFinite(state.accountUpgrades[item.id])) state.accountUpgrades[item.id] = 0; });
           if (!state.activeQuest || !state.activeQuest.type || !Number.isFinite(state.activeQuest.target)) ensureQuest(true);
@@ -4108,6 +4215,14 @@
         });
 
         el.shopContent.addEventListener('click', handleShopAction);
+
+        el.shopNormalSection.addEventListener('click', e => {
+          const starsBtn = e.target.closest('[data-action-stars]');
+          if (starsBtn) {
+            e.preventDefault();
+            buyWithTelegramStars(starsBtn.getAttribute('data-action-stars'));
+          }
+        });
 
 
 
@@ -4493,5 +4608,5 @@
       else init();
     })();
   </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a03460695ff68d66',t:'MTc4MDA0NTkzOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
