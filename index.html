@@ -564,9 +564,107 @@
       0%, 100% { opacity: 0.35; }
       50% { opacity: 1; }
     }
+      /* Critical Tap styles */
+    .crit-float-num {
+      position: fixed;
+      z-index: 50;
+      pointer-events: none;
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffd700;
+      text-shadow: 0 0 8px #ff4500, 0 0 15px #ffd700;
+      animation: floatAwayCrit 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes floatAwayCrit {
+      0% { opacity: 1; transform: translateY(0) scale(0.6) rotate(-15deg); }
+      30% { opacity: 1; transform: translateY(-30px) scale(1.3) rotate(5deg); }
+      100% { opacity: 0; transform: translateY(-90px) scale(0.8) rotate(15deg); }
+    }
+    
+    /* Smooth background transitions */
+    body {
+      transition: background 1.5s ease-in-out, color 0.3s ease;
+    }
+      /* Boss Rage Shaking & Mercenary aura styles */
+    .boss-rage-shake {
+      animation: bossAngryShake 0.15s infinite linear !important;
+    }
+    @keyframes bossAngryShake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(0px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(2px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(2px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+    
+    .aura-rare {
+      filter: drop-shadow(0 0 10px #818cf8) !important;
+    }
+    .aura-epic {
+      filter: drop-shadow(0 0 12px #c084fc) !important;
+    }
+    .aura-legendary {
+      filter: drop-shadow(0 0 15px #fbbf24) !important;
+      animation: auraPulsing 2s infinite ease-in-out;
+    }
+    @keyframes auraPulsing {
+      0%, 100% { filter: drop-shadow(0 0 12px #fbbf24); }
+      50% { filter: drop-shadow(0 0 20px #fbbf24) brightness(1.2); }
+    }
+      /* Wormhole Portal Styles */
+    .wormhole-portal {
+      position: fixed;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #c084fc, #7c3aed 50%, #1e1035);
+      box-shadow: 0 0 35px #c084fc, inset 0 0 15px #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: pointer;
+      z-index: 1000;
+      animation: portalSpin 6s linear infinite, portalPulse 2s infinite ease-in-out;
+    }
+    @keyframes portalSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes portalPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 30px #c084fc; }
+      50% { transform: scale(1.12); box-shadow: 0 0 45px #c084fc, 0 0 10px #fff; }
+    }
   </style>
 </head>
 <body class="theme-default">
+  <div class="frenzy-overlay" id="frenzyOverlay"></div>
+  <div class="frenzy-timer-bar" id="frenzyTimerBar">
+    <span>⚡ Золотая лихорадка x5!</span>
+    <b id="frenzyTimerText">30с</b>
+  </div>
+
+  <!-- Wormhole Confirmation Modal -->
+  <div class="modal-overlay" id="wormholeModal">
+    <div class="modal-box" style="border-color:#c084fc; box-shadow: 0 0 30px rgba(192, 132, 252, 0.35); background: rgba(18,15,34,0.96);">
+      <div style="font-size:52px; animation: portalSpin 6s linear infinite; display:inline-block; margin-bottom:12px;">🌀</div>
+      <h2 class="reward-title" style="color:#c084fc; font-size:16px;">Космическая Червоточина</h2>
+      <div class="reward-text" style="font-size:11px; line-height:1.45; color:rgba(255,255,255,0.7); margin-bottom:16px; white-space:normal;">
+        Вы обнаружили пространственный разлом! Хотите запустить искривление времени и мгновенно совершить прыжок на <b>1 ЧАС</b> вперёд?<br><br>
+        Вы получите автодоход и проценты вашего банка за 60 минут прямо сейчас!
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+        <button class="ad-btn" id="btnWormholeJump" type="button" style="background: linear-gradient(135deg, #a855f7, #7c3aed); padding:11px; font-size:11px;">Совершить прыжок (Реклама)</button>
+        <button class="bank-btn" id="btnWormholeClose" type="button" style="width:100%; padding:10px; font-size:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:rgba(255,255,255,0.42);">Закрыть разлом</button>
+      </div>
+    </div>
+  </div>
   <div class="frenzy-overlay" id="frenzyOverlay"></div>
   <div class="frenzy-timer-bar" id="frenzyTimerBar">
     <span>⚡ Золотая лихорадка x5!</span>
@@ -1475,7 +1573,10 @@
           towerHintText: document.getElementById('towerHintText'),
           topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark'),
           btnToggleSound: document.getElementById('btnToggleSound'),
-          btnToggleVibration: document.getElementById('btnToggleVibration')
+          btnToggleVibration: document.getElementById('btnToggleVibration'),
+          wormholeModal: document.getElementById('wormholeModal'),
+          btnWormholeJump: document.getElementById('btnWormholeJump'),
+          btnWormholeClose: document.getElementById('btnWormholeClose')
         });
       }
 
@@ -1843,14 +1944,14 @@
         return '<div class="coin-art coin-preview skin-' + skin.id + '"><span class="coin-mark">' + skin.mark + '</span></div>';
       }
 
-      function spawnFloat(x, y, text) {
+      function spawnFloat(x, y, text, isCrit = false) {
         const d = document.createElement('div');
-        d.className = 'float-num';
+        d.className = isCrit ? 'crit-float-num' : 'float-num';
         d.textContent = text;
         d.style.left = (x - 20) + 'px';
         d.style.top = (y - 30) + 'px';
         document.body.appendChild(d);
-        setTimeout(() => d.remove(), 700);
+        setTimeout(() => d.remove(), isCrit ? 800 : 700);
       }
 
       function getMaxUnlockedBossIdx() {
@@ -2061,7 +2162,19 @@
         el.bossTimerText.textContent = active ? fmtSeconds(remainingSec) : fmtSeconds(boss.duration);
         el.bossTimerFill.style.width = active ? Math.max(0, remainingMs / (boss.duration * 1000) * 100) + '%' : '100%';
         el.bossArmor.textContent = fmt(getBossArmorValue());
-        el.bossRage.textContent = state.bossReviveAvailable ? 'Нокдаун' : (isBossEnraged() ? 'Ярость' : (active ? 'Бой' : 'Ожидание'));
+        const enraged = isBossEnraged();
+        el.bossRage.innerHTML = state.bossReviveAvailable ? 'Нокдаун' : (enraged ? '🔥 ЯРОСТЬ! 🔥' : (active ? 'Бой' : 'Ожидание'));
+        if (enraged && active) {
+          el.bossSprite.classList.add('boss-rage-shake');
+          el.bossCard.style.borderColor = '#ef4444';
+          el.bossCard.style.boxShadow = '0 0 25px rgba(239, 68, 68, 0.25)';
+          el.bossRage.style.color = '#ef4444';
+        } else {
+          el.bossSprite.classList.remove('boss-rage-shake');
+          el.bossCard.style.borderColor = '';
+          el.bossCard.style.boxShadow = '';
+          el.bossRage.style.color = '';
+        }
         el.bossDuration.textContent = fmt(getBossRegenValue()) + '/с';
         el.btnPrevBoss.disabled = state.bossIdx <= 0;
         el.btnNextBoss.disabled = state.bossIdx >= BOSSES.length - 1;
@@ -2966,6 +3079,24 @@
 
       function applyTheme(themeId) {
         document.body.className = themeId.replace('_', '-');
+        
+        if (themeId === 'theme_default') {
+          const loc = getLoc();
+          if (loc.name.includes('ПЕЩЕРА')) {
+            document.body.style.background = '#0a0f1e'; // Default dark blue
+          } else if (loc.name.includes('ДВОРЕЦ')) {
+            document.body.style.background = '#180a0a'; // Crimson Red
+          } else if (loc.name.includes('ХРАМ')) {
+            document.body.style.background = '#0a1c2e'; // Sky Blue / Slate
+          } else if (loc.name.includes('ТЕНЕЙ')) {
+            document.body.style.background = '#10051e'; // Void Purple
+          } else {
+            document.body.style.background = '#1c0b05'; // Space Fiery Orange
+          }
+        } else {
+          document.body.style.background = ''; // reset to stylesheet
+        }
+        
         initParticles();
       }
 
@@ -2975,6 +3106,9 @@
         if (state.currentTheme === 'theme_space') count = 50;
         if (state.currentTheme === 'theme_neon') count = 24;
         if (state.currentTheme === 'theme_dungeon') count = 20;
+        
+        const loc = getLoc();
+        
         for (let i = 0; i < count; i++) {
           const p = document.createElement('div');
           p.className = 'particle';
@@ -2982,7 +3116,26 @@
           p.style.top = Math.random() * 100 + '%';
           p.style.animationDelay = Math.random() * 5 + 's';
           p.style.animationDuration = 2 + Math.random() * 4 + 's';
-          if (state.currentTheme === 'theme_space') {
+          
+          if (state.currentTheme === 'theme_default') {
+            // Customize particle sizes and colors depending on location!
+            if (loc.name.includes('ПЕЩЕРА')) {
+              p.style.background = '#38bdf8'; // Cyan moss sparks
+              p.style.boxShadow = '0 0 6px #38bdf8';
+            } else if (loc.name.includes('ДВОРЕЦ')) {
+              p.style.background = '#fbbf24'; // Golden palace embers
+              p.style.boxShadow = '0 0 6px #fbbf24';
+            } else if (loc.name.includes('ХРАМ')) {
+              p.style.background = '#ffffff'; // Soft clouds/stars
+              p.style.boxShadow = '0 0 8px #ffffff';
+            } else if (loc.name.includes('ТЕНЕЙ')) {
+              p.style.background = '#c084fc'; // Violet shadow sparks
+              p.style.boxShadow = '0 0 6px #c084fc';
+            } else {
+              p.style.background = '#f97316'; // Fiery space embers
+              p.style.boxShadow = '0 0 8px #f97316';
+            }
+          } else if (state.currentTheme === 'theme_space') {
             const s = 1 + Math.random() * 2;
             p.style.width = s + 'px';
             p.style.height = s + 'px';
@@ -3622,11 +3775,10 @@
 
             currentStep++;
             if (currentStep < totalSteps) {
-              // Decelerate as it approaches the target
-              if (totalSteps - currentStep < 6) {
-                currentInterval += 60;
-              } else if (totalSteps - currentStep < 12) {
-                currentInterval += 25;
+              // True exponential mechanical deceleration curve
+              const remainingSteps = totalSteps - currentStep;
+              if (remainingSteps < 10) {
+                currentInterval = 50 + Math.pow(10 - remainingSteps, 1.8) * 14;
               }
               setTimeout(tick, currentInterval);
             } else {
@@ -4166,7 +4318,17 @@
 
         if (towerActiveRun) {
           const boss = getTowerBoss(towerActiveRun.floor);
-          el.towerName.textContent = boss.name;
+          const isConquered = towerActiveRun.floor <= state.towerMaxFloorReached;
+          
+          if (isConquered) {
+            el.towerName.innerHTML = boss.name + ' <span style="color:#10b981; font-size:10px; font-weight:900; margin-left:4px;">(ЗАЧИЩЕНО ✓)</span>';
+            el.towerSprite.style.opacity = '0.5';
+            el.towerSprite.style.filter = 'grayscale(0.65)';
+          } else {
+            el.towerName.textContent = boss.name;
+            el.towerSprite.style.opacity = '1';
+            el.towerSprite.style.filter = 'none';
+          }
           el.towerSprite.textContent = boss.sprite;
           el.towerFloorText.textContent = towerActiveRun.floor + ' / 15';
           el.towerDurationText.textContent = boss.regen + '/с';
@@ -4341,10 +4503,10 @@
         
         // Build full list of bots + player
         const playerRecord = state.towerMaxFloorReached || 0;
-        const playerRankName = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
+        const playerRankName = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
           ? TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
           : 'Вы';
-        const playerUsername = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.username 
+        const playerUsername = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.username 
           ? '@' + TELEGRAM_WEBAPP.initDataUnsafe.user.username 
           : '@player';
 
@@ -4408,6 +4570,26 @@
 
         // Mage: unlocked if prestige stars > 0
         el.mercMage.style.display = state.prestige > 0 ? 'block' : 'none';
+
+        // Apply mystical color aura depending on highest equipped item rarity
+        let bestRarity = 'common';
+        const slots = ['weapon', 'armor', 'amulet'];
+        slots.forEach(slot => {
+          if (state.equippedGear && state.equippedGear[slot]) {
+            const item = GEAR_TEMPLATES.find(g => g.id === state.equippedGear[slot]);
+            if (item) {
+              if (item.rarity === 'legendary') bestRarity = 'legendary';
+              else if (item.rarity === 'epic' && bestRarity !== 'legendary') bestRarity = 'epic';
+              else if (item.rarity === 'rare' && bestRarity !== 'legendary' && bestRarity !== 'epic') bestRarity = 'rare';
+            }
+          }
+        });
+
+        const auraClass = bestRarity === 'legendary' ? 'aura-legendary' : (bestRarity === 'epic' ? 'aura-epic' : (bestRarity === 'rare' ? 'aura-rare' : ''));
+        [el.mercWarrior, el.mercArcher, el.mercMage].forEach(m => {
+          m.classList.remove('aura-rare', 'aura-epic', 'aura-legendary');
+          if (auraClass) m.classList.add(auraClass);
+        });
       }
 
       function spawnLuckyGoldenCoin() {
@@ -4543,9 +4725,49 @@
 
 
 
+      function spawnWormhole() {
+        if (document.querySelector('.wormhole-portal')) return;
+
+        const portal = document.createElement('div');
+        portal.className = 'wormhole-portal';
+        portal.innerHTML = '🌀';
+
+        const x = 50 + (Math.random() * (window.innerWidth - 100));
+        const y = 120 + (Math.random() * (window.innerHeight - 270));
+
+        portal.style.left = Math.max(20, Math.min(window.innerWidth - 80, x)) + 'px';
+        portal.style.top = Math.max(120, Math.min(window.innerHeight - 150, y)) + 'px';
+
+        portal.addEventListener('click', e => {
+          e.preventDefault();
+          portal.remove();
+          openWormholeModal();
+        });
+
+        document.body.appendChild(portal);
+
+        setTimeout(() => {
+          if (portal.parentNode) portal.remove();
+        }, 12000);
+      }
+
+      function openWormholeModal() {
+        triggerHaptic('heavy');
+        playSound('reward');
+        el.wormholeModal.classList.add('show');
+      }
+
       function updateUI() {
         checkBossBattleState();
         const levelData = getLevelData();
+        
+        // Dynamic location theme tracker
+        const loc = getLoc();
+        updateUI._lastLocName = updateUI._lastLocName || '';
+        if (updateUI._lastLocName !== loc.name) {
+          updateUI._lastLocName = loc.name;
+          applyTheme(state.currentTheme);
+        }
         el.goldVal.textContent = fmt(state.gold);
         el.gemsVal.textContent = fmt(state.gems);
         el.cpsVal.textContent = fmt(getAutoIncome());
@@ -4563,7 +4785,6 @@
         el.rankBadge.textContent = getRank();
         el.comboChip.textContent = 'COMBO x' + getComboMult().toFixed(2);
         el.comboChip.classList.toggle('hot', getComboMult() > 1.4);
-        const loc = getLoc();
         el.locTitle.textContent = loc.name;
         el.locDesc.textContent = loc.desc;
         el.statLevel.textContent = String(levelData.level);
@@ -5108,6 +5329,43 @@
           });
         });
 
+        el.btnWormholeJump.addEventListener('click', e => {
+          e.preventDefault();
+          el.wormholeModal.classList.remove('show');
+
+          showAdsgramReward('offline', () => {
+            const autoGold = getAutoIncome() * 3600;
+            const bankGold = getBankIncomePerMinute() * 60;
+            const totalGold = autoGold + bankGold;
+
+            addGold(totalGold);
+            playSound('reward');
+            triggerHaptic('heavy');
+
+            // Sparkle effect
+            for (let i = 0; i < 15; i++) {
+              setTimeout(() => {
+                const sx = window.innerWidth / 2 + (Math.random() * 160 - 80);
+                const sy = window.innerHeight / 2 + (Math.random() * 160 - 80);
+                spawnFloat(sx, sy, '🌀');
+              }, i * 50);
+            }
+
+            showReward('⏳ ВРЕМЕННОЙ СКАЧОК УСПЕШЕН! ⏳\\n\\nВы прыгнули во времени на 1 ЧАС вперёд!\\n\\nПолучено:\\n💰 +' + fmt(totalGold) + ' монет!\\n\\n(Автодоход: +' + fmt(autoGold) + ' • Проценты банка: +' + fmt(bankGold) + ')', {
+              rarity: 'epic',
+              title: 'ИСКРИВЛЕНИЕ ВРЕМЕНИ'
+            });
+
+            updateUI();
+            saveGame();
+          }, 'wormholeJump');
+        });
+
+        el.btnWormholeClose.addEventListener('click', e => {
+          e.preventDefault();
+          el.wormholeModal.classList.remove('show');
+        });
+
         el.btnToggleSound.addEventListener('click', e => {
           e.preventDefault();
           state.soundEnabled = !state.soundEnabled;
@@ -5208,6 +5466,11 @@
             if (bot.score > oldScore) {
               showToast('🏆 Игрок ' + bot.name + ' зачистил ' + bot.score + ' этаж Башни!');
             }
+          }
+
+          // Cosmic Wormhole passive roll
+          if (Math.random() < 0.0008) {
+            spawnWormhole();
           }
           
           updateUI();
