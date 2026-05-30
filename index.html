@@ -650,6 +650,13 @@
     <b id="frenzyTimerText">30с</b>
   </div>
 
+
+  <div class="frenzy-overlay" id="frenzyOverlay"></div>
+  <div class="frenzy-timer-bar" id="frenzyTimerBar">
+    <span>⚡ Золотая лихорадка x5!</span>
+    <b id="frenzyTimerText">30с</b>
+  </div>
+
   <!-- Wormhole Confirmation Modal -->
   <div class="modal-overlay" id="wormholeModal">
     <div class="modal-box" style="border-color:#c084fc; box-shadow: 0 0 30px rgba(192, 132, 252, 0.35); background: rgba(18,15,34,0.96);">
@@ -977,6 +984,8 @@
           </div>
         </div>
 
+
+
         <button class="btn-reset" id="btnReset" type="button">Сбросить весь прогресс</button>
       </div>
     </div>
@@ -1132,6 +1141,24 @@
         <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">🔁</div><div class="bonus-card-body"><div class="bonus-card-title">Восстановление серии</div><div class="bonus-card-desc">Возвращает потерянную серию входов, если вы пропустили день.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="restoreStreak" type="button">Вернуть</button></div></div></div>
         <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">⏭</div><div class="bonus-card-body"><div class="bonus-card-title">Пропуск части ожидания</div><div class="bonus-card-desc">Сбрасывает ожидание до следующего бесплатного бонуса.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="skipWait" type="button">Пропустить</button></div></div></div>
         <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">💠</div><div class="bonus-card-body"><div class="bonus-card-title">Бесплатный редкий сундук</div><div class="bonus-card-desc">Мгновенно выдаёт редкий сундук с улучшенной добычей.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="rareChest" type="button">Открыть</button></div></div></div>
+        
+        <!-- Adsterra Banner 320x50 -->
+        <div class="ad-card" style="padding: 12px; text-align: center; background: rgba(0,0,0,0.22); margin-top: 15px; border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80px;">
+          <div style="font-size: 8px; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.8px;">Реклама от партнеров</div>
+          
+          <div id="adsterra-banner-container" style="width: 320px; height: 50px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px;">
+            <script type="text/javascript">
+              atOptions = {
+                'key' : 'd8f8e3afa3669a4585924945d6cc05e7',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+              };
+            </script>
+            <script type="text/javascript" src="https://www.highperformanceformat.com/d8f8e3afa3669a4585924945d6cc05e7/invoke.js"></script>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1574,6 +1601,7 @@
           topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark'),
           btnToggleSound: document.getElementById('btnToggleSound'),
           btnToggleVibration: document.getElementById('btnToggleVibration'),
+
           wormholeModal: document.getElementById('wormholeModal'),
           btnWormholeJump: document.getElementById('btnWormholeJump'),
           btnWormholeClose: document.getElementById('btnWormholeClose')
@@ -2580,6 +2608,7 @@
           }
         });
         PLAYER_TITLES.forEach(title => {
+          if (title.id === 'title_novice') return; 
           if (title.unlockBosses && state.bossesDefeated < title.unlockBosses) return;
           if (title.unlockPrestige && state.prestige < title.unlockPrestige) return;
           if (title.unlockSkins && state.ownedCoinSkins.length < title.unlockSkins) return;
@@ -4768,6 +4797,57 @@
         el.wormholeModal.classList.add('show');
       }
 
+      function generateRandomTonAddress() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+        let addr = 'EQ';
+        for (let i = 0; i < 44; i++) {
+          addr += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return addr;
+      }
+
+      function simulateWalletConnection(walletName) {
+        if (state.tonWalletAddress) return;
+        
+        el.tonWalletOptionsBox.style.display = 'none';
+        el.btnCloseWalletModal.style.display = 'none';
+        el.tonWalletLoadingBox.style.display = 'flex';
+        
+        playSound('click');
+        triggerHaptic('light');
+
+        // Simulate 2 second loading delay
+        setTimeout(() => {
+          const generatedAddress = generateRandomTonAddress();
+          state.tonWalletAddress = generatedAddress;
+          
+          // Reward: +50 crystals, title Crypto Lord
+          addGems(50);
+          if (!state.ownedTitles.includes('title_crypto')) {
+            state.ownedTitles.push('title_crypto');
+          }
+          state.currentTitle = 'title_crypto';
+
+          el.tonWalletModal.classList.remove('show');
+          
+          playSound('reward');
+          triggerHaptic('heavy');
+          
+          // Yandex.Metrika goal tracking
+          if (typeof ym === 'function') {
+            ym(109494281, 'reachGoal', 'wallet_connect');
+          }
+
+          showReward('🎉 КОШЕЛЕК УСПЕШНО ПОДКЛЮЧЕН! 🎉\n\nКошелек: ' + walletName + '\n\nАдрес в блокчейне:\n' + generatedAddress + '\n\nВы получили:\n💎 +50 кристаллов!\n📜 Титул: Крипто-Лорд\n\nВаш аккаунт допущен к будущему Airdrop!', {
+            rarity: 'legendary',
+            title: 'Web3 & AirDrop'
+          });
+
+          updateUI();
+          saveGame();
+        }, 2000);
+      }
+
       function updateUI() {
         checkBossBattleState();
         const levelData = getLevelData();
@@ -4835,6 +4915,8 @@
         updateBossUI();
         updateSettingsUI();
         renderHiredMercenaries();
+        
+
         if (el.goalsLeaderboardSection && el.goalsLeaderboardSection.style.display !== 'none') {
           renderLeaderboard();
         }
@@ -5377,6 +5459,8 @@
           el.wormholeModal.classList.remove('show');
         });
 
+
+
         el.btnToggleSound.addEventListener('click', e => {
           e.preventDefault();
           state.soundEnabled = !state.soundEnabled;
@@ -5514,5 +5598,5 @@
       else init();
     })();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a03fef0e9b928d8b',t:'MTc4MDE2NzEyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
