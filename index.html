@@ -1178,8 +1178,8 @@
         }
       }
 
-      const SAVE_KEY = 'goldEmp_v13';
-      const LOAD_KEYS = ['goldEmp_v13', 'goldEmp_v12', 'goldEmp_v10'];
+      const SAVE_KEY = 'aniverse_v1';
+      const LOAD_KEYS = ['aniverse_v1'];
       const BASE_PRESTIGE_COST = 500000;
       const DAY_MS = 86400000;
       const ADSGRAM_CONFIG = {
@@ -3633,7 +3633,7 @@
         state.equippedGear[item.type] = itemId;
 
         playSound('reward');
-        showReward('🎉 ВЫ СКУЛИ НОВОЕ СНАРЯЖЕНИЕ! 🎉\\n\\nВы получили: ' + item.icon + ' ' + item.name + '\\n\\nПредмет автоматически экипирован!\\nБонус: ' + item.desc, {
+        showReward('🎉 ВЫ СКОВАЛИ НОВОЕ СНАРЯЖЕНИЕ! 🎉\n\nВы получили: ' + item.icon + ' ' + item.name + '\n\nПредмет автоматически экипирован!\nБонус: ' + item.desc, {
           rarity: item.rarity,
           title: 'КУЗНИЦА ИМПЕРИИ'
         });
@@ -3790,7 +3790,7 @@
               playSound('reward');
               triggerHaptic('heavy');
 
-              showReward('🎉 КОЛЕСО ФОРТУНЫ 🎉\\n\\nВы выиграли:\\n' + WHEEL_REWARDS[winIdx].icon + ' ' + WHEEL_REWARDS[winIdx].label + '!\\n\\n' + WHEEL_REWARDS[winIdx].desc, {
+              showReward('🎉 КОЛЕСО ФОРТУНЫ 🎉\n\nВы выиграли:\n' + WHEEL_REWARDS[winIdx].icon + ' ' + WHEEL_REWARDS[winIdx].label + '!\n\n' + WHEEL_REWARDS[winIdx].desc, {
                 rarity: winIdx === 6 || winIdx === 7 ? 'legendary' : winIdx === 4 ? 'epic' : 'rare',
                 title: 'НЕОЖИДАННЫЙ ВЫИГРЫШ!'
               });
@@ -4391,6 +4391,7 @@
       let synthInterval = null;
       let synthStep = 0;
       let synthPlaying = false;
+      let currentAmbianceType = null;
 
       function playAmbianceNote(freq, type = 'square', duration = 0.15, vol = 0.015) {
         if (!state.soundEnabled || !audioCtx) return;
@@ -4415,42 +4416,51 @@
           stopChiptune();
           return;
         }
-        if (synthPlaying) return;
+
+        const isBossFight = state.bossBattleActive;
+        const isTowerFight = towerActiveRun && towerActiveRun.state === 'fighting';
+        const loc = getLoc();
+
+        let requiredType = 'cave';
+        if (isBossFight || isTowerFight) {
+          requiredType = 'combat';
+        } else if (loc.name.includes('ДВОРЕЦ') || loc.name.includes('ХРАМ') || loc.name.includes('ТЕНЕЙ') || loc.name.includes('ЗВЕЗДЫ')) {
+          requiredType = 'palace';
+        }
+
+        // Only restart if the required theme has changed!
+        if (currentAmbianceType === requiredType && synthPlaying) return;
+
+        stopChiptune();
+        currentAmbianceType = requiredType;
         synthPlaying = true;
 
-        // Loop patterns
-        // Standard Cave: deep mysterious arpeggio (Minor)
-        const caveMelody = [130.81, 155.56, 196.00, 220.00, 196.00, 155.56]; // C3, Eb3, G3, A3, G3, Eb3
-        // Palace: regal Renaissance melody
-        const palaceMelody = [146.83, 185.00, 220.00, 293.66, 220.00, 185.00, 146.83, 220.00]; // D3, F#3, A3, D4, A3, F#3, D3, A3
-        // Combat/Bosses: fast epic combat march!
-        const combatMelody = [110.00, 110.00, 164.81, 110.00, 110.00, 196.00, 220.00, 196.00]; // A2, A2, E3, A2, A2, G3, A3, G3
+        const caveMelody = [130.81, 155.56, 196.00, 220.00, 196.00, 155.56];
+        const palaceMelody = [146.83, 185.00, 220.00, 293.66, 220.00, 185.00, 146.83, 220.00];
+        const combatMelody = [110.00, 110.00, 164.81, 110.00, 110.00, 196.00, 220.00, 196.00];
 
+        let melody = caveMelody;
+        let type = 'triangle';
+        let vol = 0.012;
         let stepMs = 280;
 
+        if (requiredType === 'combat') {
+          melody = combatMelody;
+          type = 'sawtooth';
+          stepMs = 180;
+          vol = 0.008;
+        } else if (requiredType === 'palace') {
+          melody = palaceMelody;
+          type = 'square';
+          stepMs = 250;
+          vol = 0.005;
+        }
+
         synthInterval = setInterval(() => {
-          let melody = caveMelody;
-          let type = 'triangle';
-          let vol = 0.012;
-
-          const isBossFight = state.bossBattleActive;
-          const isTowerFight = towerActiveRun && towerActiveRun.state === 'fighting';
-
-          if (isBossFight || isTowerFight) {
-            melody = combatMelody;
-            type = 'sawtooth';
-            stepMs = 180;
-            vol = 0.008; // Sawtooth is loud
-          } else {
-            const loc = getLoc();
-            if (loc.name.includes('ДВОРЕЦ') || loc.name.includes('ХРАМ')) {
-              melody = palaceMelody;
-              type = 'square';
-              stepMs = 250;
-              vol = 0.005; // Square is piercing
-            }
+          if (!state.soundEnabled) {
+            stopChiptune();
+            return;
           }
-
           const freq = melody[synthStep % melody.length];
           playAmbianceNote(freq, type, stepMs / 1000 * 1.5, vol);
           synthStep++;
@@ -4464,6 +4474,7 @@
         }
         synthPlaying = false;
         synthStep = 0;
+        currentAmbianceType = null;
       }
 
       // --- Leagues & Leaderboard Logic ---
@@ -5127,7 +5138,7 @@
             state.bossReviveHp = 0;
             state.bossHp = boss.hp;
             playSound('reward');
-            showToast('Босс побеждён! +' + fmt(boss.reward * rewardMult) + '💎' + (timeBonus > 0 ? ' и +' + fmt(timeBonus) + '$' : '') + '\\nПолучено ресурсов:' + dropMsg);
+            showToast('Босс побеждён! +' + fmt(boss.reward * rewardMult) + '💎' + (timeBonus > 0 ? ' и +' + fmt(timeBonus) + '$' : '') + '\nПолучено ресурсов:' + dropMsg);
             maybeShowInterstitial('boss');
           } else if (hit.blocked === 'vulnerable') {
             showToast('Сейчас босс неуязвим!');
@@ -5351,7 +5362,7 @@
               }, i * 50);
             }
 
-            showReward('⏳ ВРЕМЕННОЙ СКАЧОК УСПЕШЕН! ⏳\\n\\nВы прыгнули во времени на 1 ЧАС вперёд!\\n\\nПолучено:\\n💰 +' + fmt(totalGold) + ' монет!\\n\\n(Автодоход: +' + fmt(autoGold) + ' • Проценты банка: +' + fmt(bankGold) + ')', {
+            showReward('⏳ ВРЕМЕННОЙ СКАЧОК УСПЕШЕН! ⏳\n\nВы прыгнули во времени на 1 ЧАС вперёд!\n\nПолучено:\n💰 +' + fmt(totalGold) + ' монет!\n\n(Автодоход: +' + fmt(autoGold) + ' • Проценты банка: +' + fmt(bankGold) + ')', {
               rarity: 'epic',
               title: 'ИСКРИВЛЕНИЕ ВРЕМЕНИ'
             });
@@ -5503,5 +5514,5 @@
       else init();
     })();
   </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a03fef0e9b928d8b',t:'MTc4MDE2NzEyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
