@@ -476,6 +476,66 @@
       filter: brightness(1.8) saturate(1.8) drop-shadow(0 0 12px rgba(124, 58, 237, 0.85)) !important;
       transform: scale(0.8);
     }
+      /* Mercenary Bobbing Animations */
+    .merc {
+      position: absolute;
+      font-size: 28px;
+      pointer-events: none;
+      z-index: 10;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+    .merc-warrior {
+      left: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: mercBob1 2.2s infinite ease-in-out;
+    }
+    .merc-archer {
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: mercBob2 2.5s infinite ease-in-out;
+    }
+    .merc-mage {
+      right: 0px;
+      top: -25px;
+      animation: mercBob1 3s infinite ease-in-out;
+    }
+    @keyframes mercBob1 {
+      0%, 100% { transform: translateY(-50%) translateY(0px) scale(1); }
+      50% { transform: translateY(-50%) translateY(-6px) scale(1.05); }
+    }
+    @keyframes mercBob2 {
+      0%, 100% { transform: translateY(-50%) translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-50%) translateY(-8px) rotate(-3deg); }
+    }
+    
+    /* Leaderboard list styles */
+    .leader-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      margin-bottom: 6px;
+      transition: all 0.15s ease;
+    }
+    .leader-row.player {
+      border-color: #ffd700;
+      background: rgba(255,215,0,0.06);
+      box-shadow: 0 0 10px rgba(255,215,0,0.1) inset;
+    }
+    .leader-rank {
+      font-size: 14px;
+      font-weight: 900;
+      width: 25px;
+      text-align: center;
+    }
+    .leader-rank-1 { color: #ffd700; }
+    .leader-rank-2 { color: #cbd5e1; }
+    .leader-rank-3 { color: #b45309; }
   </style>
 </head>
 <body class="theme-default">
@@ -550,6 +610,12 @@
           <div class="clicker-aura"></div>
           <div class="clicker-pulse"></div>
           <div class="clicker-ring"></div>
+          
+          <!-- Hired Mercenaries (Live Emojis) -->
+          <div class="merc merc-warrior" id="mercWarrior" style="display:none;">⚔️</div>
+          <div class="merc merc-archer" id="mercArcher" style="display:none;">🏹</div>
+          <div class="merc merc-mage" id="mercMage" style="display:none;">🔮</div>
+          
           <button class="clicker-btn" id="clickerBtn" type="button">
             <div class="coin-art coin-main skin-classic coin-sweep" id="mainCoin"><span class="coin-mark" id="mainCoinMark">$</span></div>
           </button>
@@ -586,6 +652,24 @@
         </div>
 
         <div id="shop-forge-section" style="width:100%; display:none;">
+          <!-- Refinement Oven Card -->
+          <div class="collection-card" style="padding:15px; margin-bottom:15px; background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(16, 185, 129, 0.15)); border: 1px solid rgba(16, 185, 129, 0.25); box-shadow: 0 10px 24px rgba(16, 185, 129, 0.08);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <h3 style="color:#10b981; font-size:14px; margin:0;">🔥 Плавильная Печь Империи</h3>
+              <span id="ovenStateText" style="font-size:10px; font-weight:900; background:rgba(16, 185, 129, 0.15); color:#10b981; padding:3px 8px; border-radius:6px; text-transform:uppercase;">Свободна</span>
+            </div>
+            <p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px;">Переплавляйте обычные материалы в более редкие. Просмотр рекламы мгновенно завершит переплавку!</p>
+            
+            <div id="ovenJobBox" style="display:none; flex-direction:column; margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; margin-bottom:6px;">
+                <span id="ovenJobTitle">Плавка...</span>
+                <span id="ovenJobTimer">00:00</span>
+              </div>
+              <div class="boss-timer-bar"><div class="boss-timer-fill" id="ovenJobFill" style="background: linear-gradient(90deg, #10b981, #059669); width:0%;"></div></div>
+            </div>
+            
+            <div id="ovenControlsBox" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
           <!-- Materials Display Row -->
           <div class="collection-card" style="padding:14px; margin-bottom:15px; background:rgba(0,0,0,0.25);">
             <div style="font-size:10px; font-weight:900; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">Ваши материалы для крафта</div>
@@ -652,6 +736,20 @@
           </div>
         </div>
 
+        <!-- Wheel of Fortune Card -->
+        <div class="ad-card" id="wheelCard" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(245, 158, 11, 0.15)); border: 1px solid rgba(245, 158, 11, 0.25); box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08); margin-bottom: 12px; padding: 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h3 style="color:#f59e0b; font-size:14px; margin:0;">🎡 Колесо Фортуны</h3>
+            <span id="wheelStatusText" style="font-size:10px; font-weight:900; background:rgba(245, 158, 11, 0.15); color:#f59e0b; padding:3px 8px; border-radius:6px; text-transform:uppercase;">Готово</span>
+          </div>
+          <p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px;">Бесплатная прокрутка каждый день! Дополнительные попытки доступны за просмотр рекламы.</p>
+          
+          <!-- Sector Grid -->
+          <div id="wheelGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px;"></div>
+          
+          <button class="ad-btn" id="btnSpinWheel" type="button" style="background: linear-gradient(135deg, #f59e0b, #d97706); color:#fff; font-size:11px; padding:10px; width:100%;">Испытать удачу</button>
+        </div>
+
         <div id="boss-tower-section" style="width:100%;display:none;">
           <div class="boss-card" id="towerCard">
             <div class="boss-state-row">
@@ -667,6 +765,17 @@
               <div class="boss-meta"><span>Реген</span><b id="towerDurationText">—</b></div>
             </div>
             <div class="boss-timer-bar"><div class="boss-timer-fill" id="towerTimerFill"></div></div>
+            <!-- Tower Insurance Box -->
+            <div id="towerInsuranceBox" style="display:none; flex-direction:column; align-items:center; text-align:center; padding:15px; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.25); border-radius:14px; margin-bottom:12px;">
+              <div style="font-size:26px; margin-bottom:8px;">🌋</div>
+              <h3 style="color:#fca5a5; font-size:13px; margin:0 0 6px 0; text-transform:uppercase; letter-spacing:0.8px;">Обвал подземелья!</h3>
+              <p style="font-size:10px; color:rgba(255,255,255,0.42); line-height:1.45; margin-bottom:12px;">Время вышло! Используйте страховку РСЯ/AdsGram, чтобы добавить +10 секунд к таймеру и продолжить бой прямо сейчас!</p>
+              <div style="display:flex; gap:8px; width:100%;">
+                <button class="ad-btn" id="btnClaimInsurance" type="button" style="flex:1.2; padding:8px 0; font-size:10px; background: linear-gradient(135deg, #10b981, #059669);">Спасти поход (Реклама)</button>
+                <button class="ad-btn" id="btnRejectInsurance" type="button" style="flex:1; padding:8px 0; font-size:10px; background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04);">Сдаться</button>
+              </div>
+            </div>
+
             <div class="boss-sprite" id="towerSprite">🏰</div>
             <div class="boss-hp-bar"><div class="boss-hp-fill" id="towerHpFill"></div></div>
             <div class="boss-hp-text"><span id="towerHp">0</span> / <span id="towerMaxHp">0</span> HP</div>
@@ -790,19 +899,38 @@
 
     <div class="tab-page" id="page-goals">
       <div class="goals-content">
-        <div class="goals-card">
-          <div class="goals-title">Долгосрочные цели</div>
-          <div class="goals-subtitle">Отдельное меню показывает, что откроется дальше: новая локация, класс, альбом, рамка, редкость и целевая дорожка на ближайшие дни.</div>
-          <div class="goals-grid">
-            <div class="goal-mini"><span>След. локация</span><b id="goalNextLoc">—</b><small id="goalNextLocMeta">—</small></div>
-            <div class="goal-mini"><span>След. класс</span><b id="goalNextRole">—</b><small id="goalNextRoleMeta">—</small></div>
-            <div class="goal-mini"><span>След. альбом</span><b id="goalNextAlbum">—</b><small id="goalNextAlbumMeta">—</small></div>
-            <div class="goal-mini"><span>След. рамка</span><b id="goalNextFrame">—</b><small id="goalNextFrameMeta">—</small></div>
-            <div class="goal-mini"><span>След. редкость</span><b id="goalNextRarity">—</b><small id="goalNextRarityMeta">—</small></div>
-            <div class="goal-mini"><span>Цель недели</span><b id="goalWeekFocus">—</b><small id="goalWeekFocusMeta">—</small></div>
+        <div class="sub-tab-bar" style="margin-bottom:15px; width:100%; max-width:400px; justify-content:center; margin-left:auto; margin-right:auto;">
+          <button class="sub-tab active" id="btnSubTabRoadmap" type="button">Цели</button>
+          <button class="sub-tab" id="btnSubTabLeaderboard" type="button">Лидеры</button>
+        </div>
+
+        <div id="goals-roadmap-section" style="width:100%;">
+          <div class="goals-card">
+            <div class="goals-title">Долгосрочные цели</div>
+            <div class="goals-subtitle">Отдельное меню показывает, что откроется дальше: новая локация, класс, альбом, рамка, редкость и целевая дорожка на ближайшие дни.</div>
+            <div class="goals-grid">
+              <div class="goal-mini"><span>След. локация</span><b id="goalNextLoc">—</b><small id="goalNextLocMeta">—</small></div>
+              <div class="goal-mini"><span>След. класс</span><b id="goalNextRole">—</b><small id="goalNextRoleMeta">—</small></div>
+              <div class="goal-mini"><span>След. альбом</span><b id="goalNextAlbum">—</b><small id="goalNextAlbumMeta">—</small></div>
+              <div class="goal-mini"><span>След. рамка</span><b id="goalNextFrame">—</b><small id="goalNextFrameMeta">—</small></div>
+              <div class="goal-mini"><span>След. редкость</span><b id="goalNextRarity">—</b><small id="goalNextRarityMeta">—</small></div>
+              <div class="goal-mini"><span>Цель недели</span><b id="goalWeekFocus">—</b><small id="goalWeekFocusMeta">—</small></div>
+            </div>
+            <div class="roadmap-title">Целевая дорожка</div>
+            <div class="roadmap-list" id="goalRoadmap"></div>
           </div>
-          <div class="roadmap-title">Целевая дорожка</div>
-          <div class="roadmap-list" id="goalRoadmap"></div>
+        </div>
+
+        <div id="goals-leaderboard-section" style="width:100%; display:none;">
+          <div class="goals-card" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(217, 119, 6, 0.08)); border: 1px solid rgba(251, 191, 36, 0.2);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <div class="goals-title">🏆 Лига и Глобальный Топ</div>
+              <span id="leagueBadge" style="font-size:9px; font-weight:900; background:rgba(251, 191, 36, 0.15); color:#fbbf24; padding:3px 8px; border-radius:6px; text-transform:uppercase;">Бронза</span>
+            </div>
+            <div class="goals-subtitle" id="leagueBonusDesc" style="margin-bottom:12px;">Повышайте ранг в Башне Испытаний, чтобы переходить в новые лиги и получать пассивные бонусы!</div>
+            
+            <div id="leaderboardList" style="display:flex; flex-direction:column;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1265,6 +1393,16 @@
           matScaleText: document.getElementById('matScaleText'),
           forgeContent: document.getElementById('forgeContent'),
           btnSubTabTower: document.getElementById('btnSubTabTower'),
+          btnSubTabRoadmap: document.getElementById('btnSubTabRoadmap'),
+          btnSubTabLeaderboard: document.getElementById('btnSubTabLeaderboard'),
+          goalsRoadmapSection: document.getElementById('goals-roadmap-section'),
+          goalsLeaderboardSection: document.getElementById('goals-leaderboard-section'),
+          leaderboardList: document.getElementById('leaderboardList'),
+          leagueBadge: document.getElementById('leagueBadge'),
+          leagueBonusDesc: document.getElementById('leagueBonusDesc'),
+          mercWarrior: document.getElementById('mercWarrior'),
+          mercArcher: document.getElementById('mercArcher'),
+          mercMage: document.getElementById('mercMage'),
           bossNormalSection: document.getElementById('boss-normal-section'),
           bossTowerSection: document.getElementById('boss-tower-section'),
           towerCard: document.getElementById('towerCard'),
@@ -1294,6 +1432,18 @@
           btnClaimMine: document.getElementById('btnClaimMine'),
           btnUpgradeMine: document.getElementById('btnUpgradeMine'),
           btnBoostMine: document.getElementById('btnBoostMine'),
+          btnSpinWheel: document.getElementById('btnSpinWheel'),
+          wheelGrid: document.getElementById('wheelGrid'),
+          wheelStatusText: document.getElementById('wheelStatusText'),
+          ovenStateText: document.getElementById('ovenStateText'),
+          ovenJobBox: document.getElementById('ovenJobBox'),
+          ovenJobTitle: document.getElementById('ovenJobTitle'),
+          ovenJobTimer: document.getElementById('ovenJobTimer'),
+          ovenJobFill: document.getElementById('ovenJobFill'),
+          ovenControlsBox: document.getElementById('ovenControlsBox'),
+          towerInsuranceBox: document.getElementById('towerInsuranceBox'),
+          btnClaimInsurance: document.getElementById('btnClaimInsurance'),
+          btnRejectInsurance: document.getElementById('btnRejectInsurance'),
           towerHintText: document.getElementById('towerHintText'),
           topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark'),
           btnToggleSound: document.getElementById('btnToggleSound'),
@@ -1566,7 +1716,7 @@
 
         return {
           clickPct: state.prestige * 5 + getTalentLevel('t_click') * 4 + globalLvl * 2 + collection.clickPct + (roleBonus.clickPct || 0) + gearClickBonus,
-          bankPct: state.prestige * 3 + getTalentLevel('t_bank') * 3 + globalLvl * 2 + (roleBonus.bankPct || 0),
+          bankPct: state.prestige * 3 + getTalentLevel('t_bank') * 3 + globalLvl * 2 + (roleBonus.bankPct || 0) + getLeagueBankBonus(),
           bossPct: state.prestige * 4 + getTalentLevel('t_boss') * 4 + globalLvl * 2 + collection.bossPct + (roleBonus.bossPct || 0),
           rarePct: state.prestige * 1 + getTalentLevel('t_rare') * 1 + getAccountUpgradeLevel('a_gems') * 1 + collection.rarePct + (roleBonus.rarePct || 0),
           autoPct: getAccountUpgradeLevel('a_auto') * 5 + globalLvl * 2 + collection.autoPct + (roleBonus.autoPct || 0) + gearAutoBonus,
@@ -3344,6 +3494,230 @@
 
 
 
+      const WHEEL_REWARDS = [
+        { label: 'Пак золота', icon: '💰', reward: () => addGold(getClickPower() * 1000), desc: 'Много монет' },
+        { label: 'Дерево x5', icon: '🪵', reward: () => { state.materials.wood += 5; }, desc: '+5 дерева' },
+        { label: 'Кристаллы +15', icon: '💎', reward: () => addGems(15), desc: '+15 💎' },
+        { label: 'Железо x8', icon: '🪙', reward: () => { state.materials.ore += 8; }, desc: '+8 руды' },
+        { label: 'Кристалл x2', icon: '🔮', reward: () => { state.materials.crystal += 2; }, desc: '+2 кристалла' },
+        { label: 'Сундук золота', icon: '💰', reward: () => addGold(getClickPower() * 2500), desc: 'Множество монет' },
+        { label: 'Чешуя x1', icon: '🐉', reward: () => { state.materials.scale += 1; }, desc: '+1 чешуя' },
+        { label: 'Кристаллы +40', icon: '💎', reward: () => addGems(40), desc: 'СУПЕРПРИЗ! +40 💎' }
+      ];
+
+      let wheelSpinning = false;
+
+      function getWheelAttemptsLeft() {
+        if (state.wheelLastSpinAt === 0) return 1;
+        return getDayDiff(state.wheelLastSpinAt) >= 1 ? 1 : 0;
+      }
+
+      function renderWheelGrid() {
+        if (!el.wheelGrid) return;
+        let html = '';
+        WHEEL_REWARDS.forEach((rew, idx) => {
+          html += '<div class="codex-item-card" id="wheel-sec-' + idx + '" style="padding:10px 4px; min-height:64px; border:1px solid rgba(255,255,255,0.04); transition:all 0.15s ease;">'
+            + '<div style="font-size:18px;">' + rew.icon + '</div>'
+            + '<div style="font-size:7px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">' + rew.label + '</div>'
+            + '</div>';
+        });
+        el.wheelGrid.innerHTML = html;
+      }
+
+      function spinWheel() {
+        if (wheelSpinning) return;
+        const attempts = getWheelAttemptsLeft();
+
+        const rollSpin = () => {
+          wheelSpinning = true;
+          el.btnSpinWheel.disabled = true;
+          el.btnSpinWheel.textContent = 'Вращение...';
+          
+          const winIdx = Math.floor(Math.random() * 8);
+          const totalSteps = 24 + winIdx;
+          let currentStep = 0;
+          let currentInterval = 50;
+
+          const tick = () => {
+            // Remove previous highlights
+            for (let i = 0; i < 8; i++) {
+              const sec = document.getElementById('wheel-sec-' + i);
+              if (sec) {
+                sec.style.background = 'rgba(255,255,255,.02)';
+                sec.style.borderColor = 'rgba(255,255,255,0.04)';
+                sec.style.boxShadow = 'none';
+              }
+            }
+
+            const activeIdx = currentStep % 8;
+            const activeSec = document.getElementById('wheel-sec-' + activeIdx);
+            if (activeSec) {
+              activeSec.style.background = 'rgba(255,215,0,0.12)';
+              activeSec.style.borderColor = '#ffd700';
+              activeSec.style.boxShadow = '0 0 10px rgba(255,215,0,0.3)';
+            }
+
+            triggerHaptic('light');
+            playSound('click');
+
+            currentStep++;
+            if (currentStep < totalSteps) {
+              // Decelerate as it approaches the target
+              if (totalSteps - currentStep < 6) {
+                currentInterval += 60;
+              } else if (totalSteps - currentStep < 12) {
+                currentInterval += 25;
+              }
+              setTimeout(tick, currentInterval);
+            } else {
+              // Completed!
+              wheelSpinning = false;
+              state.wheelLastSpinAt = Date.now();
+              WHEEL_REWARDS[winIdx].reward();
+              
+              playSound('reward');
+              triggerHaptic('heavy');
+
+              showReward('🎉 КОЛЕСО ФОРТУНЫ 🎉\\n\\nВы выиграли:\\n' + WHEEL_REWARDS[winIdx].icon + ' ' + WHEEL_REWARDS[winIdx].label + '!\\n\\n' + WHEEL_REWARDS[winIdx].desc, {
+                rarity: winIdx === 6 || winIdx === 7 ? 'legendary' : winIdx === 4 ? 'epic' : 'rare',
+                title: 'НЕОЖИДАННЫЙ ВЫИГРЫШ!'
+              });
+
+              updateUI();
+              saveGame();
+            }
+          };
+
+          tick();
+        };
+
+        if (attempts > 0) {
+          rollSpin();
+        } else {
+          // Additional spins for rewarded ad
+          showAdsgramReward('gems', () => {
+            rollSpin();
+          }, 'wheelAdSpin');
+        }
+      }
+
+      // --- Refinement Oven ---
+      const REFINE_TEMPLATES = {
+        ore: { id: 'ore', name: 'Железная руда', icon: '🪙', costMsg: '10 Дерева', durationMins: 5, rewardMsg: '+1 Железная руда', check: () => state.materials.wood >= 10, deduct: () => { state.materials.wood -= 10; }, grant: () => { state.materials.ore += 1; } },
+        crystal: { id: 'crystal', name: 'Магический Кристалл', icon: '🔮', costMsg: '10 Руды', durationMins: 10, rewardMsg: '+1 Кристалл', check: () => state.materials.ore >= 10, deduct: () => { state.materials.ore -= 10; }, grant: () => { state.materials.crystal += 1; } },
+        scale: { id: 'scale', name: 'Драконья чешуя', icon: '🐉', costMsg: '5 Кристаллов', durationMins: 20, rewardMsg: '+1 Чешуя', check: () => state.materials.crystal >= 5, deduct: () => { state.materials.crystal -= 5; }, grant: () => { state.materials.scale += 1; } }
+      };
+
+      function updateRefineOven() {
+        if (!state.refineJobType) return;
+        if (Date.now() >= state.refineJobEndsAt) {
+          // Finished!
+          return;
+        }
+      }
+
+      function startRefineJob(type) {
+        if (state.refineJobType) return;
+        const job = REFINE_TEMPLATES[type];
+        if (!job || !job.check()) {
+          showToast('Недостаточно ресурсов!');
+          return;
+        }
+
+        job.deduct();
+        state.refineJobType = type;
+        state.refineJobEndsAt = Date.now() + job.durationMins * 60 * 1000;
+
+        playSound('click');
+        showToast('Плавка началась!');
+        updateUI();
+        saveGame();
+      }
+
+      function claimRefineResult() {
+        if (!state.refineJobType) return;
+        if (Date.now() < state.refineJobEndsAt) return;
+
+        const job = REFINE_TEMPLATES[state.refineJobType];
+        job.grant();
+
+        state.refineJobType = null;
+        state.refineJobEndsAt = 0;
+
+        playSound('reward');
+        showToast('Вы получили ' + job.icon + ' ' + job.name + '!');
+        updateUI();
+        saveGame();
+      }
+
+      function skipRefineCooldown() {
+        if (!state.refineJobType) return;
+        showAdsgramReward('offline', () => {
+          state.refineJobEndsAt = Date.now();
+          showToast('Плавка мгновенно ускорена и завершена!');
+          updateUI();
+          saveGame();
+        }, 'refineSkip');
+      }
+
+      function renderRefineOven() {
+        if (!el.ovenControlsBox || !el.ovenStateText) return;
+        const job = state.refineJobType;
+
+        if (!job) {
+          el.ovenStateText.textContent = 'Свободна';
+          el.ovenStateText.style.background = 'rgba(16, 185, 129, 0.15)';
+          el.ovenStateText.style.color = '#10b981';
+          el.ovenJobBox.style.display = 'none';
+
+          let html = '';
+          Object.values(REFINE_TEMPLATES).forEach(tmpl => {
+            const allowed = tmpl.check();
+            html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); border-radius:12px;">'
+              + '<div style="display:flex; align-items:center; gap:8px; text-align:left;">'
+              + '<span style="font-size:20px;">' + tmpl.icon + '</span>'
+              + '<div><div style="font-size:12px; font-weight:900;">Плавь: ' + tmpl.name + '</div><div style="font-size:9px; color:rgba(255,255,255,0.4);">Из: ' + tmpl.costMsg + ' • Время: ' + tmpl.durationMins + 'м</div></div>'
+              + '</div>'
+              + '<button class="ad-btn shop-btn-buy" style="width:85px; padding:6px 0; font-size:9px; background:#10b981; color:#fff;" ' + (allowed ? 'data-refine-start="' + tmpl.id + '"' : 'disabled') + '>Плавь</button>'
+              + '</div>';
+          });
+          el.ovenControlsBox.innerHTML = html;
+        } else {
+          updateRefineOven();
+          const tmpl = REFINE_TEMPLATES[job];
+          el.ovenStateText.textContent = 'В работе';
+          el.ovenStateText.style.background = 'rgba(245, 158, 11, 0.15)';
+          el.ovenStateText.style.color = '#f59e0b';
+          el.ovenJobBox.style.display = 'flex';
+
+          const remaining = Math.max(0, state.refineJobEndsAt - Date.now());
+          const totalDur = tmpl.durationMins * 60 * 1000;
+          const progressPct = Math.min(100, Math.floor((totalDur - remaining) / totalDur * 100));
+          const ready = remaining <= 0;
+
+          el.ovenJobTitle.textContent = 'Плавка: ' + tmpl.name;
+          el.ovenJobTimer.textContent = ready ? 'Готово!' : fmtSeconds(Math.ceil(remaining / 1000));
+          el.ovenJobFill.style.width = (ready ? 100 : progressPct) + '%';
+
+          let html = '';
+          if (ready) {
+            html = '<button class="ad-btn shop-btn-buy" style="background: linear-gradient(135deg, #10b981, #059669); font-size:11px; padding:10px;" id="btnClaimRefine">Забрать ' + tmpl.icon + '</button>';
+          } else {
+            html = '<div style="display:flex; gap:8px;">'
+              + '<button class="ad-btn shop-btn-equipped" style="flex:1.2; padding:8px 0; font-size:10px;" disabled>ПЛАВЛЕНИЕ...</button>'
+              + '<button class="ad-btn" style="flex:1; padding:8px 0; background: linear-gradient(135deg, #e8c84a, #c4a535); color:#0a0f1e; font-size:9px;" id="btnSkipRefine">Завершить за Рекламу</button>'
+              + '</div>';
+          }
+          el.ovenControlsBox.innerHTML = html;
+
+          // Re-bind dynamic events
+          const claimBtn = document.getElementById('btnClaimRefine');
+          if (claimBtn) claimBtn.addEventListener('click', e => { e.preventDefault(); claimRefineResult(); });
+          const skipBtn = document.getElementById('btnSkipRefine');
+          if (skipBtn) skipBtn.addEventListener('click', e => { e.preventDefault(); skipRefineCooldown(); });
+        }
+      }
+
       function getGemMineConfig(lvl) {
         const configs = [
           { level: 0, speedMins: 0, cap: 0 },
@@ -3600,6 +3974,13 @@
         if (!towerActiveRun || towerActiveRun.state !== 'fighting') return;
         const remaining = Math.max(0, towerActiveRun.battleEndsAt - Date.now());
         if (remaining <= 0) {
+          if (!towerActiveRun.insuranceUsed) {
+            towerActiveRun.state = 'insurance_offered';
+            playSound('hit');
+            triggerHaptic('heavy');
+            updateUI();
+            return;
+          }
           endTowerRun(false);
           updateUI();
           saveGame();
@@ -3757,6 +4138,183 @@
             el.towerHintText.textContent = 'Вы уже израсходовали сегодняшнюю попытку. Возвращайтесь завтра для нового восхождения!';
           }
         }
+      }
+
+      // --- Procedural 8-bit Chiptune Music Engine ---
+      let synthInterval = null;
+      let synthStep = 0;
+      let synthPlaying = false;
+
+      function playAmbianceNote(freq, type = 'square', duration = 0.15, vol = 0.015) {
+        if (!state.soundEnabled || !audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+        try {
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          gain.gain.setValueAtTime(vol, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+          osc.start(now);
+          osc.stop(now + duration);
+        } catch (e) {}
+      }
+
+      function updateChiptuneAmbiance() {
+        if (!state.soundEnabled) {
+          stopChiptune();
+          return;
+        }
+        if (synthPlaying) return;
+        synthPlaying = true;
+
+        // Loop patterns
+        // Standard Cave: deep mysterious arpeggio (Minor)
+        const caveMelody = [130.81, 155.56, 196.00, 220.00, 196.00, 155.56]; // C3, Eb3, G3, A3, G3, Eb3
+        // Palace: regal Renaissance melody
+        const palaceMelody = [146.83, 185.00, 220.00, 293.66, 220.00, 185.00, 146.83, 220.00]; // D3, F#3, A3, D4, A3, F#3, D3, A3
+        // Combat/Bosses: fast epic combat march!
+        const combatMelody = [110.00, 110.00, 164.81, 110.00, 110.00, 196.00, 220.00, 196.00]; // A2, A2, E3, A2, A2, G3, A3, G3
+
+        let stepMs = 280;
+
+        synthInterval = setInterval(() => {
+          let melody = caveMelody;
+          let type = 'triangle';
+          let vol = 0.012;
+
+          const isBossFight = state.bossBattleActive;
+          const isTowerFight = towerActiveRun && towerActiveRun.state === 'fighting';
+
+          if (isBossFight || isTowerFight) {
+            melody = combatMelody;
+            type = 'sawtooth';
+            stepMs = 180;
+            vol = 0.008; // Sawtooth is loud
+          } else {
+            const loc = getLoc();
+            if (loc.name.includes('ДВОРЕЦ') || loc.name.includes('ХРАМ')) {
+              melody = palaceMelody;
+              type = 'square';
+              stepMs = 250;
+              vol = 0.005; // Square is piercing
+            }
+          }
+
+          const freq = melody[synthStep % melody.length];
+          playAmbianceNote(freq, type, stepMs / 1000 * 1.5, vol);
+          synthStep++;
+        }, stepMs);
+      }
+
+      function stopChiptune() {
+        if (synthInterval) {
+          clearInterval(synthInterval);
+          synthInterval = null;
+        }
+        synthPlaying = false;
+        synthStep = 0;
+      }
+
+      // --- Leagues & Leaderboard Logic ---
+      function getLeagueBankBonus() {
+        const floor = state.towerMaxFloorReached || 0;
+        if (floor >= 15) return 40; // Legendary: +40%
+        if (floor >= 10) return 25; // Platinum: +25%
+        if (floor >= 6) return 15;  // Gold: +15%
+        if (floor >= 3) return 10;  // Silver: +10%
+        return 5;                   // Bronze: +5%
+      }
+
+      function getLeagueName() {
+        const floor = state.towerMaxFloorReached || 0;
+        if (floor >= 15) return 'Легендарная';
+        if (floor >= 10) return 'Платиновая';
+        if (floor >= 6) return 'Золотая';
+        if (floor >= 3) return 'Серебряная';
+        return 'Бронзовая';
+      }
+
+      const BOTS_DATA = [
+        { name: 'Тон-Лорд', username: '@ton_lord', score: 14 },
+        { name: 'Убийца Хомяков', username: '@hamster_killer', score: 11 },
+        { name: 'Криптошейх', username: '@crypto_sheikh', score: 8 },
+        { name: 'Король Тапов', username: '@tap_king', score: 5 },
+        { name: 'Королева Кликов', username: '@click_queen', score: 4 },
+        { name: 'Гроза Боссов', username: '@boss_slayer', score: 2 },
+        { name: 'Изумрудный Глаз', username: '@emerald_eye', score: 1 },
+        { name: 'Скиталец Пустоты', username: '@void_traveler', score: 15 },
+        { name: 'Золотоискатель', username: '@gold_miner', score: 7 },
+        { name: 'Про-Игрок', username: '@aniverse_pro', score: 3 }
+      ];
+
+      function renderLeaderboard() {
+        if (!el.leaderboardList) return;
+        
+        // Build full list of bots + player
+        const playerRecord = state.towerMaxFloorReached || 0;
+        const playerRankName = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
+          ? TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
+          : 'Вы';
+        const playerUsername = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.username 
+          ? '@' + TELEGRAM_WEBAPP.initDataUnsafe.user.username 
+          : '@player';
+
+        const list = BOTS_DATA.map(b => ({ ...b, isPlayer: false }));
+        list.push({ name: playerRankName + ' (Вы)', username: playerUsername, score: playerRecord, isPlayer: true });
+
+        // Sort descending
+        list.sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return b.isPlayer ? -1 : 1; // Bias towards player
+        });
+
+        // Update League Card Header
+        el.leagueBadge.textContent = getLeagueName();
+        el.leagueBonusDesc.textContent = 'Ваша лига: ' + getLeagueName() + ' • Пассивный доход в Банке увеличен на +' + getLeagueBankBonus() + '% навсегда!';
+
+        let html = '';
+        list.forEach((user, index) => {
+          const rank = index + 1;
+          const rankClass = rank <= 3 ? 'leader-rank-' + rank : '';
+          const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+          
+          html += '<div class="leader-row' + (user.isPlayer ? ' player' : '') + '">'
+            + '<div class="leader-rank ' + rankClass + '">' + rankEmoji + '</div>'
+            + '<div style="flex:1; text-align:left; margin-left:12px;">'
+            + '<div style="font-size:12px; font-weight:900; color:#fff;">' + user.name + '</div>'
+            + '<div style="font-size:9px; color:rgba(255,255,255,0.4);">' + user.username + '</div>'
+            + '</div>'
+            + '<div style="font-size:12px; font-weight:900; color:#f59e0b;">' + user.score + ' эт.</div>'
+            + '</div>';
+        });
+
+        el.leaderboardList.innerHTML = html;
+      }
+
+      // --- Live Mercenaries rendering on main clicker screen ---
+      function renderHiredMercenaries() {
+        if (!el.mercWarrior || !el.mercArcher || !el.mercMage) return;
+
+        // Click power upgrades levels total
+        let clickLevels = 0;
+        CLICK_UPGRADES.forEach(u => { clickLevels += (state.upgrades[u.id] || 0); });
+        
+        // Auto click upgrades levels total
+        let autoLevels = 0;
+        AUTO_UPGRADES.forEach(u => { autoLevels += (state.upgrades[u.id] || 0); });
+
+        // Warrior: unlocked if clickLevels > 0
+        el.mercWarrior.style.display = clickLevels > 0 ? 'block' : 'none';
+        
+        // Archer: unlocked if autoLevels > 0
+        el.mercArcher.style.display = autoLevels > 0 ? 'block' : 'none';
+
+        // Mage: unlocked if prestige stars > 0
+        el.mercMage.style.display = state.prestige > 0 ? 'block' : 'none';
       }
 
       function spawnLuckyGoldenCoin() {
@@ -3942,6 +4500,21 @@
         renderAchievements();
         updateBossUI();
         updateSettingsUI();
+        renderHiredMercenaries();
+        if (el.goalsLeaderboardSection && el.goalsLeaderboardSection.style.display !== 'none') {
+          renderLeaderboard();
+        }
+        if (el.wheelGrid) {
+          const att = getWheelAttemptsLeft();
+          el.wheelStatusText.textContent = att > 0 ? 'Готово' : 'Ожидание';
+          el.btnSpinWheel.disabled = wheelSpinning;
+          if (!wheelSpinning) {
+            el.btnSpinWheel.textContent = att > 0 ? 'Испытать удачу' : 'Вращать за Рекламу';
+          }
+        }
+        if (el.ovenControlsBox) {
+          renderRefineOven();
+        }
         updateTowerUI();
         renderGemMine();
       }
@@ -4030,6 +4603,9 @@
           }
           if (!Number.isFinite(state.towerExtraAttempts)) state.towerExtraAttempts = 0;
           if (state.soundEnabled === undefined) state.soundEnabled = true;
+          if (!Number.isFinite(state.wheelLastSpinAt)) state.wheelLastSpinAt = 0;
+          if (state.refineJobType === undefined) state.refineJobType = null;
+          if (!Number.isFinite(state.refineJobEndsAt)) state.refineJobEndsAt = 0;
           if (state.vibrationEnabled === undefined) state.vibrationEnabled = true;
           PRESTIGE_TALENTS.forEach(item => { if (!Number.isFinite(state.prestigeTalents[item.id])) state.prestigeTalents[item.id] = 0; });
           ACCOUNT_UPGRADES.forEach(item => { if (!Number.isFinite(state.accountUpgrades[item.id])) state.accountUpgrades[item.id] = 0; });
@@ -4068,6 +4644,60 @@
         el.btnBoostMine.addEventListener('click', e => {
           e.preventDefault();
           boostGemMine();
+        });
+
+        el.btnSpinWheel.addEventListener('click', e => {
+          e.preventDefault();
+          spinWheel();
+        });
+
+        el.shopForgeSection.addEventListener('click', e => {
+          const startRefineId = e.target.closest('[data-refine-start]');
+          if (startRefineId) {
+            e.preventDefault();
+            startRefineJob(startRefineId.getAttribute('data-refine-start'));
+            renderRefineOven();
+          }
+        });
+
+        el.btnClaimInsurance.addEventListener('click', e => {
+          e.preventDefault();
+          if (!towerActiveRun || towerActiveRun.state !== 'insurance_offered') return;
+          showAdsgramReward('x2', () => {
+            towerActiveRun.insuranceUsed = true;
+            towerActiveRun.state = 'fighting';
+            towerActiveRun.battleEndsAt = Date.now() + 10000; // Add 10 seconds
+            towerActiveRun.battleStartedAt = Date.now();
+            towerActiveRun.lastRegenAt = Date.now();
+            playSound('reward');
+            showToast('Поход спасён! Вперед к победе!');
+            updateUI();
+          }, 'towerInsuranceBoost');
+        });
+
+        el.btnRejectInsurance.addEventListener('click', e => {
+          e.preventDefault();
+          if (!towerActiveRun || towerActiveRun.state !== 'insurance_offered') return;
+          endTowerRun(false);
+          updateUI();
+          saveGame();
+        });
+
+        el.btnSubTabRoadmap.addEventListener('click', e => {
+          e.preventDefault();
+          el.goalsRoadmapSection.style.display = 'block';
+          el.goalsLeaderboardSection.style.display = 'none';
+          el.btnSubTabRoadmap.classList.add('active');
+          el.btnSubTabLeaderboard.classList.remove('active');
+        });
+
+        el.btnSubTabLeaderboard.addEventListener('click', e => {
+          e.preventDefault();
+          el.goalsRoadmapSection.style.display = 'none';
+          el.goalsLeaderboardSection.style.display = 'block';
+          el.btnSubTabRoadmap.classList.remove('active');
+          el.btnSubTabLeaderboard.classList.add('active');
+          renderLeaderboard();
         });
 
         el.btnDeposit.addEventListener('click', e => {
@@ -4382,6 +5012,11 @@
           state.soundEnabled = !state.soundEnabled;
           triggerHaptic('light');
           playSound('click');
+          if (state.soundEnabled) {
+            updateChiptuneAmbiance();
+          } else {
+            stopChiptune();
+          }
           updateUI();
           saveGame();
         });
@@ -4434,6 +5069,8 @@
         try { if (TELEGRAM_WEBAPP && typeof TELEGRAM_WEBAPP.ready === 'function') TELEGRAM_WEBAPP.ready(); } catch (e) {}
         cacheElements();
         loadGame();
+        renderWheelGrid();
+        updateChiptuneAmbiance();
         const previousAppOpenAt = state.lastAppOpenAt || 0;
         state.appLaunchCount = (state.appLaunchCount || 0) + 1;
         state.lastAppOpenAt = Date.now();
@@ -4469,6 +5106,8 @@
           updateBossUI();
           updateTowerUI();
           updateFrenzyUI();
+          updateRefineOven();
+          updateChiptuneAmbiance();
         }, 250);
 
         setInterval(() => {
