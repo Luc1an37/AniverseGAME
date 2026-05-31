@@ -1060,8 +1060,9 @@
 
         <div id="goals-leaderboard-section" style="width:100%; display:none;">
           <div class="goals-card" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(217, 119, 6, 0.08)); border: 1px solid rgba(251, 191, 36, 0.2);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <div class="goals-title">🏆 Глобальный Топ Миллионеров</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:4px;">
+              <div class="goals-title" style="font-size:10px; max-width:40%;">🏆 Топ Богачей</div>
+              <button class="ad-btn" id="btnRefreshLeaderboard" type="button" style="width:75px; padding:4px 0; font-size:9px; margin:0; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04);">Обновить</button>
               <span id="leagueBadge" style="font-size:9px; font-weight:900; background:rgba(251, 191, 36, 0.15); color:#fbbf24; padding:3px 8px; border-radius:6px; text-transform:uppercase;">Бронза</span>
             </div>
             <div class="goals-subtitle" id="leagueBonusDesc" style="margin-bottom:12px;">Повышайте ранг в Башне Испытаний, чтобы переходить в новые лиги и получать пассивные бонусы!</div>
@@ -1587,6 +1588,7 @@
           topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark'),
           btnToggleSound: document.getElementById('btnToggleSound'),
           btnToggleVibration: document.getElementById('btnToggleVibration'),
+          btnRefreshLeaderboard: document.getElementById('btnRefreshLeaderboard'),
 
           wormholeModal: document.getElementById('wormholeModal'),
           btnWormholeJump: document.getElementById('btnWormholeJump'),
@@ -4411,6 +4413,9 @@
       let synthStep = 0;
       let synthPlaying = false;
       let currentAmbianceType = null;
+      let cachedLeaderboardData = null;
+      let lastLeaderboardFetchAt = 0;
+      let leaderboardLoadingInProgress = false;
 
       function playAmbianceNote(freq, type = 'square', duration = 0.15, vol = 0.015) {
         if (!state.soundEnabled || !audioCtx) return;
@@ -4541,8 +4546,17 @@
         }).catch(() => {});
       }
 
-      function loadLiveLeaderboardFromServer() {
+      function loadLiveLeaderboardFromServer(force = false) {
         if (!el.leaderboardList) return;
+
+        const now = Date.now();
+        if (cachedLeaderboardData && (now - lastLeaderboardFetchAt < 180000) && !force) {
+          renderLeaderboardWithData(cachedLeaderboardData);
+          return;
+        }
+
+        if (leaderboardLoadingInProgress) return;
+        leaderboardLoadingInProgress = true;
 
         el.leaderboardList.innerHTML = '<div style="text-align:center; padding: 20px 0; font-size:11px; color:rgba(255,255,255,0.4);"><div class="spinner" style="border-top-color:#fbbf24; width:20px; height:20px; margin:0 auto 8px auto;"></div>Загрузка списка лидеров...</div>';
 
@@ -4553,13 +4567,18 @@
           })
           .then(data => {
             if (data && Array.isArray(data.leaderboard)) {
-              renderLeaderboardWithData(data.leaderboard);
+              cachedLeaderboardData = data.leaderboard;
+              lastLeaderboardFetchAt = Date.now();
+              renderLeaderboardWithData(cachedLeaderboardData);
             } else {
               fallbackToSimulatedLeaderboard();
             }
           })
           .catch(err => {
             fallbackToSimulatedLeaderboard();
+          })
+          .finally(() => {
+            leaderboardLoadingInProgress = false;
           });
       }
 
@@ -4619,7 +4638,7 @@
       }
 
       function renderLeaderboard() {
-        loadLiveLeaderboardFromServer();
+        loadLiveLeaderboardFromServer(false);
       }
 
       // --- Live Mercenaries rendering on main clicker screen ---
@@ -5156,7 +5175,13 @@
           el.btnSubTabRoadmap.classList.remove('active');
           el.btnSubTabLeaderboard.classList.add('active');
           savePlayerScoreOnServer(); // Синхронизируем текущее золото на сервер перед загрузкой!
-          renderLeaderboard();
+          loadLiveLeaderboardFromServer(true); // Форсируем обновление при переключении вкладки!
+        });
+
+        el.btnRefreshLeaderboard.addEventListener('click', e => {
+          e.preventDefault();
+          savePlayerScoreOnServer(); // Синхронизируем текущее золото на сервер перед загрузкой!
+          loadLiveLeaderboardFromServer(true); // Форсируем загрузку свежих данных!
         });
 
         el.btnDeposit.addEventListener('click', e => {
