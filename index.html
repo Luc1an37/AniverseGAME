@@ -782,6 +782,8 @@
         
         <div id="shop-normal-section" style="width:100%;">
           <div id="shopContent"></div>
+          
+
         </div>
 
         <div id="shop-forge-section" style="width:100%; display:none;">
@@ -1059,7 +1061,7 @@
         <div id="goals-leaderboard-section" style="width:100%; display:none;">
           <div class="goals-card" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(217, 119, 6, 0.08)); border: 1px solid rgba(251, 191, 36, 0.2);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <div class="goals-title">🏆 Лига и Глобальный Топ</div>
+              <div class="goals-title">🏆 Глобальный Топ Миллионеров</div>
               <span id="leagueBadge" style="font-size:9px; font-weight:900; background:rgba(251, 191, 36, 0.15); color:#fbbf24; padding:3px 8px; border-radius:6px; text-transform:uppercase;">Бронза</span>
             </div>
             <div class="goals-subtitle" id="leagueBonusDesc" style="margin-bottom:12px;">Повышайте ранг в Башне Испытаний, чтобы переходить в новые лиги и получать пассивные бонусы!</div>
@@ -1142,23 +1144,7 @@
         <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">⏭</div><div class="bonus-card-body"><div class="bonus-card-title">Пропуск части ожидания</div><div class="bonus-card-desc">Сбрасывает ожидание до следующего бесплатного бонуса.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="skipWait" type="button">Пропустить</button></div></div></div>
         <div class="ad-card"><div class="bonus-card"><div class="bonus-card-icon">💠</div><div class="bonus-card-body"><div class="bonus-card-title">Бесплатный редкий сундук</div><div class="bonus-card-desc">Мгновенно выдаёт редкий сундук с улучшенной добычей.</div></div><div class="bonus-card-side"><button class="ad-btn" data-reward-button="rareChest" type="button">Открыть</button></div></div></div>
         
-        <!-- Adsterra Banner 320x50 -->
-        <div class="ad-card" style="padding: 12px; text-align: center; background: rgba(0,0,0,0.22); margin-top: 15px; border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80px;">
-          <div style="font-size: 8px; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.8px;">Реклама от партнеров</div>
-          
-          <div id="adsterra-banner-container" style="width: 320px; height: 50px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px;">
-            <script type="text/javascript">
-              atOptions = {
-                'key' : 'd8f8e3afa3669a4585924945d6cc05e7',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-              };
-            </script>
-            <script type="text/javascript" src="https://www.highperformanceformat.com/d8f8e3afa3669a4585924945d6cc05e7/invoke.js"></script>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -3837,6 +3823,7 @@
         } else {
           // Additional spins for rewarded ad
           showAdsgramReward('gems', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
             rollSpin();
           }, 'wheelAdSpin');
         }
@@ -3894,6 +3881,7 @@
       function skipRefineCooldown() {
         if (!state.refineJobType) return;
         showAdsgramReward('offline', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
           state.refineJobEndsAt = Date.now();
           showToast('Плавка мгновенно ускорена и завершена!');
           updateUI();
@@ -4071,6 +4059,7 @@
           return;
         }
         showAdsgramReward('offline', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
           updateGemMineProduction();
           const cfg = getGemMineConfig(state.gemMineLevel);
           const boostedGems = Math.floor(240 / cfg.speedMins);
@@ -4323,6 +4312,7 @@
 
         if (cleared > state.towerMaxFloorReached) {
           state.towerMaxFloorReached = cleared;
+          savePlayerScoreOnServer();
         }
 
         if (gold > 0) addGold(gold);
@@ -4525,24 +4515,56 @@
         return 'Бронзовая';
       }
 
-      const BOTS_DATA = [
-        { name: 'Тон-Лорд', username: '@ton_lord', score: 14 },
-        { name: 'Убийца Хомяков', username: '@hamster_killer', score: 11 },
-        { name: 'Криптошейх', username: '@crypto_sheikh', score: 8 },
-        { name: 'Король Тапов', username: '@tap_king', score: 5 },
-        { name: 'Королева Кликов', username: '@click_queen', score: 4 },
-        { name: 'Гроза Боссов', username: '@boss_slayer', score: 2 },
-        { name: 'Изумрудный Глаз', username: '@emerald_eye', score: 1 },
-        { name: 'Скиталец Пустоты', username: '@void_traveler', score: 15 },
-        { name: 'Золотоискатель', username: '@gold_miner', score: 7 },
-        { name: 'Про-Игрок', username: '@aniverse_pro', score: 3 }
-      ];
 
-      function renderLeaderboard() {
+
+      function savePlayerScoreOnServer() {
+        if (!TELEGRAM_WEBAPP || !TELEGRAM_WEBAPP.initDataUnsafe || !TELEGRAM_WEBAPP.initDataUnsafe.user) return;
+
+        const userId = TELEGRAM_WEBAPP.initDataUnsafe.user.id;
+        const firstName = TELEGRAM_WEBAPP.initDataUnsafe.user.first_name || 'Игрок';
+        const username = TELEGRAM_WEBAPP.initDataUnsafe.user.username ? '@' + TELEGRAM_WEBAPP.initDataUnsafe.user.username : '@player';
+        const score = state.totalGold || 0;
+        const adsCount = state.totalAdsWatched || 0;
+
+        fetch('https://698e69bb.aniverse-backend.pages.dev/api/leaderboard', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId,
+            firstName,
+            username,
+            score,
+            adsCount
+          })
+        }).catch(() => {});
+      }
+
+      function loadLiveLeaderboardFromServer() {
         if (!el.leaderboardList) return;
-        
-        // Build full list of bots + player
-        const playerRecord = state.towerMaxFloorReached || 0;
+
+        el.leaderboardList.innerHTML = '<div style="text-align:center; padding: 20px 0; font-size:11px; color:rgba(255,255,255,0.4);"><div class="spinner" style="border-top-color:#fbbf24; width:20px; height:20px; margin:0 auto 8px auto;"></div>Загрузка списка лидеров...</div>';
+
+        fetch('https://698e69bb.aniverse-backend.pages.dev/api/leaderboard')
+          .then(response => {
+            if (!response.ok) throw new Error('Network response not ok');
+            return response.json();
+          })
+          .then(data => {
+            if (data && Array.isArray(data.leaderboard)) {
+              renderLeaderboardWithData(data.leaderboard);
+            } else {
+              fallbackToSimulatedLeaderboard();
+            }
+          })
+          .catch(err => {
+            fallbackToSimulatedLeaderboard();
+          });
+      }
+
+      function fallbackToSimulatedLeaderboard() {
+        const playerRecord = state.totalGold || 0;
         const playerRankName = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
           ? TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
           : 'Вы';
@@ -4553,33 +4575,52 @@
         const list = BOTS_DATA.map(b => ({ ...b, isPlayer: false }));
         list.push({ name: playerRankName + ' (Вы)', username: playerUsername, score: playerRecord, isPlayer: true });
 
-        // Sort descending
         list.sort((a, b) => {
           if (b.score !== a.score) return b.score - a.score;
-          return b.isPlayer ? -1 : 1; // Bias towards player
+          return b.isPlayer ? -1 : 1;
         });
 
-        // Update League Card Header
+        renderLeaderboardWithData(list);
+      }
+
+      function renderLeaderboardWithData(list) {
         el.leagueBadge.textContent = getLeagueName();
         el.leagueBonusDesc.textContent = 'Ваша лига: ' + getLeagueName() + ' • Пассивный доход в Банке увеличен на +' + getLeagueBankBonus() + '% навсегда!';
 
         let html = '';
-        list.forEach((user, index) => {
-          const rank = index + 1;
-          const rankClass = rank <= 3 ? 'leader-rank-' + rank : '';
-          const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-          
-          html += '<div class="leader-row' + (user.isPlayer ? ' player' : '') + '">'
-            + '<div class="leader-rank ' + rankClass + '">' + rankEmoji + '</div>'
-            + '<div style="flex:1; text-align:left; margin-left:12px;">'
-            + '<div style="font-size:12px; font-weight:900; color:#fff;">' + user.name + '</div>'
-            + '<div style="font-size:9px; color:rgba(255,255,255,0.4);">' + user.username + '</div>'
-            + '</div>'
-            + '<div style="font-size:12px; font-weight:900; color:#f59e0b;">' + user.score + ' эт.</div>'
+        if (!list || list.length === 0) {
+          html = '<div style="text-align:center; padding: 25px 10px; font-size:11px; color:rgba(255,255,255,0.34); line-height:1.45;">'
+            + '<div style="font-size:32px; margin-bottom:8px;">🏆</div>'
+            + '<b>Глобальный топ пуст!</b><br>Сделайте первый клик или Престиж, чтобы ваш результат улетел на сервер и вы вошли в историю первым!'
             + '</div>';
-        });
+        } else {
+          list.forEach((user, index) => {
+            const rank = index + 1;
+            const rankClass = rank <= 3 ? 'leader-rank-' + rank : '';
+            const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+
+            const isMe = user.isPlayer || (TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && String(user.userId) === String(TELEGRAM_WEBAPP.initDataUnsafe.user.id));
+
+            const ads = user.adsCount || 0;
+            html += '<div class="leader-row' + (isMe ? ' player' : '') + '">'
+              + '<div class="leader-rank ' + rankClass + '">' + rankEmoji + '</div>'
+              + '<div style="flex:1; text-align:left; margin-left:12px;">'
+              + '<div style="font-size:12px; font-weight:900; color:#fff;">' + (user.firstName || user.name || 'Игрок') + '</div>'
+              + '<div style="font-size:9px; color:rgba(255,255,255,0.4);">' + user.username + '</div>'
+              + '</div>'
+              + '<div style="text-align:right; min-width:80px;">'
+              + '<div style="font-size:12px; font-weight:900; color:#ffd700;">💰 ' + fmt(user.score) + '</div>'
+              + '<div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">📺 ' + ads + '</div>'
+              + '</div>'
+              + '</div>';
+          });
+        }
 
         el.leaderboardList.innerHTML = html;
+      }
+
+      function renderLeaderboard() {
+        loadLiveLeaderboardFromServer();
       }
 
       // --- Live Mercenaries rendering on main clicker screen ---
@@ -5023,6 +5064,7 @@
           if (state.refineJobType === undefined) state.refineJobType = null;
           if (!Number.isFinite(state.refineJobEndsAt)) state.refineJobEndsAt = 0;
           if (state.vibrationEnabled === undefined) state.vibrationEnabled = true;
+          if (!Number.isFinite(state.totalAdsWatched)) state.totalAdsWatched = 0;
           PRESTIGE_TALENTS.forEach(item => { if (!Number.isFinite(state.prestigeTalents[item.id])) state.prestigeTalents[item.id] = 0; });
           ACCOUNT_UPGRADES.forEach(item => { if (!Number.isFinite(state.accountUpgrades[item.id])) state.accountUpgrades[item.id] = 0; });
           if (!state.activeQuest || !state.activeQuest.type || !Number.isFinite(state.activeQuest.target)) ensureQuest(true);
@@ -5080,6 +5122,7 @@
           e.preventDefault();
           if (!towerActiveRun || towerActiveRun.state !== 'insurance_offered') return;
           showAdsgramReward('x2', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
             towerActiveRun.insuranceUsed = true;
             towerActiveRun.state = 'fighting';
             towerActiveRun.battleEndsAt = Date.now() + 10000; // Add 10 seconds
@@ -5113,6 +5156,7 @@
           el.goalsLeaderboardSection.style.display = 'block';
           el.btnSubTabRoadmap.classList.remove('active');
           el.btnSubTabLeaderboard.classList.add('active');
+          savePlayerScoreOnServer(); // Синхронизируем текущее золото на сервер перед загрузкой!
           renderLeaderboard();
         });
 
@@ -5427,6 +5471,7 @@
           el.wormholeModal.classList.remove('show');
 
           showAdsgramReward('offline', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
             const autoGold = getAutoIncome() * 3600;
             const bankGold = getBankIncomePerMinute() * 60;
             const totalGold = autoGold + bankGold;
@@ -5538,6 +5583,7 @@
         renderShop();
         updateUI();
         saveGame();
+        savePlayerScoreOnServer();
 
         if (shouldShowLaunchInterstitial()) {
           setTimeout(() => showAdsgramInterstitial('launch'), 900);
@@ -5552,16 +5598,7 @@
             spawnLuckyGoldenCoin();
           }
           
-          // Simulated Live Leaderboard bot score advancement
-          if (Math.random() < 0.0006) {
-            const botIdx = Math.floor(Math.random() * BOTS_DATA.length);
-            const bot = BOTS_DATA[botIdx];
-            const oldScore = bot.score;
-            bot.score = Math.min(15, bot.score + 1);
-            if (bot.score > oldScore) {
-              showToast('🏆 Игрок ' + bot.name + ' зачистил ' + bot.score + ' этаж Башни!');
-            }
-          }
+
 
           // Cosmic Wormhole passive roll
           if (Math.random() < 0.0008) {
@@ -5598,5 +5635,5 @@
       else init();
     })();
   </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a04657e64c938d7d',t:'MTc4MDIzNDMzMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
