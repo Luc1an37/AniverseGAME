@@ -4531,7 +4531,7 @@
         const score = state.totalGold || 0;
         const adsCount = state.totalAdsWatched || 0;
 
-        fetch('https://698e69bb.aniverse-backend.pages.dev/api/leaderboard', {
+        fetch('https://aniversegame.pages.dev/api/leaderboard', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -4560,7 +4560,7 @@
 
         el.leaderboardList.innerHTML = '<div style="text-align:center; padding: 20px 0; font-size:11px; color:rgba(255,255,255,0.4);"><div class="spinner" style="border-top-color:#fbbf24; width:20px; height:20px; margin:0 auto 8px auto;"></div>Загрузка списка лидеров...</div>';
 
-        fetch('https://698e69bb.aniverse-backend.pages.dev/api/leaderboard')
+        fetch('https://aniversegame.pages.dev/api/leaderboard')
           .then(response => {
             if (!response.ok) throw new Error('Network response not ok');
             return response.json();
@@ -4571,10 +4571,12 @@
               lastLeaderboardFetchAt = Date.now();
               renderLeaderboardWithData(cachedLeaderboardData);
             } else {
+              lastLeaderboardFetchAt = Date.now(); // Set cooldown to prevent rapid-fire re-fetching!
               fallbackToSimulatedLeaderboard();
             }
           })
           .catch(err => {
+            lastLeaderboardFetchAt = Date.now(); // Set cooldown on failure to prevent rapid-fire re-fetching!
             fallbackToSimulatedLeaderboard();
           })
           .finally(() => {
@@ -5659,6 +5661,5 @@
       else init();
     })();
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
