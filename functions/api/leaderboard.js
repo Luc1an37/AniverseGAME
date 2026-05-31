@@ -1,8 +1,8 @@
 // /functions/api/leaderboard.js
 
-// 1. GET-запрос: Отдает ТОП-50 игроков для game.html
+// 1. GET-запрос: Отдает ТОП-15 игроков с двумя параметрами
 export async function onRequestGet(context) {
-    const db = context.env.LEADERBOARD_DB; // Наша KV база данных
+    const db = context.env.LEADERBOARD_DB;
     
     try {
         const list = await db.list();
@@ -15,16 +15,16 @@ export async function onRequestGet(context) {
             }
         }
         
-        // Сортируем игроков по убыванию зачищенного этажа Башни
+        // Сортируем игроков по убыванию общего золота (score)
         records.sort((a, b) => b.score - a.score);
         
-        // Берем только топ-50 лучших результатов
-        const top50 = records.slice(0, 50);
+        // Берем ТОП-15 лучших результатов
+        const top15 = records.slice(0, 15);
         
-        return new Response(JSON.stringify({ leaderboard: top50 }), {
+        return new Response(JSON.stringify({ leaderboard: top15 }), {
             headers: { 
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*", // Разрешаем CORS-запросы от игры
+                "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type"
             }
@@ -37,14 +37,14 @@ export async function onRequestGet(context) {
     }
 }
 
-// 2. POST-запрос: Записывает новый рекорд игрока при прохождении Башни
+// 2. POST-запрос: Записывает золото и число просмотров рекламы
 export async function onRequestPost(context) {
     const db = context.env.LEADERBOARD_DB;
     const request = context.request;
     
     try {
         const body = await request.json();
-        const { userId, firstName, username, score } = body;
+        const { userId, firstName, username, score, adsCount } = body;
         
         if (!userId || score === undefined) {
             return new Response(JSON.stringify({ error: "Missing params" }), { 
@@ -54,15 +54,13 @@ export async function onRequestPost(context) {
         }
         
         const playerKey = `player_${userId}`;
-        
-        // Проверяем, есть ли уже этот игрок в базе
         const existingDataRaw = await db.get(playerKey);
         let shouldUpdate = true;
         
         if (existingDataRaw) {
             const existingData = JSON.parse(existingDataRaw);
-            // Сохраняем результат только если новый рекорд БОЛЬШЕ старого
-            if (existingData.score >= score) {
+            // Обновляем запись, если золото выросло или число просмотров рекламы изменилось
+            if (existingData.score >= score && existingData.adsCount >= (adsCount || 0)) {
                 shouldUpdate = false;
             }
         }
@@ -73,10 +71,9 @@ export async function onRequestPost(context) {
                 name: firstName || "Игрок",
                 username: username || "@player",
                 score: parseInt(score),
+                adsCount: parseInt(adsCount || 0), // <--- Записываем число просмотров рекламы!
                 updatedAt: Date.now()
             };
-            
-            // Записываем в базу данных Cloudflare KV
             await db.put(playerKey, JSON.stringify(playerData));
         }
         
@@ -96,7 +93,7 @@ export async function onRequestPost(context) {
     }
 }
 
-// 3. OPTIONS-запрос: Необходим для предварительной проверки CORS браузерами
+// 3. OPTIONS-запрос для CORS
 export async function onRequestOptions() {
     return new Response(null, {
         headers: {
