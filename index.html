@@ -3510,13 +3510,21 @@
       }
 
       function giveBonus(type) {
-        showAdsgramReward(type, () => grantBonus(type), type);
+        showAdsgramReward(type, () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+          savePlayerScoreOnServer();
+          grantBonus(type);
+        }, type);
       }
 
       function triggerRewardAction(action) {
         const placement = REWARD_ACTION_PLACEMENTS[action];
         if (!placement) return;
-        showAdsgramReward(placement, () => grantRewardAction(action), action);
+        showAdsgramReward(placement, () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+          savePlayerScoreOnServer();
+          grantRewardAction(action);
+        }, action);
       }
 
       function bindAdsgramTask() {
@@ -3826,6 +3834,7 @@
           // Additional spins for rewarded ad
           showAdsgramReward('gems', () => {
           state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+            savePlayerScoreOnServer();
             rollSpin();
           }, 'wheelAdSpin');
         }
@@ -3884,6 +3893,7 @@
         if (!state.refineJobType) return;
         showAdsgramReward('offline', () => {
           state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+          savePlayerScoreOnServer();
           state.refineJobEndsAt = Date.now();
           showToast('Плавка мгновенно ускорена и завершена!');
           updateUI();
@@ -4062,6 +4072,7 @@
         }
         showAdsgramReward('offline', () => {
           state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+          savePlayerScoreOnServer();
           updateGemMineProduction();
           const cfg = getGemMineConfig(state.gemMineLevel);
           const boostedGems = Math.floor(240 / cfg.speedMins);
@@ -5143,6 +5154,7 @@
           if (!towerActiveRun || towerActiveRun.state !== 'insurance_offered') return;
           showAdsgramReward('x2', () => {
           state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+            savePlayerScoreOnServer();
             towerActiveRun.insuranceUsed = true;
             towerActiveRun.state = 'fighting';
             towerActiveRun.battleEndsAt = Date.now() + 10000; // Add 10 seconds
@@ -5498,6 +5510,7 @@
 
           showAdsgramReward('offline', () => {
           state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+            savePlayerScoreOnServer();
             const autoGold = getAutoIncome() * 3600;
             const bankGold = getBankIncomePerMinute() * 60;
             const totalGold = autoGold + bankGold;
