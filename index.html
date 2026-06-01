@@ -338,7 +338,7 @@
     .btn-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.28);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
     .modal-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:200}
     .modal-overlay.show{display:flex}
-    .modal-box{max-width:85%;padding:26px;border-radius:16px;background:rgba(18,22,40,.95);border:1px solid rgba(255,215,0,.2);text-align:center;animation:pop .28s cubic-bezier(.34,1.56,.64,1)}
+    .modal-box{max-width:85%;max-height:85vh;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;padding:26px;border-radius:16px;background:rgba(18,22,40,.95);border:1px solid rgba(255,215,0,.2);text-align:center;animation:pop .28s cubic-bezier(.34,1.56,.64,1)}
     .modal-box.reward-common{border-color:rgba(255,255,255,.18)}
     .modal-box.reward-rare{border-color:rgba(56,189,248,.4);box-shadow:0 0 24px rgba(56,189,248,.16)}
     .modal-box.reward-epic{border-color:rgba(168,85,247,.4);box-shadow:0 0 28px rgba(168,85,247,.18)}
@@ -365,7 +365,7 @@
     .chest-anim.legendary{filter:drop-shadow(0 0 22px rgba(250,204,21,.65));animation-duration:.35s}
     @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
     .chest-hint{margin-top:10px;color:rgba(255,255,255,.42);font-size:12px;line-height:1.35}
-    .reward-text{font-size:32px;line-height:1.2;margin:14px 0;white-space:pre-line;position:relative;z-index:2}
+    .reward-text{font-size:32px;line-height:1.2;margin:14px 0;white-space:pre-line;position:relative;z-index:2;overflow-y:auto;max-height:45vh;-webkit-overflow-scrolling:touch}
     .toast{position:fixed;top:max(20px,env(safe-area-inset-top,20px));left:50%;transform:translateX(-50%) translateY(-120px);background:rgba(18,22,40,.96);border:1px solid rgba(255,215,0,.2);padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:300;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;pointer-events:none}
     .toast.show{transform:translateX(-50%) translateY(0)}
     .loading-screen{position:fixed;inset:0;background:#0a0f1e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease,visibility .4s ease}
@@ -1288,6 +1288,7 @@
           gemMineLevel: 0,
           gemMineStorage: 0,
           gemMineLastClaimAt: 0,
+          totalAdsWatched: 0,
           lastSave: Date.now()
         };
       }
@@ -1603,6 +1604,14 @@
         if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
         if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
         return String(n);
+      }
+
+      function fmtHours(totalSeconds) {
+        totalSeconds = Math.max(0, Math.floor(totalSeconds || 0));
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
       }
 
       function fmtSeconds(totalSeconds) {
@@ -2216,10 +2225,19 @@
           el.btnStartBoss.disabled = false;
           el.btnStartBoss.textContent = 'Перезапустить бой';
         } else {
-          el.bossState.textContent = 'Ожидание';
-          el.bossHintText.textContent = 'Нажмите «Начать бой», затем атакуйте босса до истечения таймера.';
-          el.btnStartBoss.disabled = false;
-          el.btnStartBoss.textContent = 'Начать бой';
+          const cooldownElapsed = Date.now() - (state.lastBossDefeatedAt || 0);
+          if (cooldownElapsed < 180000) {
+            const remSecs = Math.ceil((180000 - cooldownElapsed) / 1000);
+            el.bossState.textContent = 'Перезарядка';
+            el.bossHintText.textContent = 'Боссы восстанавливают свои силы. Перезарядка закончится через ' + fmtSeconds(remSecs) + '.';
+            el.btnStartBoss.disabled = true;
+            el.btnStartBoss.textContent = 'Откат (' + remSecs + 'с)';
+          } else {
+            el.bossState.textContent = 'Ожидание';
+            el.bossHintText.textContent = 'Нажмите «Начать бой», затем атакуйте босса до истечения таймера.';
+            el.btnStartBoss.disabled = false;
+            el.btnStartBoss.textContent = 'Начать бой';
+          }
         }
       }
 
@@ -2378,7 +2396,8 @@
         showToast('Ежедневное задание выполнено!');
       }
 
-      function claimDailyReward(multiplier = 1) {
+      function claimDailyReward(multiplier) {
+        if (typeof multiplier !== 'number') multiplier = 1;
         if (!canClaimDailyReward()) return showToast('Сегодня уже получено!');
         const reward = getCurrentDailyReward();
         const totalMultiplier = multiplier * (state.dailyDoublePending ? 2 : 1);
@@ -4370,28 +4389,58 @@
 
           el.towerReq.textContent = 'Текущий поход • Накоплено: ' + fmt(towerActiveRun.goldAccumulated) + ' $ • ' + towerActiveRun.gemsAccumulated + ' 💎';
 
-          if (active) {
-            el.towerSprite.className = 'boss-sprite tower-sprite-active';
-            el.towerState.textContent = 'Бой';
-            const remaining = Math.max(0, towerActiveRun.battleEndsAt - Date.now());
-            el.towerTimerText.textContent = fmtSeconds(Math.ceil(remaining / 1000));
-            el.towerTimerFill.style.width = Math.max(0, remaining / 15000 * 100) + '%';
-            el.btnStartTower.disabled = true;
-            el.btnStartTower.textContent = 'Атакуйте кликами!';
-            el.towerReward.textContent = 'Награда этажа: ' + fmt(boss.goldReward) + ' $ • ' + boss.gemReward + ' 💎';
-            el.towerHintText.textContent = 'Успейте победить босса до окончания таймера!';
-          } else if (cleared) {
-            el.towerSprite.className = 'boss-sprite';
-            el.towerState.textContent = 'Победа';
+          const offered = towerActiveRun.state === 'insurance_offered';
+          
+          if (offered) {
+            if (el.towerInsuranceBox) el.towerInsuranceBox.style.display = 'flex';
+            if (el.towerSprite) el.towerSprite.style.display = 'none';
+            if (el.towerHpFill && el.towerHpFill.parentNode) el.towerHpFill.parentNode.style.display = 'none';
+            const hpText = document.querySelector('#towerCard .boss-hp-text');
+            if (hpText) hpText.style.display = 'none';
+            
+            el.towerState.textContent = 'Обвал';
             el.towerTimerText.textContent = '00:00';
             el.towerTimerFill.style.width = '0%';
-            el.btnStartTower.disabled = false;
-            el.btnStartTower.textContent = 'Перейти на этаж ' + (towerActiveRun.floor + 1);
-            el.towerReward.textContent = 'Этаж ' + towerActiveRun.floor + ' зачищен!';
-            el.towerHintText.textContent = 'Нажмите кнопку выше, чтобы продолжить восхождение на следующий этаж.';
+            el.btnStartTower.disabled = true;
+            el.btnStartTower.textContent = 'Используйте страховку!';
+            el.towerReward.textContent = 'Поход в опасности!';
+            el.towerHintText.textContent = 'Используйте страховку Яндекса/AdsGram для спасения похода или сдайтесь.';
+          } else {
+            if (el.towerInsuranceBox) el.towerInsuranceBox.style.display = 'none';
+            if (el.towerSprite) el.towerSprite.style.display = 'inline-block';
+            if (el.towerHpFill && el.towerHpFill.parentNode) el.towerHpFill.parentNode.style.display = 'block';
+            const hpText = document.querySelector('#towerCard .boss-hp-text');
+            if (hpText) hpText.style.display = 'block';
+
+            if (active) {
+              el.towerSprite.className = 'boss-sprite tower-sprite-active';
+              el.towerState.textContent = 'Бой';
+              const remaining = Math.max(0, towerActiveRun.battleEndsAt - Date.now());
+              el.towerTimerText.textContent = fmtSeconds(Math.ceil(remaining / 1000));
+              el.towerTimerFill.style.width = Math.max(0, remaining / 15000 * 100) + '%';
+              el.btnStartTower.disabled = true;
+              el.btnStartTower.textContent = 'Атакуйте кликами!';
+              el.towerReward.textContent = 'Награда этажа: ' + fmt(boss.goldReward) + ' $ • ' + boss.gemReward + ' 💎';
+              el.towerHintText.textContent = 'Успейте победить босса до окончания таймера!';
+            } else if (cleared) {
+              el.towerSprite.className = 'boss-sprite';
+              el.towerState.textContent = 'Победа';
+              el.towerTimerText.textContent = '00:00';
+              el.towerTimerFill.style.width = '0%';
+              el.btnStartTower.disabled = false;
+              el.btnStartTower.textContent = 'Перейти на этаж ' + (towerActiveRun.floor + 1);
+              el.towerReward.textContent = 'Этаж ' + towerActiveRun.floor + ' зачищен!';
+              el.towerHintText.textContent = 'Нажмите кнопку выше, чтобы продолжить восхождение на следующий этаж.';
+            }
           }
         } else {
           el.towerSprite.className = 'boss-sprite';
+          if (el.towerInsuranceBox) el.towerInsuranceBox.style.display = 'none';
+          if (el.towerSprite) el.towerSprite.style.display = 'inline-block';
+          if (el.towerHpFill && el.towerHpFill.parentNode) el.towerHpFill.parentNode.style.display = 'block';
+          const hpText = document.querySelector('#towerCard .boss-hp-text');
+          if (hpText) hpText.style.display = 'block';
+          
           el.towerState.textContent = attemptsLeft > 0 ? 'Готова' : 'Ожидание';
           el.towerTimerText.textContent = '00:15';
           el.towerTimerFill.style.width = '100%';
@@ -4411,10 +4460,11 @@
             el.towerHintText.textContent = 'Начните ежедневный поход в Башню Испытаний! Постарайтесь пройти как можно глубже.';
           } else {
             const nextDailyMs = Math.max(0, getDayStart(Date.now() + DAY_MS) - Date.now());
-            el.towerReq.textContent = 'Попытки исчерпаны';
+            const remSecs = Math.ceil(nextDailyMs / 1000);
+            el.towerReq.textContent = 'Попытки исчерпаны (Откат: ' + fmtHours(remSecs) + ')';
             el.btnStartTower.disabled = true;
-            el.btnStartTower.textContent = 'Доступно завтра';
-            el.towerHintText.textContent = 'Вы уже израсходовали сегодняшнюю попытку. Возвращайтесь завтра для нового восхождения!';
+            el.btnStartTower.textContent = 'Откат: ' + fmtHours(remSecs);
+            el.towerHintText.textContent = 'Вы уже израсходовали сегодняшнюю попытку. Новое восхождение станет доступно через ' + fmtHours(remSecs) + '.';
           }
         }
       }
@@ -4571,7 +4621,13 @@
 
         el.leaderboardList.innerHTML = '<div style="text-align:center; padding: 20px 0; font-size:11px; color:rgba(255,255,255,0.4);"><div class="spinner" style="border-top-color:#fbbf24; width:20px; height:20px; margin:0 auto 8px auto;"></div>Загрузка списка лидеров...</div>';
 
-        fetch('https://aniversegame.pages.dev/api/leaderboard')
+        fetch('https://aniversegame.pages.dev/api/leaderboard', {
+          mode: 'cors',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        })
           .then(response => {
             if (!response.ok) throw new Error('Network response not ok');
             return response.json();
@@ -5096,6 +5152,7 @@
           if (!Number.isFinite(state.refineJobEndsAt)) state.refineJobEndsAt = 0;
           if (state.vibrationEnabled === undefined) state.vibrationEnabled = true;
           if (!Number.isFinite(state.totalAdsWatched)) state.totalAdsWatched = 0;
+          if (!Number.isFinite(state.lastBossDefeatedAt)) state.lastBossDefeatedAt = 0;
           PRESTIGE_TALENTS.forEach(item => { if (!Number.isFinite(state.prestigeTalents[item.id])) state.prestigeTalents[item.id] = 0; });
           ACCOUNT_UPGRADES.forEach(item => { if (!Number.isFinite(state.accountUpgrades[item.id])) state.accountUpgrades[item.id] = 0; });
           if (!state.activeQuest || !state.activeQuest.type || !Number.isFinite(state.activeQuest.target)) ensureQuest(true);
@@ -5119,7 +5176,7 @@
         el.clickerBtn.addEventListener('click', handleClick);
         el.clickerBtn.addEventListener('touchstart', initAudio, { passive: true, once: true });
         el.btnQuestClaim.addEventListener('click', claimQuest);
-        el.btnDailyClaim.addEventListener('click', claimDailyReward);
+        el.btnDailyClaim.addEventListener('click', () => claimDailyReward(1));
         el.btnClaimMine.addEventListener('click', e => {
           e.preventDefault();
           claimGemMineGems();
@@ -5259,6 +5316,14 @@
           checkBossBattleState();
           if (bossCooldown) return;
           if (!isBossUnlocked(state.bossIdx)) return showToast('Босс ещё закрыт');
+
+          // Проверка перезарядки перед запуском нового боя при клике на спрайт босса!
+          const cooldownElapsed = Date.now() - (state.lastBossDefeatedAt || 0);
+          if (cooldownElapsed < 180000 && !state.bossBattleActive) {
+            const remSecs = Math.ceil((180000 - cooldownElapsed) / 1000);
+            return showToast('Боссы на перезарядке! Осталось: ' + fmtSeconds(remSecs));
+          }
+
           if (!state.bossBattleActive || getBossRemainingMs() <= 0) {
             startBossBattle(true);
             showToast('Бой начался!');
@@ -5282,6 +5347,7 @@
             addGems(boss.reward * rewardMult);
             if (timeBonus > 0) addGold(timeBonus);
             state.bossesDefeated += 1;
+            state.lastBossDefeatedAt = Date.now(); // 3-минутная перезарядка после победы!
 
             const drop = dropBossMaterials(state.bossIdx);
             let dropMsg = '';
@@ -5674,5 +5740,5 @@
       else init();
     })();
   </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a050c8b35ecfa103',t:'MTc4MDM0MzgxMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
