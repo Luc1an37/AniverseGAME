@@ -9,9 +9,14 @@ export async function onRequestGet(context) {
         const records = [];
         
         for (const key of list.keys) {
-            const rawData = await db.get(key.name);
-            if (rawData) {
-                records.push(JSON.parse(rawData));
+            try {
+                const rawData = await db.get(key.name);
+                if (rawData) {
+                    records.push(JSON.parse(rawData));
+                }
+            } catch (parseError) {
+                // ЗАЩИТА: Если запись одного игрока повреждена, пропускаем её, а не ломаем весь топ!
+                continue;
             }
         }
         
@@ -32,7 +37,10 @@ export async function onRequestGet(context) {
     } catch (err) {
         return new Response(JSON.stringify({ error: err.message }), { 
             status: 500,
-            headers: { "Access-Control-Allow-Origin": "*" }
+            headers: { 
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*" 
+            }
         });
     }
 }
@@ -58,10 +66,14 @@ export async function onRequestPost(context) {
         let shouldUpdate = true;
         
         if (existingDataRaw) {
-            const existingData = JSON.parse(existingDataRaw);
-            // Обновляем запись, если золото выросло или число просмотров рекламы изменилось
-            if (existingData.score >= score && existingData.adsCount >= (adsCount || 0)) {
-                shouldUpdate = false;
+            try {
+                const existingData = JSON.parse(existingDataRaw);
+                // Обновляем запись, если золото выросло или число просмотров рекламы увеличилось
+                if (existingData.score >= score && existingData.adsCount >= (adsCount || 0)) {
+                    shouldUpdate = false;
+                }
+            } catch (e) {
+                shouldUpdate = true;
             }
         }
         
@@ -71,7 +83,7 @@ export async function onRequestPost(context) {
                 name: firstName || "Игрок",
                 username: username || "@player",
                 score: parseInt(score),
-                adsCount: parseInt(adsCount || 0), // <--- Записываем число просмотров рекламы!
+                adsCount: parseInt(adsCount || 0),
                 updatedAt: Date.now()
             };
             await db.put(playerKey, JSON.stringify(playerData));
@@ -88,7 +100,10 @@ export async function onRequestPost(context) {
     } catch (err) {
         return new Response(JSON.stringify({ error: err.message }), { 
             status: 500,
-            headers: { "Access-Control-Allow-Origin": "*" }
+            headers: { 
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*" 
+            }
         });
     }
 }
