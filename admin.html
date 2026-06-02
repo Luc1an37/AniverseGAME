@@ -143,10 +143,12 @@
       cursor: pointer;
       margin-right: 4px;
       margin-top: 4px;
+      transition: all 0.15s ease;
     }
     .template-btn:hover {
       color: #fff;
       border-color: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
     }
     .spinner {
       width: 20px;
@@ -190,20 +192,27 @@
       <input type="password" id="botToken" placeholder="Вставьте токен вашего бота из BotFather">
     </div>
 
-    <!-- Message Templates -->
+    <!-- Message Templates (Expanded to 10 templates!) -->
     <div class="form-group" style="margin-bottom:8px;">
-      <label>Шаблоны сообщений</label>
-      <div style="display:flex; flex-wrap:wrap;">
-        <button class="template-btn" onclick="applyTemplate('mine')">🔋 Шахта заполнена</button>
-        <button class="template-btn" onclick="applyTemplate('wheel')">🎡 Колесо готово</button>
-        <button class="template-btn" onclick="applyTemplate('top')">🏆 Вас обогнали</button>
+      <label>Шаблоны сообщений (10 вариантов)</label>
+      <div style="display:flex; flex-wrap:wrap; gap:2px;" id="templatesGrid">
+        <button class="template-btn" onclick="applyTemplate('mine')">🔋 Шахта</button>
+        <button class="template-btn" onclick="applyTemplate('wheel')">🎡 Колесо</button>
+        <button class="template-btn" onclick="applyTemplate('top')">🏆 Рекорд</button>
+        <button class="template-btn" onclick="applyTemplate('boss')">⚔️ Боссы</button>
+        <button class="template-btn" onclick="applyTemplate('forge')">🔨 Кузница</button>
+        <button class="template-btn" onclick="applyTemplate('bank')">🏦 Банк</button>
+        <button class="template-btn" onclick="applyTemplate('wormhole')">🌀 Разлом</button>
+        <button class="template-btn" onclick="applyTemplate('quest')">📜 Контракт</button>
+        <button class="template-btn" onclick="applyTemplate('refine')">🔥 Печь</button>
+        <button class="template-btn" onclick="applyTemplate('streak')">🎁 Награда</button>
       </div>
     </div>
 
     <!-- Broadcast Message Area -->
     <div class="form-group">
       <label for="msgText">Текст вашего пуш-сообщения</label>
-      <textarea id="msgText" placeholder="Введите сообщение... (Markdown разметка поддерживается)"></textarea>
+      <textarea id="msgText" placeholder="Выберите шаблон выше или напишите сообщение сами... (Markdown разметка поддерживается)"></textarea>
     </div>
 
     <!-- Submit Button -->
@@ -236,7 +245,7 @@
         });
     }
 
-    // 2. Applying text templates
+    // 2. Applying 10 diverse text templates
     function applyTemplate(type) {
       const textarea = document.getElementById('msgText');
       if (type === 'mine') {
@@ -245,13 +254,27 @@
         textarea.value = `🎡 *Бесплатный спин в Колесе Фортуны готов!*\n\nТвоя ежедневная попытка обновилась. Испытай удачу и выиграй золото, кристаллы или редчайшую *Драконью Чешую 🐉* для крафта легендарного меча!`;
       } else if (type === 'top') {
         textarea.value = `⚠️ *Вас обогнали в Глобальном Топе!*\n\nДругие игроки заработали новые миллионы и сместили вас в Таблице лидеров. Ваша лига в опасности! Возвращайтесь, улучшайте снаряжение в Кузнице и верните себе статус Короля богатств! 🏆`;
+      } else if (type === 'boss') {
+        textarea.value = `⚔️ *Боссы восстановили свои силы!*\n\nВаша 3-минутная перезарядка закончилась! Самое время вернуться во вкладку Боссов, бросить вызов чудовищам и заработать горы ценных кристаллов 💎!`;
+      } else if (type === 'forge') {
+        textarea.value = `🔨 *Ваша Кузница остывает!*\n\nВы накопили достаточно дерева 🪵 и руды 🪙 для создания нового эпического снаряжения! Выкуйте легендарный Меч или Амулет и увеличьте свой доход в сотни раз! 🚀`;
+      } else if (type === 'bank') {
+        textarea.value = `🏦 *Казна ломится от монет!*\n\nИмперский Банк начислил ваши пассивные проценты за время отсутствия! Скорее снимите золото со вклада, пока казна не переполнилась! 💰`;
+      } else if (type === 'wormhole') {
+        textarea.value = `🌀 *Обнаружено искажение пространства!*\n\nВ космосе открылась редкая Червоточина! Зайдите в игру прямо сейчас, совершите мгновенный скачок во времени на 1 ЧАС вперёд и заберите всю накопленную прибыль! ⏳`;
+      } else if (type === 'quest') {
+        textarea.value = `📜 *Имперский Контракт завершён!*\n\nВаша текущая цель достигнута! Зайдите и заберите вашу заслуженную награду в золоте и ценных кристаллах. Империя уже подготовила для вас новый контракт! 💎`;
+      } else if (type === 'refine') {
+        textarea.value = `🔥 *Переплавка в Печи завершена!*\n\nВаши материалы успешно переплавлены в более ценные ресурсы! Заберите Магический Кристалл 🔮 или Драконью Чешую 🐉 прямо сейчас и приступайте к крафту!`;
+      } else if (type === 'streak') {
+        textarea.value = `🎁 *Ваша Ежедневная награда сгорает!*\n\nДо сброса ежедневной серии осталось совсем немного времени! Зайдите в игру прямо сейчас, заберите ваш бонус за вход и сохраните серию! 📳`;
       }
     }
 
     // 3. Executing the server-side broadcast
     document.getElementById('btnSendAd').addEventListener('click', () => {
-      const password = document.getElementById('adminPass').value.strip ? document.getElementById('adminPass').value.strip() : document.getElementById('adminPass').value;
-      const botToken = document.getElementById('botToken').value.strip ? document.getElementById('botToken').value.strip() : document.getElementById('botToken').value;
+      const password = document.getElementById('adminPass').value.trim();
+      const botToken = document.getElementById('botToken').value.trim();
       const text = document.getElementById('msgText').value;
       
       if (!password || !botToken || !text) {
