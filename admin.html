@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Aniverse GAME — Панель Администратора</title>
+  <style>
+    :root {
+      --bg-color: #0a0f1e;
+      --card-bg: rgba(20, 26, 46, 0.7);
+      --accent-color: #7c3aed;
+      --gold-color: #fbbf24;
+      --text-color: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .admin-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 24px rgba(124, 58, 237, 0.12);
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .sub-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+    input, textarea {
+      width: 100%;
+      background: rgba(10, 15, 30, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--accent-color);
+    }
+    textarea {
+      resize: none;
+      min-height: 110px;
+    }
+    .btn-action {
+      width: 100%;
+      padding: 14px;
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent-color), #5b21b6);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
+      transition: transform 0.1s;
+    }
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+    .btn-action:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat-box {
+      flex: 1;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-box span {
+      display: block;
+      font-size: 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .stat-box b {
+      font-size: 16px;
+      color: #fff;
+    }
+    .template-btn {
+      padding: 6px 10px;
+      font-size: 9px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      margin-right: 4px;
+      margin-top: 4px;
+    }
+    .template-btn:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.2);
+    }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: var(--accent-color);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="admin-card">
+    <h2>👑 Панель Рассылки</h2>
+    <p class="sub-title">Отправляйте пуш-сообщения реального времени всем вашим игрокам прямо из вашего телефона!</p>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <span>Всего игроков</span>
+        <b id="statPlayers">Загрузка...</b>
+      </div>
+      <div class="stat-box">
+        <span>Сервер базы</span>
+        <b id="statServer" style="color:#10b981;">ONLINE</b>
+      </div>
+    </div>
+
+    <!-- Admin Password -->
+    <div class="form-group">
+      <label for="adminPass">Секретный пароль админа</label>
+      <input type="password" id="adminPass" placeholder="Введите ваш пароль для подтверждения">
+    </div>
+
+    <!-- Bot Token -->
+    <div class="form-group">
+      <label for="botToken">Токен вашего бота</label>
+      <input type="password" id="botToken" placeholder="Вставьте токен вашего бота из BotFather">
+    </div>
+
+    <!-- Message Templates -->
+    <div class="form-group" style="margin-bottom:8px;">
+      <label>Шаблоны сообщений</label>
+      <div style="display:flex; flex-wrap:wrap;">
+        <button class="template-btn" onclick="applyTemplate('mine')">🔋 Шахта заполнена</button>
+        <button class="template-btn" onclick="applyTemplate('wheel')">🎡 Колесо готово</button>
+        <button class="template-btn" onclick="applyTemplate('top')">🏆 Вас обогнали</button>
+      </div>
+    </div>
+
+    <!-- Broadcast Message Area -->
+    <div class="form-group">
+      <label for="msgText">Текст вашего пуш-сообщения</label>
+      <textarea id="msgText" placeholder="Введите сообщение... (Markdown разметка поддерживается)"></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button class="btn-action" id="btnSendAd">Запустить рассылку</button>
+    
+    <div id="loadingBox" style="display:none; text-align:center; margin-top:15px;">
+      <div class="spinner"></div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:8px;" id="loadingText">Отправка сообщений в Telegram...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://aniversegame.pages.dev";
+    
+    // 1. Load active player count on startup
+    function loadStats() {
+      fetch(`${API_URL}/api/leaderboard`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && Array.isArray(data.leaderboard)) {
+            document.getElementById('statPlayers').textContent = data.leaderboard.length;
+          } else {
+            document.getElementById('statPlayers').textContent = "0";
+          }
+        })
+        .catch(err => {
+          document.getElementById('statPlayers').textContent = "Ошибка";
+          document.getElementById('statServer').textContent = "OFFLINE";
+          document.getElementById('statServer').style.color = "#ef4444";
+        });
+    }
+
+    // 2. Applying text templates
+    function applyTemplate(type) {
+      const textarea = document.getElementById('msgText');
+      if (type === 'mine') {
+        textarea.value = `🔋 *Имперская Шахта Кристаллов переполнена!*\n\nВаша шахта работала всю ночь и накопила максимум кристаллов 💎! Скорее собери их, чтобы производство не простаивало. Твоя Кузница ждёт новые материалы! 🔨`;
+      } else if (type === 'wheel') {
+        textarea.value = `🎡 *Бесплатный спин в Колесе Фортуны готов!*\n\nТвоя ежедневная попытка обновилась. Испытай удачу и выиграй золото, кристаллы или редчайшую *Драконью Чешую 🐉* для крафта легендарного меча!`;
+      } else if (type === 'top') {
+        textarea.value = `⚠️ *Вас обогнали в Глобальном Топе!*\n\nДругие игроки заработали новые миллионы и сместили вас в Таблице лидеров. Ваша лига в опасности! Возвращайтесь, улучшайте снаряжение в Кузнице и верните себе статус Короля богатств! 🏆`;
+      }
+    }
+
+    // 3. Executing the server-side broadcast
+    document.getElementById('btnSendAd').addEventListener('click', () => {
+      const password = document.getElementById('adminPass').value.strip ? document.getElementById('adminPass').value.strip() : document.getElementById('adminPass').value;
+      const botToken = document.getElementById('botToken').value.strip ? document.getElementById('botToken').value.strip() : document.getElementById('botToken').value;
+      const text = document.getElementById('msgText').value;
+      
+      if (!password || !botToken || !text) {
+        alert("Пожалуйста, заполните ВСЕ поля (Пароль, Токен бота и Текст)!");
+        return;
+      }
+      
+      const btn = document.getElementById('btnSendAd');
+      const loader = document.getElementById('loadingBox');
+      
+      btn.disabled = true;
+      loader.style.display = "block";
+      
+      // Post to Cloudflare Broadcast endpoint
+      fetch(`${API_URL}/api/broadcast`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, botToken, text })
+      })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 403) throw new Error("Неверный секретный пароль админа!");
+          throw new Error("Сетевая ошибка сервера");
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (data && data.success) {
+          alert(`📢 Рассылка завершена успешно!\n\n✅ Доставлено: ${data.sent} игрокам\n❌ Бот заблокирован у: ${data.blocked} пользователей`);
+          document.getElementById('adminPass').value = "";
+          document.getElementById('msgText').value = "";
+        } else {
+          alert("Ошибка во время отправки.");
+        }
+      })
+      .catch(err => {
+        alert("Ошибка: " + err.message);
+      })
+      .finally(() => {
+        btn.disabled = false;
+        loader.style.display = "none";
+        loadStats();
+      });
+    });
+
+    // Run on boot
+    window.onload = loadStats;
+  </script>
+</body>
+</html>
