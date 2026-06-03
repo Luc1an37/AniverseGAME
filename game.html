@@ -172,7 +172,19 @@
     .click-label .plus{color:rgba(255,255,255,.8);font-weight:800}
     .combo-chip{margin-top:10px;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.08);font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.48);font-weight:800;text-transform:uppercase;max-width:calc(100% - var(--page-pad) * 2);text-align:center}
     .combo-chip.hot{color:#ffd700;border-color:rgba(255,215,0,.24);box-shadow:0 0 18px rgba(255,215,0,.08)}
-    .float-num{position:fixed;z-index:50;pointer-events:none;font-size:18px;font-weight:800;color:rgba(255,255,255,.92);text-shadow:0 2px 4px rgba(0,0,0,.4);animation:floatAway .7s ease-out forwards}
+    .float-num {
+      position: fixed;
+      z-index: 50;
+      pointer-events: none;
+      font-size: 18px;
+      font-weight: 800;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 2px 4px rgba(0,0,0,.4);
+      animation: floatAway .7s ease-out forwards;
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+    }
     @keyframes floatAway{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-70px) scale(.6)}}
     .bank-card{margin:0 var(--page-pad) 14px;padding:var(--section-pad);border-radius:var(--section-radius);backdrop-filter:blur(var(--card-blur));box-shadow:0 12px 28px rgba(0,0,0,.14)}
     .bank-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
@@ -487,6 +499,9 @@
       font-size: 14px;
       z-index: 9999;
       animation: particleFly 0.6s cubic-bezier(0.25, 1, 0.50, 1) forwards;
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
     }
     @keyframes particleFly {
       0% {
@@ -625,6 +640,9 @@
       color: #ffd700;
       text-shadow: 0 0 8px #ff4500, 0 0 15px #ffd700;
       animation: floatAwayCrit 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      will-change: transform, opacity;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
     }
     @keyframes floatAwayCrit {
       0% { opacity: 1; transform: translateY(0) scale(0.6) rotate(-15deg); }
@@ -3524,6 +3542,12 @@
         if (clickCooldown) return;
         clickCooldown = true;
         setTimeout(() => { clickCooldown = false; }, 80);
+        
+        let x = 0, y = 0;
+        if (event.clientX !== undefined) { x = event.clientX; y = event.clientY; }
+        else if (event.touches && event.touches[0]) { x = event.touches[0].clientX; y = event.touches[0].clientY; }
+        else if (event.changedTouches && event.changedTouches[0]) { x = event.changedTouches[0].clientX; y = event.changedTouches[0].clientY; }
+
         const now = Date.now();
         state.combo = now <= state.comboExpire ? Math.min(state.combo + 1, 31) : 1;
         state.comboExpire = now + 1400;
@@ -3562,14 +3586,11 @@
             document.body.appendChild(p);
             setTimeout(() => p.remove(), 600);
           }
+          spawnFloat(x, y, '+' + fmt(earned));
         }
         if (state.hatchingEggType !== null && state.hatchingEndsAt > Date.now()) {
           state.hatchingEndsAt = Math.max(Date.now(), state.hatchingEndsAt - 5000);
         }
-        let x = 0, y = 0;
-        if (event.clientX !== undefined) { x = event.clientX; y = event.clientY; }
-        else if (event.touches && event.touches[0]) { x = event.touches[0].clientX; y = event.touches[0].clientY; }
-        if (x && y) spawnFloat(x, y, '+' + fmt(earned));
         if (Math.random() < 0.03) showChest();
         updateUI();
       }
@@ -6168,6 +6189,5 @@
       else init();
     })();
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
