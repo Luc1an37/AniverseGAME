@@ -1067,7 +1067,7 @@
         <div id="goals-leaderboard-section" style="width:100%; display:none;">
           <div class="goals-card" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(217, 119, 6, 0.08)); border: 1px solid rgba(251, 191, 36, 0.2);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:4px;">
-              <div class="goals-title" style="font-size:10px; max-width:40%;">🏆 Топ Богачей</div>
+              <div class="goals-title" style="font-size:10px; max-width:40%;">🏆 Топ Зрителей</div>
               <button class="ad-btn" id="btnRefreshLeaderboard" type="button" style="width:75px; padding:4px 0; font-size:9px; margin:0; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04);">Обновить</button>
               <span id="leagueBadge" style="font-size:9px; font-weight:900; background:rgba(251, 191, 36, 0.15); color:#fbbf24; padding:3px 8px; border-radius:6px; text-transform:uppercase;">Бронза</span>
             </div>
@@ -4595,8 +4595,8 @@
         const userId = TELEGRAM_WEBAPP.initDataUnsafe.user.id;
         const firstName = TELEGRAM_WEBAPP.initDataUnsafe.user.first_name || 'Игрок';
         const username = TELEGRAM_WEBAPP.initDataUnsafe.user.username ? '@' + TELEGRAM_WEBAPP.initDataUnsafe.user.username : '@player';
-        const score = state.totalGold || 0;
-        const adsCount = state.totalAdsWatched || 0;
+        const score = state.totalGold || 0; // На сервере 'score' - это общее золото
+        const adsCount = state.totalAdsWatched || 0; // На сервере 'adsCount' - это просмотры рекламы
 
         fetch('https://aniversegame.pages.dev/api/leaderboard', {
           method: 'POST',
@@ -4658,17 +4658,16 @@
       }
 
       function fallbackToSimulatedLeaderboard() {
-        const playerRecord = state.totalGold || 0;
+        const playerAds = state.totalAdsWatched || 0;
         const playerRankName = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
           ? TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
           : 'Вы';
         const playerUsername = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.username 
           ? '@' + TELEGRAM_WEBAPP.initDataUnsafe.user.username 
           : '@player';
-        const adsCount = state.totalAdsWatched || 0;
+        const playerGold = state.totalGold || 0;
 
-        const list = [{ name: playerRankName + ' (Вы)', username: playerUsername, score: playerRecord, adsCount: adsCount, isPlayer: true }];
-        
+        const list = [{ name: playerRankName + ' (Вы)', username: playerUsername, score: playerGold, adsCount: playerAds, isPlayer: true }];
         renderLeaderboardWithData(list);
         
         if (el.leagueBonusDesc) {
@@ -4695,6 +4694,7 @@
             const isMe = user.isPlayer || (TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && String(user.userId) === String(TELEGRAM_WEBAPP.initDataUnsafe.user.id));
 
             const ads = user.adsCount || 0;
+            const gold = user.score || 0;
             html += '<div class="leader-row' + (isMe ? ' player' : '') + '">'
               + '<div class="leader-rank ' + rankClass + '">' + rankEmoji + '</div>'
               + '<div style="flex:1; text-align:left; margin-left:12px;">'
@@ -4702,8 +4702,8 @@
               + '<div style="font-size:9px; color:rgba(255,255,255,0.4);">' + user.username + '</div>'
               + '</div>'
               + '<div style="text-align:right; min-width:80px;">'
-              + '<div style="font-size:12px; font-weight:900; color:#ffd700;">💰 ' + fmt(user.score) + '</div>'
-              + '<div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">📺 ' + ads + '</div>'
+              + '<div style="font-size:12px; font-weight:900; color:#c084fc;">📺 ' + ads + '</div>'
+              + '<div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">💰 ' + fmt(gold) + '</div>'
               + '</div>'
               + '</div>';
           });
