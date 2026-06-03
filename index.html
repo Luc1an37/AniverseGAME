@@ -24,6 +24,53 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <style>
+    .coin-aura{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:calc(var(--clicker-button-size) + 40px);
+      height:calc(var(--clicker-button-size) + 40px);
+      border-radius:50%;
+      pointer-events:none;
+      z-index:0;
+      transition:all .3s ease;
+    }
+    .coin-aura.aura-none{
+      display:none;
+    }
+    .coin-aura.aura-sun{
+      background:radial-gradient(circle, rgba(249,115,22,0.3) 0%, rgba(249,115,22,0) 70%);
+      box-shadow:0 0 40px 15px rgba(249,115,22,0.4);
+      animation:auraPulse 2s infinite alternate;
+    }
+    @keyframes auraPulse {
+      0% { transform: translate(-50%,-50%) scale(0.95); opacity: 0.8; }
+      100% { transform: translate(-50%,-50%) scale(1.1); opacity: 1; }
+    }
+    .coin-aura.aura-void{
+      background:radial-gradient(circle, rgba(168,85,247,0.35) 0%, rgba(124,58,237,0.05) 50%, rgba(124,58,237,0) 70%);
+      box-shadow:0 0 45px 18px rgba(168,85,247,0.4);
+      animation:auraSpin 6s linear infinite;
+    }
+    @keyframes auraSpin {
+      0% { transform: translate(-50%,-50%) rotate(0deg) scale(1); }
+      50% { transform: translate(-50%,-50%) rotate(180deg) scale(1.05); }
+      100% { transform: translate(-50%,-50%) rotate(360deg) scale(1); }
+    }
+    .coin-aura.aura-lightning{
+      background:radial-gradient(circle, rgba(56,189,248,0.4) 0%, rgba(56,189,248,0) 70%);
+      box-shadow:0 0 50px 22px rgba(56,189,248,0.55);
+      animation:auraLightning 1.5s infinite;
+    }
+    @keyframes auraLightning {
+      0%, 100% { opacity: 0.9; box-shadow: 0 0 40px 15px rgba(56,189,248,0.45); }
+      15% { opacity: 0.4; }
+      30% { opacity: 1; box-shadow: 0 0 60px 25px rgba(56,189,248,0.7); }
+      45% { opacity: 0.6; }
+      60% { opacity: 0.95; }
+      75% { opacity: 0.5; }
+    }
     :root{--app-max-width:560px;--shell-gap:clamp(10px,2.4vw,14px);--page-pad:clamp(14px,4vw,20px);--section-pad:clamp(12px,3vw,16px);--section-radius:clamp(14px,3vw,18px);--top-number:clamp(24px,6vw,30px);--card-blur:10px;--clicker-wrap-size:clamp(180px,48vw,238px);--clicker-button-size:calc(var(--clicker-wrap-size) - clamp(24px,6vw,32px));--clicker-coin-size:calc(var(--clicker-button-size) - clamp(38px,10vw,52px));--clicker-ring-size:calc(var(--clicker-wrap-size) + clamp(20px,5vw,30px))}
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
     html,body{width:100%;height:100%;overflow:hidden}
@@ -746,6 +793,7 @@
 
       <div class="clicker-section">
         <div class="clicker-wrap">
+          <div id="coinAura" class="coin-aura aura-none"></div>
           <div class="clicker-aura"></div>
           <div class="clicker-pulse"></div>
           <div class="clicker-ring"></div>
@@ -1109,6 +1157,54 @@
 
     <div class="tab-page" id="page-bonus">
       <div class="ad-content" id="bonusContent">
+        <!-- Cosmic Expeditions Card -->
+        <div class="ad-card" id="expeditionsCard" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(59, 130, 246, 0.15)); border: 1px solid rgba(59, 130, 246, 0.25); box-shadow: 0 10px 24px rgba(59, 130, 246, 0.08); margin-bottom: 12px; padding: 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h3 style="color:#3b82f6; font-size:14px; margin:0;">🛸 Космические Экспедиции</h3>
+            <span id="expeditionStatusText" style="font-size:10px; font-weight:900; background:rgba(59, 130, 246, 0.15); color:#3b82f6; padding:3px 8px; border-radius:6px; text-transform:uppercase;">Свободна</span>
+          </div>
+          <p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px;">Отправляйте корабли на исследование космоса за ценными материалами! Сокращайте время в пути за просмотр рекламы.</p>
+
+          <div id="expeditionActiveBox" style="display:none; flex-direction:column; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; margin-bottom:6px;">
+              <span id="expeditionActiveTitle" style="color:#60a5fa;">Активная миссия: ...</span>
+              <span id="expeditionTimerText" style="color:rgba(255,255,255,0.6); font-variant-numeric:tabular-nums;">--:--:--</span>
+            </div>
+            <div class="level-bar" style="background:rgba(255,255,255,0.06); height:10px; border-radius:6px; margin-bottom:12px;">
+              <div class="level-fill" id="expeditionProgressFill" style="width:0%; background:linear-gradient(90deg, #3b82f6, #60a5fa); height:100%; border-radius:6px;"></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <button class="ad-btn" id="btnExpeditionSpeedup" type="button" style="padding:8px 0; font-size:10px; margin:0; width:100%;">Ускорить в 2 раза 📺</button>
+              <button class="ad-btn" id="btnExpeditionInstant" type="button" style="padding:8px 0; font-size:10px; margin:0; width:100%;">Вернуть мгновенно 📺</button>
+            </div>
+            <button class="ad-btn" id="btnExpeditionClaim" type="button" style="margin-top:8px; padding:10px 0; font-size:11px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; width:100%;" disabled>Забрать награду</button>
+          </div>
+
+          <div id="expeditionLaunchBox" style="display:flex; flex-direction:column; gap:8px;">
+            <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:10px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="text-align:left;">
+                <div style="font-size:12px; font-weight:800; color:#fff;">☄️ Разведка астероида</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">Время: 5 мин • Награда: 10 Дерева, 3 Руды, 500 Золота</div>
+              </div>
+              <button class="ad-btn" onclick="startExpedition('asteroid')" type="button" style="padding:6px 12px; font-size:10px; margin:0; background:#3b82f6; width:auto; border-radius:6px;">Запуск</button>
+            </div>
+            <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:10px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="text-align:left;">
+                <div style="font-size:12px; font-weight:800; color:#fff;">🌙 Шахта на Луне</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">Время: 1 час • Награда: 50 Руды, 5 Кристаллов, 25к Золота</div>
+              </div>
+              <button class="ad-btn" onclick="startExpedition('moon')" type="button" style="padding:6px 12px; font-size:10px; margin:0; background:#3b82f6; width:auto; border-radius:6px;">Запуск</button>
+            </div>
+            <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:10px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="text-align:left;">
+                <div style="font-size:12px; font-weight:800; color:#fff;">🌌 Рейд в глубокий космос</div>
+                <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">Время: 8 час • Награда: 1 Чешуя, 30 Кристаллов, 500к Золота</div>
+              </div>
+              <button class="ad-btn" onclick="startExpedition('deep')" type="button" style="padding:6px 12px; font-size:10px; margin:0; background:#3b82f6; width:auto; border-radius:6px;">Запуск</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Imperial Gem Mine Card -->
         <div class="ad-card" id="gemMineCard" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(16, 15, 34, 0.9)); border: 1px solid rgba(192, 132, 252, 0.25); box-shadow: 0 10px 24px rgba(124, 58, 237, 0.12); margin-bottom: 12px; padding: 16px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -1336,6 +1432,10 @@
           gemMineStorage: 0,
           gemMineLastClaimAt: 0,
           totalAdsWatched: 0,
+          ownedAuras: ['aura_none'],
+          currentAura: 'aura_none',
+          expeditionId: 'none',
+          expeditionEnd: 0,
           lastSave: Date.now()
         };
       }
@@ -1389,6 +1489,13 @@
         { id: 'pet_dragon', name: 'Дракон', icon: '🐉', cost: 1000, effect: 2.0, rarity: 'epic' },
         { id: 'pet_ghost', name: 'Призрак', icon: '👻', cost: 5000, effect: 3.0, rarity: 'legendary' },
         { id: 'pet_phoenix', name: 'Феникс', icon: '🦅', cost: 12000, effect: 4.0, rarity: 'legendary' }
+      ];
+
+      const AURAS = [
+        { id: 'aura_none', name: 'Нет', icon: '🚫', cost: 0, desc: 'Без эффекта', rarity: 'common' },
+        { id: 'aura_sun', name: 'Солнечная вспышка', icon: '🔥', cost: 100, desc: '+5% сила клика', rarity: 'rare' },
+        { id: 'aura_void', name: 'Энергия Бездны', icon: '🔮', cost: 300, desc: '+8% автодоход', rarity: 'epic' },
+        { id: 'aura_lightning', name: 'Имперские Молнии', icon: '⚡', cost: 1000, desc: '+10% урон боссам', rarity: 'legendary' }
       ];
 
       const THEMES = [
@@ -1963,13 +2070,21 @@
         const role = getRole();
         const basePower = state.clickPower * getPetMult() * (1 + getPrestigePassiveBonuses().clickPct / 100);
         const frenzyMult = Date.now() < frenzyEnd ? 5 : 1;
-        return Math.max(1, Math.floor(basePower * getX2Mult() * getComboMult() * getLevelBonusMult() * frenzyMult));
+        let finalPower = Math.max(1, Math.floor(basePower * getX2Mult() * getComboMult() * getLevelBonusMult() * frenzyMult));
+        if (state.currentAura === 'aura_sun') {
+          finalPower = Math.floor(finalPower * 1.05);
+        }
+        return finalPower;
       }
       function getAutoIncome() {
         const base = state.autoClick;
         const boost = Date.now() < state.autoClickBoostEnd ? Math.max(10, Math.floor(state.clickPower * 0.5 + state.autoClick * 0.35)) : 0;
         const bonuses = getPrestigePassiveBonuses();
-        return Math.max(0, Math.floor((base + boost) * getPetMult() * (1 + bonuses.autoPct / 100) * getX2Mult() * getLevelBonusMult()));
+        let income = Math.max(0, Math.floor((base + boost) * getPetMult() * (1 + bonuses.autoPct / 100) * getX2Mult() * getLevelBonusMult()));
+        if (state.currentAura === 'aura_void') {
+          income = Math.floor(income * 1.08);
+        }
+        return income;
       }
       function getBankIncomePerMinute() {
         const boostMult = Date.now() < state.bankBoostEnd ? 3 : 1;
@@ -1987,7 +2102,13 @@
       function getRareLootBonusPct() {
         return getPrestigePassiveBonuses().rarePct;
       }
-      function getBossDmg() { return Math.max(1, Math.floor(getClickPower() * 10)); }
+      function getBossDmg() {
+        let dmg = Math.max(1, Math.floor(getClickPower() * 10));
+        if (state.currentAura === 'aura_lightning') {
+          dmg = Math.floor(dmg * 1.10);
+        }
+        return dmg;
+      }
 
       function getRank() {
         let rank = RANKS[0].name;
@@ -3308,6 +3429,35 @@
         }
         html += '</div>';
 
+        // Cosmic Auras Rendering
+        html += '<div class="shop-section-title">Космические Ауры</div><div class="shop-grid">';
+        for (const aura of AURAS) {
+          const owned = state.ownedAuras.includes(aura.id);
+          const active = state.currentAura === aura.id;
+          const canBuy = state.gems >= aura.cost;
+          const badgeStyle = getShopBadgeStyle('АУРА');
+
+          let btnHtml = '';
+          if (active) {
+            btnHtml = '<button class="shop-item-btn shop-btn-equipped" disabled>ВЫБРАНО</button>';
+          } else if (owned) {
+            btnHtml = '<button class="shop-item-btn shop-btn-buy" data-action="equipAura" data-id="' + aura.id + '">ВЫБРАТЬ</button>';
+          } else {
+            btnHtml = canBuy
+              ? '<button class="shop-item-btn shop-btn-buy" data-action="buyAura" data-id="' + aura.id + '" data-cost="' + aura.cost + '">' + aura.cost + ' 💎</button>'
+              : '<button class="shop-item-btn shop-btn-disabled" disabled>НУЖНО ' + aura.cost + ' 💎</button>';
+          }
+
+          html += '<div class="shop-item' + (active ? ' owned' : '') + '">'
+            + '<div class="shop-item-top"><span class="shop-item-badge" style="' + badgeStyle + '">Аура</span><span class="shop-item-price">' + getRarityMeta(aura.rarity || 'common').label + '</span></div>'
+            + '<div class="shop-item-icon">' + aura.icon + '</div>'
+            + '<div class="shop-item-name">' + aura.name + '</div>'
+            + '<div class="shop-item-desc">' + aura.desc + '</div>'
+            + btnHtml
+            + '</div>';
+        }
+        html += '</div>';
+
         html += '<div class="shop-section-title">Темы</div><div class="shop-grid">';
         for (const theme of THEMES) {
           const owned = state.ownedThemes.includes(theme.id);
@@ -3446,6 +3596,22 @@
           if (state.gems < cost) return showToast('Недостаточно кристаллов!');
           state.gems -= cost; if (!state.ownedPets.includes(id)) { state.ownedPets.push(id); const pet = PETS.find(item => item.id === id); if (pet) markUnlock('pet:' + id, pet.name, pet.rarity || 'common', 'Новый питомец'); } state.currentPet = id;
           playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Питомец получен!');
+          return;
+        }
+        if (action === 'buyAura') {
+          if (state.gems < cost) return showToast('Недостаточно кристаллов!');
+          state.gems -= cost;
+          if (!state.ownedAuras.includes(id)) {
+            state.ownedAuras.push(id);
+            const aura = AURAS.find(item => item.id === id);
+            if (aura) markUnlock('aura:' + id, aura.name, aura.rarity || 'common', 'Новая аура');
+          }
+          state.currentAura = id;
+          playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Аура получена!');
+          return;
+        }
+        if (action === 'equipAura') {
+          state.currentAura = id; triggerHaptic('heavy'); playSound('reward'); renderShop(); updateUI(); saveGame(); showToast('Аура выбрана!');
           return;
         }
         if (action === 'equipPet') {
@@ -5034,6 +5200,9 @@
           updateUI._lastLocName = loc.name;
           applyTheme(state.currentTheme);
         }
+        const elAura = document.getElementById('coinAura');
+        if (elAura) elAura.className = 'coin-aura ' + (state.currentAura || 'aura_none');
+
         el.goldVal.textContent = fmt(state.gold);
         el.gemsVal.textContent = fmt(state.gems);
         el.cpsVal.textContent = fmt(getAutoIncome());
@@ -5123,6 +5292,10 @@
           const data = JSON.parse(raw);
           Object.keys(state).forEach(key => { if (Object.prototype.hasOwnProperty.call(data, key)) state[key] = data[key]; });
           if (!Array.isArray(state.ownedPets) || !state.ownedPets.length) state.ownedPets = ['pet_none'];
+          if (!Array.isArray(state.ownedAuras) || !state.ownedAuras.length) state.ownedAuras = ['aura_none'];
+          if (!state.currentAura) state.currentAura = 'aura_none';
+          if (!state.expeditionId) state.expeditionId = 'none';
+          if (!state.expeditionEnd) state.expeditionEnd = 0;
           if (!Array.isArray(state.ownedThemes) || !state.ownedThemes.length) state.ownedThemes = ['theme_default'];
           if (!Array.isArray(state.ownedCoinSkins) || !state.ownedCoinSkins.length) state.ownedCoinSkins = ['classic'];
           if (!state.ownedPets.includes('pet_none')) state.ownedPets.unshift('pet_none');
@@ -5617,7 +5790,168 @@
           });
         });
 
-        // --- Profile Sub-Tabs Switching Logic ---
+        // --- Cosmic Expeditions Logic ---
+      function startExpedition(type) {
+        if (state.expeditionId && state.expeditionId !== 'none') {
+          return showToast('Корабль уже в экспедиции!');
+        }
+        state.expeditionId = type;
+        let duration = 300; // 5 min
+        if (type === 'moon') duration = 3600; // 1 hour
+        if (type === 'deep') duration = 28800; // 8 hours
+        state.expeditionEnd = Date.now() + duration * 1000;
+        playSound('click');
+        triggerHaptic('light');
+        updateUI();
+        saveGame();
+        showToast('Корабль запущен в космос!');
+      }
+      window.startExpedition = startExpedition;
+
+      function fmtSecs(totalSeconds) {
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        const pad = val => String(val).padStart(2, '0');
+        if (h > 0) {
+          return `${h}:${pad(m)}:${pad(s)}`;
+        }
+        return `${m}:${pad(s)}`;
+      }
+
+      function updateExpeditionUI() {
+        const expCard = document.getElementById('expeditionsCard');
+        if (!expCard) return;
+
+        const activeBox = document.getElementById('expeditionActiveBox');
+        const launchBox = document.getElementById('expeditionLaunchBox');
+        const statusText = document.getElementById('expeditionStatusText');
+        const activeTitle = document.getElementById('expeditionActiveTitle');
+        const timerText = document.getElementById('expeditionTimerText');
+        const progressFill = document.getElementById('expeditionProgressFill');
+        const claimBtn = document.getElementById('btnExpeditionClaim');
+
+        if (!state.expeditionId || state.expeditionId === 'none') {
+          statusText.textContent = 'Свободна';
+          statusText.style.color = '#3b82f6';
+          statusText.style.background = 'rgba(59, 130, 246, 0.15)';
+          activeBox.style.display = 'none';
+          launchBox.style.display = 'flex';
+        } else {
+          statusText.textContent = 'В пути';
+          statusText.style.color = '#f59e0b';
+          statusText.style.background = 'rgba(245, 158, 11, 0.15)';
+          activeBox.style.display = 'flex';
+          launchBox.style.display = 'none';
+
+          const totalDuration = state.expeditionId === 'asteroid' ? 300 : state.expeditionId === 'moon' ? 3600 : 28800;
+          const remaining = Math.max(0, Math.floor((state.expeditionEnd - Date.now()) / 1000));
+          const elapsed = totalDuration - remaining;
+          const progressPct = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
+
+          let title = 'Разведка астероида';
+          if (state.expeditionId === 'moon') title = 'Шахта на Луне';
+          if (state.expeditionId === 'deep') title = 'Рейд в глубокий космос';
+
+          activeTitle.textContent = title;
+          progressFill.style.width = progressPct + '%';
+
+          if (remaining > 0) {
+            timerText.textContent = fmtSecs(remaining);
+            claimBtn.disabled = true;
+            claimBtn.textContent = 'Возвращение через ' + fmtSecs(remaining);
+          } else {
+            timerText.textContent = 'ГОТОВО';
+            claimBtn.disabled = false;
+            claimBtn.textContent = 'Забрать награду';
+          }
+        }
+      }
+
+      function claimExpeditionReward() {
+        if (!state.expeditionId || state.expeditionId === 'none') return;
+        const remaining = Math.max(0, Math.floor((state.expeditionEnd - Date.now()) / 1000));
+        if (remaining > 0) return;
+
+        const type = state.expeditionId;
+        state.expeditionId = 'none';
+        state.expeditionEnd = 0;
+
+        let rewardMsg = 'Получено: ';
+        if (type === 'asteroid') {
+          state.materialsWood = (state.materialsWood || 0) + 10;
+          state.materialsOre = (state.materialsOre || 0) + 3;
+          addGold(500);
+          rewardMsg += '10 дерева 🪵, 3 руды 🪨, 500 золота 💰';
+        } else if (type === 'moon') {
+          state.materialsOre = (state.materialsOre || 0) + 50;
+          state.gems = (state.gems || 0) + 5;
+          addGold(25000);
+          rewardMsg += '50 руды 🪨, 5 кристаллов 💎, 25к золота 💰';
+        } else if (type === 'deep') {
+          state.materialsScale = (state.materialsScale || 0) + 1;
+          state.gems = (state.gems || 0) + 30;
+          addGold(500000);
+          rewardMsg += '1 чешуя дракона 🐉, 30 кристаллов 💎, 500к золота 💰';
+        }
+
+        playSound('reward');
+        triggerHaptic('heavy');
+        updateUI();
+        saveGame();
+        alert(rewardMsg);
+      }
+
+      function speedupExpeditionAd() {
+        if (!state.expeditionId || state.expeditionId === 'none') return;
+        const remaining = Math.max(0, Math.floor((state.expeditionEnd - Date.now()) / 1000));
+        if (remaining <= 0) return showToast('Экспедиция уже завершена!');
+
+        showAdsgramReward('offline', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+          savePlayerScoreOnServer();
+          const halfRemaining = Math.floor(remaining / 2);
+          state.expeditionEnd = Date.now() + halfRemaining * 1000;
+          updateUI();
+          saveGame();
+          showToast('Корабль летит в 2 раза быстрее!');
+        });
+      }
+
+      function instantReturnExpeditionAd() {
+        if (!state.expeditionId || state.expeditionId === 'none') return;
+        const remaining = Math.max(0, Math.floor((state.expeditionEnd - Date.now()) / 1000));
+        if (remaining <= 0) return showToast('Экспедиция уже завершена!');
+
+        showAdsgramReward('offline', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+          savePlayerScoreOnServer();
+          state.expeditionEnd = Date.now();
+          updateUI();
+          saveGame();
+          showToast('Корабль совершил гиперпрыжок и вернулся!');
+        });
+      }
+
+      // Add to updateUI hook
+      const oldUpdateUI = updateUI;
+      updateUI = function() {
+        oldUpdateUI();
+        updateExpeditionUI();
+      };
+
+      // Add click listeners
+      setTimeout(() => {
+        const btnExpSpeedup = document.getElementById('btnExpeditionSpeedup');
+        const btnExpInstant = document.getElementById('btnExpeditionInstant');
+        const btnExpClaim = document.getElementById('btnExpeditionClaim');
+
+        if (btnExpSpeedup) btnExpSpeedup.addEventListener('click', speedupExpeditionAd);
+        if (btnExpInstant) btnExpInstant.addEventListener('click', instantReturnExpeditionAd);
+        if (btnExpClaim) btnExpClaim.addEventListener('click', claimExpeditionReward);
+      }, 1000);
+
+      // --- Profile Sub-Tabs Switching Logic ---
         const btnProfileTabChar = document.getElementById('btnProfileTabChar');
         const btnProfileTabGoals = document.getElementById('btnProfileTabGoals');
         const btnProfileTabCol = document.getElementById('btnProfileTabCol');
@@ -5834,5 +6168,6 @@
       else init();
     })();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a05cf663bd338d8c',t:'MTc4MDQ3MTUxMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a05e7549ea7c8dd7',t:'MTc4MDQ4NzE5NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
