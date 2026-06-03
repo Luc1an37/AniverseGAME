@@ -1068,6 +1068,10 @@
             <span style="font-size:12px; font-weight:800; color:rgba(255,255,255,0.7);">Вибрация (Тактильный отклик)</span>
             <button class="ad-btn" id="btnToggleVibration" type="button" style="width:100px; padding:6px 0; font-size:10px; margin:0; border:1px solid rgba(255,255,255,0.04);">Вкл</button>
           </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+            <span style="font-size:12px; font-weight:800; color:rgba(255,255,255,0.7);">Блёстки (Эффекты кликов)</span>
+            <button class="ad-btn" id="btnToggleParticles" type="button" style="width:100px; padding:6px 0; font-size:10px; margin:0; border:1px solid rgba(255,255,255,0.04);">Вкл</button>
+          </div>
         </div>
 
         <!-- Adsterra 300x250 Square Banner Slot 2 -->
@@ -1221,6 +1225,16 @@
               <button class="ad-btn" onclick="startExpedition('deep')" type="button" style="padding:6px 12px; font-size:10px; margin:0; background:#3b82f6; width:auto; border-radius:6px;">Запуск</button>
             </div>
           </div>
+        </div>
+
+        <!-- Offline Battery Card -->
+        <div class="ad-card" id="offlineBatteryCard" style="background: linear-gradient(180deg, rgba(30, 27, 45, 0.9), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(168, 85, 247, 0.25); box-shadow: 0 10px 24px rgba(168, 85, 247, 0.08); margin-bottom: 12px; padding: 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h3 style="color:#a855f7; font-size:14px; margin:0;">🔋 Оффлайн-Аккумулятор</h3>
+            <span id="offlineLimitText" style="font-size:10px; font-weight:900; background:rgba(168, 85, 247, 0.15); color:#a855f7; padding:3px 8px; border-radius:6px;">2 ЧАСА</span>
+          </div>
+          <p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px;">По умолчанию оффлайн-доход копится только первые 2 часа после выхода. Заряжайте аккумулятор просмотром рекламы на +1 час для следующего выхода (макс. 12 часов)! При входе в игру заряд сбросится до базовых 2 часов.</p>
+          <button class="ad-btn" id="btnChargeOfflineBattery" type="button" style="padding:10px 0; font-size:11px; background:linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; width:100%;">Зарядить аккумулятор на +1 час 📺</button>
         </div>
 
         <!-- Imperial Gem Mine Card -->
@@ -1454,6 +1468,9 @@
           currentAura: 'aura_none',
           expeditionId: 'none',
           expeditionEnd: 0,
+          particlesEnabled: true,
+          xp: 0,
+          offlineLimitHours: 2,
           lastSave: Date.now()
         };
       }
@@ -1761,6 +1778,8 @@
           topCoinIcon: document.getElementById('topCoinIcon'), topCoinMark: document.getElementById('topCoinMark'), mainCoin: document.getElementById('mainCoin'), mainCoinMark: document.getElementById('mainCoinMark'),
           btnToggleSound: document.getElementById('btnToggleSound'),
           btnToggleVibration: document.getElementById('btnToggleVibration'),
+          btnToggleParticles: document.getElementById('btnToggleParticles'),
+          btnChargeOfflineBattery: document.getElementById('btnChargeOfflineBattery'),
           btnRefreshLeaderboard: document.getElementById('btnRefreshLeaderboard'),
 
           wormholeModal: document.getElementById('wormholeModal'),
@@ -1905,7 +1924,8 @@
       }
 
       function getPlayerXp() {
-        return Math.floor(state.totalGold + state.totalClicks * 5 + state.bossesDefeated * 250 + state.questsCompleted * 800 + state.prestige * 4000 + state.rareChestsOpened * 1600);
+        if (state.xp === undefined) state.xp = 0;
+        return Math.floor(state.xp);
       }
 
       function getLevelData() {
@@ -3561,8 +3581,10 @@
         state.totalClicks += 1;
         playSound('click');
         
+        state.xp = (state.xp || 0) + 5; // +5 XP per active click!
+
         // Spawn juicy physical sparkles
-        if (x && y) {
+        if (state.particlesEnabled && x && y) {
           const particles = ['✨', '⭐', '🔸', '🟡'];
           const count = 4;
           for (let i = 0; i < count; i++) {
@@ -5107,6 +5129,23 @@
           el.btnToggleVibration.style.background = 'rgba(255,255,255,0.03)';
           el.btnToggleVibration.style.color = 'rgba(255,255,255,0.25)';
         }
+
+        if (el.btnToggleParticles) {
+          if (state.particlesEnabled) {
+            el.btnToggleParticles.textContent = 'ВКЛ ✨';
+            el.btnToggleParticles.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            el.btnToggleParticles.style.color = '#fff';
+          } else {
+            el.btnToggleParticles.textContent = 'ВЫКЛ 🚫';
+            el.btnToggleParticles.style.background = 'rgba(255,255,255,0.03)';
+            el.btnToggleParticles.style.color = 'rgba(255,255,255,0.25)';
+          }
+        }
+
+        const offlineLimitText = document.getElementById('offlineLimitText');
+        if (offlineLimitText) {
+          offlineLimitText.textContent = (state.offlineLimitHours || 2) + ' ' + getHoursWord(state.offlineLimitHours || 2).toUpperCase();
+        }
       }
 
       function claimAchievement(id) {
@@ -5317,6 +5356,9 @@
           if (!state.currentAura) state.currentAura = 'aura_none';
           if (!state.expeditionId) state.expeditionId = 'none';
           if (!state.expeditionEnd) state.expeditionEnd = 0;
+          if (state.particlesEnabled === undefined) state.particlesEnabled = true;
+          if (state.offlineLimitHours === undefined) state.offlineLimitHours = 2;
+          if (state.xp === undefined) state.xp = getPlayerXp();
           if (!Array.isArray(state.ownedThemes) || !state.ownedThemes.length) state.ownedThemes = ['theme_default'];
           if (!Array.isArray(state.ownedCoinSkins) || !state.ownedCoinSkins.length) state.ownedCoinSkins = ['classic'];
           if (!state.ownedPets.includes('pet_none')) state.ownedPets.unshift('pet_none');
@@ -5402,9 +5444,11 @@
           const boss = BOSSES[state.bossIdx];
           if (state.bossHp <= 0 || state.bossHp > boss.hp) state.bossHp = boss.hp;
           if (state.bossBattleActive && state.bossBattleEndsAt <= Date.now()) resetBossBattle(false);
-          const elapsed = Math.min(Date.now() - (state.lastSave || Date.now()), 4 * 3600000);
+          const limitMs = (state.offlineLimitHours || 2) * 3600 * 1000;
+          const elapsed = Math.min(Date.now() - (state.lastSave || Date.now()), limitMs);
           const offline = Math.floor(getAutoIncome() * (elapsed / 1000) * 0.5);
           if (elapsed > 30000 && offline > 0) { addGold(offline); setTimeout(() => showToast('Оффлайн: +' + fmt(offline) + ' монет'), 800); }
+          state.offlineLimitHours = 2; // Сбрасываем заряд аккумулятора до базовых 2 часов после входа!
           updateGemMineProduction();
         } catch (e) {
           ensureQuest(true);
@@ -5811,6 +5855,164 @@
           });
         });
 
+            // --- Profile Sub-Tabs Switching Logic ---
+        const btnProfileTabChar = document.getElementById('btnProfileTabChar');
+        const btnProfileTabGoals = document.getElementById('btnProfileTabGoals');
+        const btnProfileTabCol = document.getElementById('btnProfileTabCol');
+
+        const profileCharSec = document.getElementById('profileContent');
+        const profileGoalsSec = document.getElementById('profile-goals-section');
+        const profileColSec = document.getElementById('collectionContent');
+
+        if (btnProfileTabChar && btnProfileTabGoals && btnProfileTabCol) {
+          btnProfileTabChar.addEventListener('click', e => {
+            if (e) e.preventDefault();
+            btnProfileTabChar.classList.add('active');
+            btnProfileTabGoals.classList.remove('active');
+            btnProfileTabCol.classList.remove('active');
+
+            profileCharSec.style.display = 'block';
+            profileGoalsSec.style.display = 'none';
+            profileColSec.style.display = 'none';
+          });
+
+          btnProfileTabGoals.addEventListener('click', e => {
+            if (e) e.preventDefault();
+            btnProfileTabChar.classList.remove('active');
+            btnProfileTabGoals.classList.add('active');
+            btnProfileTabCol.classList.remove('active');
+
+            profileCharSec.style.display = 'none';
+            profileGoalsSec.style.display = 'block';
+            profileColSec.style.display = 'none';
+
+            savePlayerScoreOnServer();
+            loadLiveLeaderboardFromServer(true);
+          });
+
+          btnProfileTabCol.addEventListener('click', e => {
+            if (e) e.preventDefault();
+            btnProfileTabChar.classList.remove('active');
+            btnProfileTabGoals.classList.remove('active');
+            btnProfileTabCol.classList.add('active');
+
+            profileCharSec.style.display = 'none';
+            profileGoalsSec.style.display = 'none';
+            profileColSec.style.display = 'block';
+          });
+        }
+
+        el.btnWormholeJump.addEventListener('click', e => {
+          e.preventDefault();
+          el.wormholeModal.classList.remove('show');
+
+          showAdsgramReward('offline', () => {
+          state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
+            savePlayerScoreOnServer();
+            const autoGold = getAutoIncome() * 3600;
+            const bankGold = getBankIncomePerMinute() * 60;
+            const totalGold = autoGold + bankGold;
+
+            addGold(totalGold);
+            playSound('reward');
+            triggerHaptic('heavy');
+
+            // Sparkle effect
+            for (let i = 0; i < 15; i++) {
+              setTimeout(() => {
+                const sx = window.innerWidth / 2 + (Math.random() * 160 - 80);
+                const sy = window.innerHeight / 2 + (Math.random() * 160 - 80);
+                spawnFloat(sx, sy, '🌀');
+              }, i * 50);
+            }
+
+            showReward('⏳ ВРЕМЕННОЙ СКАЧОК УСПЕШЕН! ⏳\n\nВы прыгнули во времени на 1 ЧАС вперёд!\n\nПолучено:\n💰 +' + fmt(totalGold) + ' монет!\n\n(Автодоход: +' + fmt(autoGold) + ' • Проценты банка: +' + fmt(bankGold) + ')', {
+              rarity: 'epic',
+              title: 'ИСКРИВЛЕНИЕ ВРЕМЕНИ'
+            });
+
+            updateUI();
+            saveGame();
+          }, 'wormholeJump');
+        });
+
+        el.btnWormholeClose.addEventListener('click', e => {
+          e.preventDefault();
+          el.wormholeModal.classList.remove('show');
+        });
+
+
+
+        el.btnToggleSound.addEventListener('click', e => {
+          e.preventDefault();
+          state.soundEnabled = !state.soundEnabled;
+          triggerHaptic('light');
+          playSound('click');
+          if (state.soundEnabled) {
+            updateChiptuneAmbiance();
+          } else {
+            stopChiptune();
+          }
+          updateUI();
+          saveGame();
+        });
+
+        el.btnToggleVibration.addEventListener('click', e => {
+          e.preventDefault();
+          state.vibrationEnabled = !state.vibrationEnabled;
+          triggerHaptic('light');
+          updateUI();
+          saveGame();
+        });
+
+        if (el.btnToggleParticles) {
+          el.btnToggleParticles.addEventListener('click', e => {
+            e.preventDefault();
+            state.particlesEnabled = !state.particlesEnabled;
+            triggerHaptic('light');
+            updateUI();
+            saveGame();
+          });
+        }
+
+        if (el.btnChargeOfflineBattery) {
+          el.btnChargeOfflineBattery.addEventListener('click', chargeOfflineBatteryAd);
+        }
+
+        el.btnReset.addEventListener('click', e => {
+          e.preventDefault();
+          if (!confirm('Сбросить весь прогресс?')) return;
+          clearSavedProgressStorage();
+          const fresh = getDefaultState();
+          Object.keys(state).forEach(key => { delete state[key]; });
+          Object.assign(state, fresh);
+          state.activeQuest = null;
+          ensureQuest(true);
+          applyTheme(state.currentTheme);
+          renderShop();
+          updateUI();
+          saveGame();
+          showToast('Прогресс сброшен');
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            appHiddenAt = Date.now();
+            saveGame();
+            return;
+          }
+
+          if (appHiddenAt) {
+            const pauseMs = Date.now() - appHiddenAt;
+            appHiddenAt = 0;
+            if (pauseMs >= ADSGRAM_CONFIG.pauseInterstitialMinMs) {
+              setTimeout(() => maybeShowInterstitial('pause'), 900);
+            }
+          }
+        });
+        window.addEventListener('beforeunload', saveGame);
+      }
+
         // --- Cosmic Expeditions Logic ---
       function startExpedition(type) {
         if (state.expeditionId && state.expeditionId !== 'none') {
@@ -5972,149 +6174,29 @@
         if (btnExpClaim) btnExpClaim.addEventListener('click', claimExpeditionReward);
       }, 1000);
 
-      // --- Profile Sub-Tabs Switching Logic ---
-        const btnProfileTabChar = document.getElementById('btnProfileTabChar');
-        const btnProfileTabGoals = document.getElementById('btnProfileTabGoals');
-        const btnProfileTabCol = document.getElementById('btnProfileTabCol');
+      // --- Offline Battery Logic ---
+      function getHoursWord(num) {
+        if (num === 1) return 'час';
+        if (num >= 2 && num <= 4) return 'часа';
+        return 'часов';
+      }
 
-        const profileCharSec = document.getElementById('profileContent');
-        const profileGoalsSec = document.getElementById('profile-goals-section');
-        const profileColSec = document.getElementById('collectionContent');
-
-        if (btnProfileTabChar && btnProfileTabGoals && btnProfileTabCol) {
-          btnProfileTabChar.addEventListener('click', e => {
-            if (e) e.preventDefault();
-            btnProfileTabChar.classList.add('active');
-            btnProfileTabGoals.classList.remove('active');
-            btnProfileTabCol.classList.remove('active');
-
-            profileCharSec.style.display = 'block';
-            profileGoalsSec.style.display = 'none';
-            profileColSec.style.display = 'none';
-          });
-
-          btnProfileTabGoals.addEventListener('click', e => {
-            if (e) e.preventDefault();
-            btnProfileTabChar.classList.remove('active');
-            btnProfileTabGoals.classList.add('active');
-            btnProfileTabCol.classList.remove('active');
-
-            profileCharSec.style.display = 'none';
-            profileGoalsSec.style.display = 'block';
-            profileColSec.style.display = 'none';
-
-            savePlayerScoreOnServer();
-            loadLiveLeaderboardFromServer(true);
-          });
-
-          btnProfileTabCol.addEventListener('click', e => {
-            if (e) e.preventDefault();
-            btnProfileTabChar.classList.remove('active');
-            btnProfileTabGoals.classList.remove('active');
-            btnProfileTabCol.classList.add('active');
-
-            profileCharSec.style.display = 'none';
-            profileGoalsSec.style.display = 'none';
-            profileColSec.style.display = 'block';
-          });
+      function chargeOfflineBatteryAd() {
+        if ((state.offlineLimitHours || 2) >= 12) {
+          return showToast('Максимальная ёмкость аккумулятора (12 часов) достигнута!');
         }
 
-        el.btnWormholeJump.addEventListener('click', e => {
-          e.preventDefault();
-          el.wormholeModal.classList.remove('show');
-
-          showAdsgramReward('offline', () => {
+        showAdsgramReward('offline', () => {
           state.totalAdsWatched = (state.totalAdsWatched || 0) + 1;
-            savePlayerScoreOnServer();
-            const autoGold = getAutoIncome() * 3600;
-            const bankGold = getBankIncomePerMinute() * 60;
-            const totalGold = autoGold + bankGold;
-
-            addGold(totalGold);
-            playSound('reward');
-            triggerHaptic('heavy');
-
-            // Sparkle effect
-            for (let i = 0; i < 15; i++) {
-              setTimeout(() => {
-                const sx = window.innerWidth / 2 + (Math.random() * 160 - 80);
-                const sy = window.innerHeight / 2 + (Math.random() * 160 - 80);
-                spawnFloat(sx, sy, '🌀');
-              }, i * 50);
-            }
-
-            showReward('⏳ ВРЕМЕННОЙ СКАЧОК УСПЕШЕН! ⏳\n\nВы прыгнули во времени на 1 ЧАС вперёд!\n\nПолучено:\n💰 +' + fmt(totalGold) + ' монет!\n\n(Автодоход: +' + fmt(autoGold) + ' • Проценты банка: +' + fmt(bankGold) + ')', {
-              rarity: 'epic',
-              title: 'ИСКРИВЛЕНИЕ ВРЕМЕНИ'
-            });
-
-            updateUI();
-            saveGame();
-          }, 'wormholeJump');
-        });
-
-        el.btnWormholeClose.addEventListener('click', e => {
-          e.preventDefault();
-          el.wormholeModal.classList.remove('show');
-        });
-
-
-
-        el.btnToggleSound.addEventListener('click', e => {
-          e.preventDefault();
-          state.soundEnabled = !state.soundEnabled;
-          triggerHaptic('light');
-          playSound('click');
-          if (state.soundEnabled) {
-            updateChiptuneAmbiance();
-          } else {
-            stopChiptune();
-          }
+          savePlayerScoreOnServer();
+          state.offlineLimitHours = (state.offlineLimitHours || 2) + 1;
           updateUI();
           saveGame();
+          showToast('Аккумулятор заряжен на +1 час для следующего выхода! Теперь: ' + state.offlineLimitHours + ' ч.');
         });
-
-        el.btnToggleVibration.addEventListener('click', e => {
-          e.preventDefault();
-          state.vibrationEnabled = !state.vibrationEnabled;
-          triggerHaptic('light');
-          updateUI();
-          saveGame();
-        });
-
-        el.btnReset.addEventListener('click', e => {
-          e.preventDefault();
-          if (!confirm('Сбросить весь прогресс?')) return;
-          clearSavedProgressStorage();
-          const fresh = getDefaultState();
-          Object.keys(state).forEach(key => { delete state[key]; });
-          Object.assign(state, fresh);
-          state.activeQuest = null;
-          ensureQuest(true);
-          applyTheme(state.currentTheme);
-          renderShop();
-          updateUI();
-          saveGame();
-          showToast('Прогресс сброшен');
-        });
-
-        document.addEventListener('visibilitychange', () => {
-          if (document.hidden) {
-            appHiddenAt = Date.now();
-            saveGame();
-            return;
-          }
-
-          if (appHiddenAt) {
-            const pauseMs = Date.now() - appHiddenAt;
-            appHiddenAt = 0;
-            if (pauseMs >= ADSGRAM_CONFIG.pauseInterstitialMinMs) {
-              setTimeout(() => maybeShowInterstitial('pause'), 900);
-            }
-          }
-        });
-        window.addEventListener('beforeunload', saveGame);
       }
+
+
 
       function hideLoading() { el.loadingScreen.classList.add('hidden'); }
 
