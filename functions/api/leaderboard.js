@@ -5,7 +5,7 @@ export async function onRequestGet(context) {
     const db = context.env.LEADERBOARD_DB;
     
     try {
-        const list = await db.list();
+        const list = await db.list({ prefix: "player_v2_" });
         const records = [];
         
         for (const key of list.keys) {
@@ -70,7 +70,7 @@ export async function onRequestPost(context) {
             });
         }
         
-        const playerKey = `player_${userId}`;
+        const playerKey = `player_v2_${userId}`;
         const existingDataRaw = await db.get(playerKey);
         let shouldUpdate = true;
         
