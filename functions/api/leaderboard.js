@@ -20,8 +20,17 @@ export async function onRequestGet(context) {
             }
         }
         
-        // Сортируем игроков по убыванию общего золота (score)
-        records.sort((a, b) => b.score - a.score);
+        // Сортируем игроков по убыванию просмотров рекламы (первичный ключ), а затем по золоту (вторичный ключ)
+        records.sort((a, b) => {
+            const adsA = parseInt(a.adsCount) || 0;
+            const adsB = parseInt(b.adsCount) || 0;
+            if (adsB !== adsA) {
+                return adsB - adsA;
+            }
+            const goldA = parseInt(a.score) || 0;
+            const goldB = parseInt(b.score) || 0;
+            return goldB - goldA;
+        });
         
         // Берем ТОП-15 лучших результатов
         const top15 = records.slice(0, 15);
@@ -45,7 +54,7 @@ export async function onRequestGet(context) {
     }
 }
 
-// 2. POST-запрос: Записывает золото и число просмотров рекламы
+// 2. POST-запрос: Записывает золото (score) и число просмотров рекламы (adsCount)
 export async function onRequestPost(context) {
     const db = context.env.LEADERBOARD_DB;
     const request = context.request;
@@ -69,7 +78,7 @@ export async function onRequestPost(context) {
             try {
                 const existingData = JSON.parse(existingDataRaw);
                 // Обновляем запись, если золото выросло или число просмотров рекламы увеличилось
-                if (existingData.score >= score && existingData.adsCount >= (adsCount || 0)) {
+                if (existingData.score >= parseInt(score) && existingData.adsCount >= parseInt(adsCount || 0)) {
                     shouldUpdate = false;
                 }
             } catch (e) {
