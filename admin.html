@@ -6,12 +6,13 @@
   <title>Aniverse GAME — Панель Администратора</title>
   <style>
     :root {
-      --bg-color: #0a0f1e;
-      --card-bg: rgba(20, 26, 46, 0.7);
-      --accent-color: #7c3aed;
+      --bg-color: #070913;
+      --card-bg: rgba(18, 22, 40, 0.85);
+      --accent-color: #a855f7;
+      --accent-glow: rgba(168, 85, 247, 0.4);
       --gold-color: #fbbf24;
-      --text-color: #f3f4f6;
-      --text-muted: #9ca3af;
+      --text-color: #e2e8f0;
+      --text-muted: #94a3b8;
     }
     * {
       margin: 0;
@@ -23,40 +24,46 @@
       background-color: var(--bg-color);
       color: var(--text-color);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      padding: 20px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      overflow-y: auto;
     }
     .admin-card {
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       background: var(--card-bg);
-      border: 1px solid rgba(192, 132, 252, 0.2);
-      border-radius: 20px;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 22px;
       padding: 24px;
-      box-shadow: 0 10px 24px rgba(124, 58, 237, 0.12);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-glow);
       margin-bottom: 20px;
+      backdrop-filter: blur(12px);
     }
     h2 {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 900;
       color: #fff;
       text-align: center;
       margin-bottom: 6px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      background: linear-gradient(135deg, #fff, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .sub-title {
       font-size: 11px;
       color: var(--text-muted);
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       line-height: 1.45;
     }
     .form-group {
       margin-bottom: 16px;
+      text-align: left;
     }
     label {
       display: block;
@@ -69,17 +76,18 @@
     }
     input, textarea {
       width: 100%;
-      background: rgba(10, 15, 30, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 12, 22, 0.85);
+      border: 1px solid rgba(168, 85, 247, 0.15);
       border-radius: 12px;
-      padding: 12px;
+      padding: 12px 14px;
       font-size: 13px;
       color: #fff;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s ease;
     }
     input:focus, textarea:focus {
       border-color: var(--accent-color);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
     }
     textarea {
       resize: none;
@@ -92,33 +100,54 @@
       font-weight: 900;
       text-transform: uppercase;
       color: #fff;
-      background: linear-gradient(135deg, var(--accent-color), #5b21b6);
+      background: linear-gradient(135deg, var(--accent-color), #7c3aed);
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
-      transition: transform 0.1s;
+      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+      transition: all 0.15s ease;
+    }
+    .btn-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 28px rgba(168, 85, 247, 0.45);
     }
     .btn-action:active {
-      transform: scale(0.98);
+      transform: translateY(1px);
     }
     .btn-action:disabled {
       opacity: 0.4;
       cursor: not-allowed;
       box-shadow: none;
+      transform: none;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-color);
+      width: auto;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
     }
     .stats-row {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
     .stat-box {
       flex: 1;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.03);
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 12px;
+      border-radius: 14px;
       text-align: center;
     }
     .stat-box span {
@@ -136,10 +165,10 @@
       padding: 6px 10px;
       font-size: 9px;
       font-weight: 800;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(168, 85, 247, 0.05);
+      border: 1px solid rgba(168, 85, 247, 0.15);
       border-radius: 6px;
-      color: var(--text-muted);
+      color: #c084fc;
       cursor: pointer;
       margin-right: 4px;
       margin-top: 4px;
@@ -147,8 +176,8 @@
     }
     .template-btn:hover {
       color: #fff;
-      border-color: rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.08);
+      border-color: var(--accent-color);
+      background: rgba(168, 85, 247, 0.15);
     }
     .spinner {
       width: 20px;
@@ -171,7 +200,7 @@
     <!-- Stats Row -->
     <div class="stats-row">
       <div class="stat-box">
-        <span>Всего игроков</span>
+        <span>Всего игроков в топе</span>
         <b id="statPlayers">Загрузка...</b>
       </div>
       <div class="stat-box">
@@ -189,10 +218,20 @@
     <!-- Bot Token -->
     <div class="form-group">
       <label for="botToken">Токен вашего бота</label>
-      <input type="password" id="botToken" placeholder="Вставьте токен вашего бота из BotFather">
+      <div style="display:flex; gap:8px;">
+        <input type="password" id="botToken" placeholder="Вставьте токен вашего бота из BotFather" style="flex:1;">
+        <button class="btn-secondary" id="btnValidateBot" type="button">Проверить</button>
+      </div>
+      <div id="botStatusInfo" style="font-size:10px; color:var(--text-muted); margin-top:6px; font-weight:800;">🔴 Бот не подключен</div>
     </div>
 
-    <!-- Message Templates (Expanded to 10 templates!) -->
+    <!-- Remember Credentials Toggle -->
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; width:100%; text-align:left;">
+      <input type="checkbox" id="chkRemember" style="width:16px; height:16px; cursor:pointer; accent-color: var(--accent-color);">
+      <label for="chkRemember" style="margin-bottom:0; cursor:pointer; font-size:11px; text-transform:none; color: var(--text-color);">Запомнить токен и пароль на этом устройстве</label>
+    </div>
+
+    <!-- Message Templates (10 templates) -->
     <div class="form-group" style="margin-bottom:8px;">
       <label>Шаблоны сообщений (10 вариантов)</label>
       <div style="display:flex; flex-wrap:wrap; gap:2px;" id="templatesGrid">
@@ -211,12 +250,42 @@
 
     <!-- Broadcast Message Area -->
     <div class="form-group">
-      <label for="msgText">Текст вашего пуш-сообщения</label>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+        <label for="msgText" style="margin-bottom:0;">Текст вашего пуш-сообщения</label>
+        <span id="charCounter" style="font-size:9px; color:var(--text-muted); font-weight:800;">0 / 4096</span>
+      </div>
       <textarea id="msgText" placeholder="Выберите шаблон выше или напишите сообщение сами... (Markdown разметка поддерживается)"></textarea>
     </div>
 
+    <!-- Telegram Live Preview Section -->
+    <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:16px;">
+      <label style="margin-bottom:8px;">Предпросмотр сообщения в Telegram</label>
+      <div class="telegram-preview-container" style="background:#0e1621; border-radius:14px; padding:12px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow:inset 0 2px 8px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.04); position:relative;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <div style="width:28px; height:28px; background:linear-gradient(135deg, #2aabee, #229ed9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; color:#fff;">🌌</div>
+          <div style="text-align:left;">
+            <div style="font-size:12px; font-weight:bold; color:#fff; display:flex; align-items:center; gap:4px;"><span id="previewBotName">Aniverse Bot</span> <span style="font-size:9px; background:rgba(255,255,255,0.15); color:#82b1ff; padding:1px 4px; border-radius:4px; font-weight:normal;">bot</span></div>
+            <div style="font-size:9px; color:#708499;" id="previewBotUsername">@bot</div>
+          </div>
+        </div>
+        <div id="telegramPreviewBubble" style="background:#182533; border-radius:0 12px 12px 12px; padding:10px; font-size:12px; color:#f5f5f5; line-height:1.45; text-align:left; word-break:break-word; max-width:92%; margin-left: 36px;">
+          Текст сообщения...
+        </div>
+      </div>
+    </div>
+
+    <!-- Direct Test Push Section -->
+    <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:16px; margin-bottom: 24px;">
+      <label for="testUserId">Тестирование перед отправкой</label>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="testUserId" placeholder="Введите ваш Telegram User ID для теста" style="flex:1;">
+        <button class="btn-secondary" id="btnSendTestPush" type="button" style="background:rgba(168, 85, 247, 0.1); border-color:rgba(168, 85, 247, 0.25); color:#c084fc;">Отправить тест ⚡</button>
+      </div>
+      <div style="font-size:10px; color:var(--text-muted); margin-top:6px; line-height:1.3;">Вы получите пуш-сообщение мгновенно в личный диалог с ботом, чтобы оценить разметку на экране телефона!</div>
+    </div>
+
     <!-- Submit Button -->
-    <button class="btn-action" id="btnSendAd">Запустить рассылку</button>
+    <button class="btn-action" id="btnSendAd">Запустить рассылку на ВСЕХ</button>
     
     <div id="loadingBox" style="display:none; text-align:center; margin-top:15px;">
       <div class="spinner"></div>
@@ -225,7 +294,7 @@
   </div>
 
   <script>
-    const API_URL = "https://aniversegame.pages.dev";
+    const API_URL = "https://aniverse-game.ru"; // Updated to use your new custom domain!
     
     // 1. Load active player count on startup
     function loadStats() {
@@ -269,6 +338,144 @@
       } else if (type === 'streak') {
         textarea.value = `🎁 *Ваша Ежедневная награда сгорает!*\n\nДо сброса ежедневной серии осталось совсем немного времени! Зайдите в игру прямо сейчас, заберите ваш бонус за вход и сохраните серию! 📳`;
       }
+      updatePreviewAndCounter();
+    }
+
+    // Simple robust Markdown parser for Live Telegram Preview
+    function parseMarkdownToHtml(text) {
+      if (!text) return "Текст сообщения...";
+      let html = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+        
+      // Replace *bold* with <strong>
+      html = html.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+      // Replace _italic_ with <em>
+      html = html.replace(/_(.*?)_/g, "<em>$1</em>");
+      // Replace `code` with <code>
+      html = html.replace(/`(.*?)`/g, "<code style='background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px; font-family:monospace;'>$1</code>");
+      
+      // Convert newlines to <br>
+      html = html.replace(/\n/g, "<br>");
+      return html;
+    }
+
+    function updatePreviewAndCounter() {
+      const text = document.getElementById('msgText').value;
+      const counter = document.getElementById('charCounter');
+      const bubble = document.getElementById('telegramPreviewBubble');
+      
+      counter.textContent = `${text.length} / 4096`;
+      if (text.length > 4096) {
+        counter.style.color = "#ef4444";
+      } else {
+        counter.style.color = "var(--text-muted)";
+      }
+      
+      bubble.innerHTML = parseMarkdownToHtml(text);
+    }
+
+    // Validate Telegram Bot Token Client-side
+    function validateBot() {
+      const token = document.getElementById('botToken').value.trim();
+      if (!token) return alert("Пожалуйста, вставьте токен вашего бота!");
+      
+      const statusInfo = document.getElementById('botStatusInfo');
+      statusInfo.innerHTML = '<span class="spinner" style="width:12px; height:12px; margin:0 5px; display:inline-block; vertical-align:middle;"></span> Проверка...';
+      statusInfo.style.color = "var(--text-muted)";
+
+      fetch(`https://api.telegram.org/bot${token}/getMe`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.ok) {
+            const bot = data.result;
+            statusInfo.innerHTML = `🟢 Подключено к: <b>${bot.first_name}</b> (@${bot.username})`;
+            statusInfo.style.color = "#10b981";
+            
+            // Sync preview box names
+            document.getElementById('previewBotName').textContent = bot.first_name;
+            document.getElementById('previewBotUsername').textContent = `@${bot.username}`;
+          } else {
+            statusInfo.innerHTML = `🔴 Ошибка: Неверный токен бота!`;
+            statusInfo.style.color = "#ef4444";
+          }
+        })
+        .catch(() => {
+          statusInfo.innerHTML = `🔴 Ошибка сети при проверке!`;
+          statusInfo.style.color = "#ef4444";
+        });
+    }
+
+    // Direct client-to-Telegram test push delivery
+    function sendTestPush() {
+      const token = document.getElementById('botToken').value.trim();
+      const userId = document.getElementById('testUserId').value.trim();
+      const text = document.getElementById('msgText').value;
+
+      if (!token) return alert("Заполните токен вашего бота для отправки теста!");
+      if (!userId) return alert("Введите ваш Telegram User ID для получения теста!");
+      if (!text) return alert("Напишите текст сообщения или выберите шаблон!");
+
+      const btn = document.getElementById('btnSendTestPush');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Отправка...";
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: userId,
+          text: text,
+          parse_mode: "Markdown"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.ok) {
+          alert("⚡ Тестовый пуш успешно доставлен на ваш телефон! Зайдите в диалог с ботом, чтобы оценить внешний вид.");
+          localStorage.setItem('admin_test_user_id', userId); // save test ID for future convenience
+        } else {
+          alert("🔴 Ошибка отправки теста: " + (data.description || "Неверный ID пользователя или бот заблокирован."));
+        }
+      })
+      .catch(() => {
+        alert("🔴 Сетевая ошибка при отправке теста!");
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      });
+    }
+
+    // Save and Load credentials logic
+    function saveCredentials() {
+      const remember = document.getElementById('chkRemember').checked;
+      if (remember) {
+        localStorage.setItem('admin_pass', document.getElementById('adminPass').value.trim());
+        localStorage.setItem('admin_token', document.getElementById('botToken').value.trim());
+        localStorage.setItem('admin_remember', 'true');
+      } else {
+        localStorage.removeItem('admin_pass');
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_remember');
+      }
+    }
+
+    function loadCredentials() {
+      const remember = localStorage.getItem('admin_remember') === 'true';
+      if (remember) {
+        document.getElementById('chkRemember').checked = true;
+        document.getElementById('adminPass').value = localStorage.getItem('admin_pass') || '';
+        document.getElementById('botToken').value = localStorage.getItem('admin_token') || '';
+        setTimeout(validateBot, 500); // Auto-validate on startup if remembered!
+      }
+      
+      const savedTestId = localStorage.getItem('admin_test_user_id');
+      if (savedTestId) {
+        document.getElementById('testUserId').value = savedTestId;
+      }
     }
 
     // 3. Executing the server-side broadcast
@@ -281,7 +488,18 @@
         alert("Пожалуйста, заполните ВСЕ поля (Пароль, Токен бота и Текст)!");
         return;
       }
+
+      if (text.length > 4096) {
+        alert("Длина сообщения превышает лимит Telegram (4096 символов)!");
+        return;
+      }
       
+      if (!confirm(`Вы действительно хотите запустить массовую рассылку пуш-сообщений на ВСЕХ игроков?`)) {
+        return;
+      }
+
+      saveCredentials(); // Save credentials if remember is checked
+
       const btn = document.getElementById('btnSendAd');
       const loader = document.getElementById('loadingBox');
       
@@ -304,8 +522,8 @@
       .then(data => {
         if (data && data.success) {
           alert(`📢 Рассылка завершена успешно!\n\n✅ Доставлено: ${data.sent} игрокам\n❌ Бот заблокирован у: ${data.blocked} пользователей`);
-          document.getElementById('adminPass').value = "";
           document.getElementById('msgText').value = "";
+          updatePreviewAndCounter();
         } else {
           alert("Ошибка во время отправки.");
         }
@@ -320,8 +538,19 @@
       });
     });
 
+    // Event listeners
+    document.getElementById('msgText').addEventListener('input', updatePreviewAndCounter);
+    document.getElementById('chkRemember').addEventListener('change', saveCredentials);
+    document.getElementById('btnValidateBot').addEventListener('click', validateBot);
+    document.getElementById('btnSendTestPush').addEventListener('click', sendTestPush);
+
     // Run on boot
-    window.onload = loadStats;
+    window.onload = () => {
+      loadStats();
+      loadCredentials();
+      updatePreviewAndCounter();
+    };
   </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
