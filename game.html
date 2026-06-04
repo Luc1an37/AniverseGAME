@@ -4848,7 +4848,7 @@
         const score = state.totalGold || 0; // На сервере 'score' - это общее золото
         const adsCount = state.totalAdsWatched || 0; // На сервере 'adsCount' - это просмотры рекламы
 
-        fetch('https://aniversegame.pages.dev/api/leaderboard', {
+        fetch('/api/leaderboard', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -4867,17 +4867,21 @@
         if (!el.leaderboardList) return;
 
         const now = Date.now();
-        if (cachedLeaderboardData && (now - lastLeaderboardFetchAt < 180000) && !force) {
-          renderLeaderboardWithData(cachedLeaderboardData);
+        if (now - lastLeaderboardFetchAt < 180000 && !force) {
+          if (cachedLeaderboardData) {
+            renderLeaderboardWithData(cachedLeaderboardData);
+          } else {
+            fallbackToSimulatedLeaderboard();
+          }
           return;
         }
 
         if (leaderboardLoadingInProgress) return;
         leaderboardLoadingInProgress = true;
 
-        el.leaderboardList.innerHTML = '<div style="text-align:center; padding: 20px 0; font-size:11px; color:rgba(255,255,255,0.4);"><div class="spinner" style="border-top-color:#fbbf24; width:20px; height:20px; margin:0 auto 8px auto;"></div>Загрузка списка лидеров...</div>';
+        el.leaderboardList.innerHTML = '<div style="text-align:center; padding: 20px 0; font-size:11px; color:rgba(255,255,255,0.4);"><div class="spinner" style="border-top-color:#fbbf24; width:20px; height:20px; margin:0 auto 8px auto;"></div>Загрузка топа...</div>';
 
-        fetch('https://aniversegame.pages.dev/api/leaderboard', {
+        fetch('/api/leaderboard', {
           mode: 'cors',
           headers: {
             'Accept': 'application/json',
@@ -6271,6 +6275,5 @@
       else init();
     })();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a06096d80dce8d58',t:'MTc4MDUwOTU0MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0697367cdc58d98',t:'MTc4MDYwMjQ2MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
