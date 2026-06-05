@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aniverse GAME — Панель Администратора</title>
+  <title>Aniverse GAME — Панель Управления & Аналитики</title>
   <style>
     :root {
       --bg-color: #070913;
       --card-bg: rgba(18, 22, 40, 0.85);
       --accent-color: #a855f7;
-      --accent-glow: rgba(168, 85, 247, 0.4);
+      --accent-glow: rgba(168, 85, 247, 0.35);
       --gold-color: #fbbf24;
       --text-color: #e2e8f0;
       --text-muted: #94a3b8;
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.2);
     }
     * {
       margin: 0;
@@ -33,9 +35,9 @@
     }
     .admin-card {
       width: 100%;
-      max-width: 520px;
+      max-width: 540px;
       background: var(--card-bg);
-      border: 1px solid rgba(168, 85, 247, 0.25);
+      border: 1px solid rgba(168, 85, 247, 0.22);
       border-radius: 22px;
       padding: 24px;
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-glow);
@@ -58,8 +60,37 @@
       font-size: 11px;
       color: var(--text-muted);
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       line-height: 1.45;
+    }
+    /* Tab Navigation Styles */
+    .tab-bar {
+      display: flex;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 4px;
+      margin-bottom: 20px;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
     }
     .form-group {
       margin-bottom: 16px;
@@ -136,15 +167,14 @@
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.2);
     }
-    .stats-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       margin-bottom: 20px;
     }
     .stat-box {
-      flex: 1;
-      padding: 12px;
+      padding: 12px 8px;
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 14px;
@@ -156,9 +186,10 @@
       color: var(--text-muted);
       text-transform: uppercase;
       margin-bottom: 4px;
+      letter-spacing: 0.5px;
     }
     .stat-box b {
-      font-size: 16px;
+      font-size: 14px;
       color: #fff;
     }
     .template-btn {
@@ -179,6 +210,67 @@
       border-color: var(--accent-color);
       background: rgba(168, 85, 247, 0.15);
     }
+    /* Player List Styles */
+    .player-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .player-row:hover {
+      border-color: rgba(168, 85, 247, 0.25);
+      background: rgba(168, 85, 247, 0.03);
+    }
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+    }
+    .player-avatar {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .player-name {
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .player-username {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .player-username:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+    .player-stats {
+      text-align: right;
+    }
+    .player-ads {
+      font-size: 12px;
+      font-weight: bold;
+      color: #c084fc;
+    }
+    .player-gold {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
     .spinner {
       width: 20px;
       height: 20px;
@@ -194,98 +286,127 @@
 <body>
 
   <div class="admin-card">
-    <h2>👑 Панель Рассылки</h2>
-    <p class="sub-title">Отправляйте пуш-сообщения реального времени всем вашим игрокам прямо из вашего телефона!</p>
+    <h2>👑 Панель Управления</h2>
+    <p class="sub-title" style="margin-bottom:15px;">Мгновенная аналитика и рассылка сообщений по вашему новому домену!</p>
 
-    <!-- Stats Row -->
-    <div class="stats-row">
+    <!-- Sub-Tab Navigation Bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="btnTabBroadcast">📢 Рассылка</button>
+      <button class="tab-btn" id="btnTabAnalytics">📊 Аналитика</button>
+    </div>
+
+    <!-- Stats Grid (Visible in both, but loaded dynamically) -->
+    <div class="stats-grid">
       <div class="stat-box">
-        <span>Всего игроков в топе</span>
+        <span>Всего в топе</span>
         <b id="statPlayers">Загрузка...</b>
       </div>
       <div class="stat-box">
-        <span>Сервер базы</span>
-        <b id="statServer" style="color:#10b981;">ONLINE</b>
+        <span>Общие Просмотры</span>
+        <b id="statTotalAds">0</b>
+      </div>
+      <div class="stat-box">
+        <span>Казна Лиги</span>
+        <b id="statTotalGold">0 $</b>
       </div>
     </div>
 
-    <!-- Admin Password -->
-    <div class="form-group">
-      <label for="adminPass">Секретный пароль админа</label>
-      <input type="password" id="adminPass" placeholder="Введите ваш пароль для подтверждения">
-    </div>
-
-    <!-- Bot Token -->
-    <div class="form-group">
-      <label for="botToken">Токен вашего бота</label>
-      <div style="display:flex; gap:8px;">
-        <input type="password" id="botToken" placeholder="Вставьте токен вашего бота из BotFather" style="flex:1;">
-        <button class="btn-secondary" id="btnValidateBot" type="button">Проверить</button>
+    <!-- ================= SECTION 1: BROADCAST ================= -->
+    <div id="sectionBroadcast" style="display:block;">
+      <!-- Admin Password -->
+      <div class="form-group">
+        <label for="adminPass">Секретный пароль админа</label>
+        <input type="password" id="adminPass" placeholder="Введите ваш пароль для подтверждения">
       </div>
-      <div id="botStatusInfo" style="font-size:10px; color:var(--text-muted); margin-top:6px; font-weight:800;">🔴 Бот не подключен</div>
-    </div>
 
-    <!-- Remember Credentials Toggle -->
-    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; width:100%; text-align:left;">
-      <input type="checkbox" id="chkRemember" style="width:16px; height:16px; cursor:pointer; accent-color: var(--accent-color);">
-      <label for="chkRemember" style="margin-bottom:0; cursor:pointer; font-size:11px; text-transform:none; color: var(--text-color);">Запомнить токен и пароль на этом устройстве</label>
-    </div>
-
-    <!-- Message Templates (10 templates) -->
-    <div class="form-group" style="margin-bottom:8px;">
-      <label>Шаблоны сообщений (10 вариантов)</label>
-      <div style="display:flex; flex-wrap:wrap; gap:2px;" id="templatesGrid">
-        <button class="template-btn" onclick="applyTemplate('mine')">🔋 Шахта</button>
-        <button class="template-btn" onclick="applyTemplate('wheel')">🎡 Колесо</button>
-        <button class="template-btn" onclick="applyTemplate('top')">🏆 Рекорд</button>
-        <button class="template-btn" onclick="applyTemplate('boss')">⚔️ Боссы</button>
-        <button class="template-btn" onclick="applyTemplate('forge')">🔨 Кузница</button>
-        <button class="template-btn" onclick="applyTemplate('bank')">🏦 Банк</button>
-        <button class="template-btn" onclick="applyTemplate('wormhole')">🌀 Разлом</button>
-        <button class="template-btn" onclick="applyTemplate('quest')">📜 Контракт</button>
-        <button class="template-btn" onclick="applyTemplate('refine')">🔥 Печь</button>
-        <button class="template-btn" onclick="applyTemplate('streak')">🎁 Награда</button>
+      <!-- Bot Token -->
+      <div class="form-group">
+        <label for="botToken">Токен вашего бота</label>
+        <div style="display:flex; gap:8px;">
+          <input type="password" id="botToken" placeholder="Вставьте токен вашего бота из BotFather" style="flex:1;">
+          <button class="btn-secondary" id="btnValidateBot" type="button">Проверить</button>
+        </div>
+        <div id="botStatusInfo" style="font-size:10px; color:var(--text-muted); margin-top:6px; font-weight:800;">🔴 Бот не подключен</div>
       </div>
-    </div>
 
-    <!-- Broadcast Message Area -->
-    <div class="form-group">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-        <label for="msgText" style="margin-bottom:0;">Текст вашего пуш-сообщения</label>
-        <span id="charCounter" style="font-size:9px; color:var(--text-muted); font-weight:800;">0 / 4096</span>
+      <!-- Remember Credentials Toggle -->
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; width:100%; text-align:left;">
+        <input type="checkbox" id="chkRemember" style="width:16px; height:16px; cursor:pointer; accent-color: var(--accent-color);">
+        <label for="chkRemember" style="margin-bottom:0; cursor:pointer; font-size:11px; text-transform:none; color: var(--text-color);">Запомнить токен и пароль на этом устройстве</label>
       </div>
-      <textarea id="msgText" placeholder="Выберите шаблон выше или напишите сообщение сами... (Markdown разметка поддерживается)"></textarea>
-    </div>
 
-    <!-- Telegram Live Preview Section -->
-    <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:16px;">
-      <label style="margin-bottom:8px;">Предпросмотр сообщения в Telegram</label>
-      <div class="telegram-preview-container" style="background:#0e1621; border-radius:14px; padding:12px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow:inset 0 2px 8px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.04); position:relative;">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-          <div style="width:28px; height:28px; background:linear-gradient(135deg, #2aabee, #229ed9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; color:#fff;">🌌</div>
-          <div style="text-align:left;">
-            <div style="font-size:12px; font-weight:bold; color:#fff; display:flex; align-items:center; gap:4px;"><span id="previewBotName">Aniverse Bot</span> <span style="font-size:9px; background:rgba(255,255,255,0.15); color:#82b1ff; padding:1px 4px; border-radius:4px; font-weight:normal;">bot</span></div>
-            <div style="font-size:9px; color:#708499;" id="previewBotUsername">@bot</div>
+      <!-- Message Templates (10 templates) -->
+      <div class="form-group" style="margin-bottom:8px;">
+        <label>Шаблоны сообщений (10 вариантов)</label>
+        <div style="display:flex; flex-wrap:wrap; gap:2px;" id="templatesGrid">
+          <button class="template-btn" onclick="applyTemplate('mine')">🔋 Шахта</button>
+          <button class="template-btn" onclick="applyTemplate('wheel')">🎡 Колесо</button>
+          <button class="template-btn" onclick="applyTemplate('top')">🏆 Рекорд</button>
+          <button class="template-btn" onclick="applyTemplate('boss')">⚔️ Боссы</button>
+          <button class="template-btn" onclick="applyTemplate('forge')">🔨 Кузница</button>
+          <button class="template-btn" onclick="applyTemplate('bank')">🏦 Банк</button>
+          <button class="template-btn" onclick="applyTemplate('wormhole')">🌀 Разлом</button>
+          <button class="template-btn" onclick="applyTemplate('quest')">📜 Контракт</button>
+          <button class="template-btn" onclick="applyTemplate('refine')">🔥 Печь</button>
+          <button class="template-btn" onclick="applyTemplate('streak')">🎁 Награда</button>
+        </div>
+      </div>
+
+      <!-- Broadcast Message Area -->
+      <div class="form-group">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+          <label for="msgText" style="margin-bottom:0;">Текст вашего пуш-сообщения</label>
+          <span id="charCounter" style="font-size:9px; color:var(--text-muted); font-weight:800;">0 / 4096</span>
+        </div>
+        <textarea id="msgText" placeholder="Выберите шаблон выше или напишите сообщение сами... (Markdown разметка поддерживается)"></textarea>
+      </div>
+
+      <!-- Telegram Live Preview Section -->
+      <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:16px;">
+        <label style="margin-bottom:8px;">Предпросмотр сообщения в Telegram</label>
+        <div class="telegram-preview-container" style="background:#0e1621; border-radius:14px; padding:12px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow:inset 0 2px 8px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.04); position:relative;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <div style="width:28px; height:28px; background:linear-gradient(135deg, #2aabee, #229ed9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; color:#fff;">🌌</div>
+            <div style="text-align:left;">
+              <div style="font-size:12px; font-weight:bold; color:#fff; display:flex; align-items:center; gap:4px;"><span id="previewBotName">Aniverse Bot</span> <span style="font-size:9px; background:rgba(255,255,255,0.15); color:#82b1ff; padding:1px 4px; border-radius:4px; font-weight:normal;">bot</span></div>
+              <div style="font-size:9px; color:#708499;" id="previewBotUsername">@bot</div>
+            </div>
+          </div>
+          <div id="telegramPreviewBubble" style="background:#182533; border-radius:0 12px 12px 12px; padding:10px; font-size:12px; color:#f5f5f5; line-height:1.45; text-align:left; word-break:break-word; max-width:92%; margin-left: 36px;">
+            Текст сообщения...
           </div>
         </div>
-        <div id="telegramPreviewBubble" style="background:#182533; border-radius:0 12px 12px 12px; padding:10px; font-size:12px; color:#f5f5f5; line-height:1.45; text-align:left; word-break:break-word; max-width:92%; margin-left: 36px;">
-          Текст сообщения...
+      </div>
+
+      <!-- Direct Test Push Section -->
+      <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:16px; margin-bottom: 24px;">
+        <label for="testUserId">Тестирование перед отправкой</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="testUserId" placeholder="Введите ваш Telegram User ID для теста" style="flex:1;">
+          <button class="btn-secondary" id="btnSendTestPush" type="button" style="background:rgba(168, 85, 247, 0.1); border-color:rgba(168, 85, 247, 0.25); color:#c084fc;">Отправить тест ⚡</button>
         </div>
+        <div style="font-size:10px; color:var(--text-muted); margin-top:6px; line-height:1.3;">Вы получите пуш-сообщение мгновенно в личный диалог с ботом, чтобы оценить разметку на экране телефона!</div>
       </div>
+
+      <!-- Submit Button -->
+      <button class="btn-action" id="btnSendAd">Запустить рассылку на ВСЕХ</button>
     </div>
 
-    <!-- Direct Test Push Section -->
-    <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:16px; margin-bottom: 24px;">
-      <label for="testUserId">Тестирование перед отправкой</label>
-      <div style="display:flex; gap:8px;">
-        <input type="text" id="testUserId" placeholder="Введите ваш Telegram User ID для теста" style="flex:1;">
-        <button class="btn-secondary" id="btnSendTestPush" type="button" style="background:rgba(168, 85, 247, 0.1); border-color:rgba(168, 85, 247, 0.25); color:#c084fc;">Отправить тест ⚡</button>
+    <!-- ================= SECTION 2: ANALYTICS ================= -->
+    <div id="sectionAnalytics" style="display:none;">
+      <div class="form-group">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <label style="margin-bottom:0;">Активные игроки (Поиск по топу)</label>
+          <button class="btn-secondary" id="btnRefreshAnalytics" type="button" style="padding:4px 8px; font-size:9px;">Обновить список</button>
+        </div>
+        <input type="text" id="searchPlayers" placeholder="Введите имя или @юзернейм игрока для быстрого поиска...">
       </div>
-      <div style="font-size:10px; color:var(--text-muted); margin-top:6px; line-height:1.3;">Вы получите пуш-сообщение мгновенно в личный диалог с ботом, чтобы оценить разметку на экране телефона!</div>
-    </div>
 
-    <!-- Submit Button -->
-    <button class="btn-action" id="btnSendAd">Запустить рассылку на ВСЕХ</button>
+      <div style="max-height:400px; overflow-y:auto; padding-right:4px;" id="playerListContainer">
+        <!-- Players list will be populated dynamically -->
+        <div style="text-align:center; padding: 20px 0; color: var(--text-muted); font-size: 12px;">Загрузка списка игроков...</div>
+      </div>
+    </div>
     
     <div id="loadingBox" style="display:none; text-align:center; margin-top:15px;">
       <div class="spinner"></div>
@@ -294,17 +415,45 @@
   </div>
 
   <script>
-    const API_URL = "https://aniverse-game.ru"; // Updated to use your new custom domain!
+    const API_URL = "https://aniverse-game.ru"; // Pure custom domain
+    let rawLeaderboardData = [];
     
-    // 1. Load active player count on startup
+    // Format numbers
+    function fmt(n) {
+      n = Math.floor(Number(n) || 0);
+      if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T';
+      if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+      if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+      return String(n);
+    }
+
+    // 1. Load active player count & analytics stats
     function loadStats() {
       fetch(`${API_URL}/api/leaderboard`)
         .then(res => res.json())
         .then(data => {
           if (data && Array.isArray(data.leaderboard)) {
-            document.getElementById('statPlayers').textContent = data.leaderboard.length;
+            rawLeaderboardData = data.leaderboard;
+            document.getElementById('statPlayers').textContent = rawLeaderboardData.length;
+            
+            // Calculate sum stats
+            let totalAds = 0;
+            let totalGold = 0;
+            rawLeaderboardData.forEach(player => {
+              // old records might have them swapped, but in player_v2_ adsCount is ads and score is gold
+              totalAds += parseInt(player.adsCount || 0);
+              totalGold += parseInt(player.score || 0);
+            });
+            
+            document.getElementById('statTotalAds').textContent = fmt(totalAds);
+            document.getElementById('statTotalGold').textContent = fmt(totalGold) + ' $';
+            
+            renderPlayerList();
           } else {
             document.getElementById('statPlayers').textContent = "0";
+            document.getElementById('statTotalAds').textContent = "0";
+            document.getElementById('statTotalGold').textContent = "0 $";
           }
         })
         .catch(err => {
@@ -313,6 +462,73 @@
           document.getElementById('statServer').style.color = "#ef4444";
         });
     }
+
+    // Render active player list into analytics tab
+    function renderPlayerList(filter = '') {
+      const container = document.getElementById('playerListContainer');
+      if (!container) return;
+
+      const query = filter.toLowerCase().trim();
+      const filtered = rawLeaderboardData.filter(player => {
+        const name = (player.name || '').toLowerCase();
+        const username = (player.username || '').toLowerCase();
+        return name.includes(query) || username.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 25px 0; font-size:12px; color:var(--text-muted);">Игроки не найдены.</div>';
+        return;
+      }
+
+      let html = '';
+      filtered.forEach((player, idx) => {
+        const initials = (player.name || 'И').substring(0, 2).toUpperCase();
+        const username = player.username || '@player';
+        const tgLink = username.startsWith('@') ? `https://t.me/${username.substring(1)}` : '#';
+        const formattedGold = fmt(player.score || 0);
+        const formattedAds = parseInt(player.adsCount || 0);
+
+        html += `
+          <div class="player-row">
+            <div class="player-info">
+              <div class="player-avatar">${initials}</div>
+              <div>
+                <div class="player-name">${player.name || 'Игрок'}</div>
+                <a href="${tgLink}" target="_blank" class="player-username">${username}</a>
+              </div>
+            </div>
+            <div class="player-stats">
+              <div class="player-ads">📺 ${formattedAds}</div>
+              <div class="player-gold">💰 ${formattedGold}</div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // Tab toggling logic
+    document.getElementById('btnTabBroadcast').addEventListener('click', () => {
+      document.getElementById('btnTabBroadcast').classList.add('active');
+      document.getElementById('btnTabAnalytics').classList.remove('active');
+      document.getElementById('sectionBroadcast').style.display = 'block';
+      document.getElementById('sectionAnalytics').style.display = 'none';
+    });
+
+    document.getElementById('btnTabAnalytics').addEventListener('click', () => {
+      document.getElementById('btnTabBroadcast').classList.remove('active');
+      document.getElementById('btnTabAnalytics').classList.add('active');
+      document.getElementById('sectionBroadcast').style.display = 'none';
+      document.getElementById('sectionAnalytics').style.display = 'block';
+      loadStats(); // Force reload fresh analytics when opening
+    });
+
+    // Search filter listener
+    document.getElementById('searchPlayers').addEventListener('input', (e) => {
+      renderPlayerList(e.target.value);
+    });
+
+    document.getElementById('btnRefreshAnalytics').addEventListener('click', loadStats);
 
     // 2. Applying 10 diverse text templates
     function applyTemplate(type) {
@@ -428,7 +644,15 @@
         body: JSON.stringify({
           chat_id: userId,
           text: text,
-          parse_mode: "Markdown"
+          parse_mode: "Markdown",
+          reply_markup: {
+            inline_keyboard: [[
+              { 
+                text: "🎮 Играть в Aniverse", 
+                web_app: { url: "https://aniverse-game.ru/game" } 
+              }
+            ]]
+          }
         })
       })
       .then(res => res.json())
@@ -551,6 +775,5 @@
       updatePreviewAndCounter();
     };
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
