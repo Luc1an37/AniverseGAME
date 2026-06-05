@@ -6,106 +6,85 @@ export async function onRequestPost(context) {
     
     try {
         const body = await request.json();
-        const { password, text, botToken } = body;
+        const { password, botToken, text } = body;
         
-        // ------------------ ЗАЩИТА: ПАРОЛЬ АДМИНИСТРАТОРА ------------------
-        // Придумайте и вставьте сюда любой сложный пароль между кавычек!
-        const ADMIN_PASSWORD = "aniverse_secret_2026"; 
-        // -------------------------------------------------------------------
-        
-        if (password !== ADMIN_PASSWORD) {
-            return new Response(JSON.stringify({ error: "Неверный пароль админа!" }), { 
+        // 1. Проверка пароля администратора (читается из переменных окружения Cloudflare или ставится дефолт)
+        const expectedPassword = context.env.ADMIN_PASSWORD || "admin123"; 
+        if (password !== expectedPassword) {
+            return new Response(JSON.stringify({ error: "Invalid admin password" }), { 
                 status: 403,
-                headers: { "Access-Control-Allow-Origin": "*" }
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*" 
+                }
             });
         }
         
-        if (!text || !botToken) {
-            return new Response(JSON.stringify({ error: "Missing text or botToken" }), { 
+        if (!botToken || !text) {
+            return new Response(JSON.stringify({ error: "Missing params" }), { 
                 status: 400,
-                headers: { "Access-Control-Allow-Origin": "*" }
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*" 
+                }
             });
         }
         
-        // Получаем всех реальных игроков из вашей базы данных KV
-        const list = await db.list();
-        const userIds = [];
+        // 2. Получаем список всех активных игроков (с новым префиксом player_v2_)
+        const list = await db.list({ prefix: "player_v2_" });
+        const userIds = list.keys.map(key => key.name.split('_')[2]).filter(id => id && !isNaN(id));
         
-        for (const key of list.keys) {
-            const rawData = await db.get(key.name);
-            if (rawData) {
-                const player = JSON.parse(rawData);
-                if (player.userId) {
-                    userIds.push(player.userId);
-                }
-            }
-        }
+        let sent = 0;
+        let blocked = 0;
         
-        if (userIds.length === 0) {
-            return new Response(JSON.stringify({ success: true, sent: 0, blocked: 0 }), {
-                headers: { "Access-Control-Allow-Origin": "*" }
-            });
-        }
-        
-        let successCount = 0;
-        let blockedCount = 0;
-        
-        // Кнопка нативного быстрого запуска игры под сообщением
-        const keyboard = {
-            inline_keyboard: [[
-                {
-                    text: "🎮 Запустить Aniverse GAME",
-                    web_app: { url: "https://luc1an37.github.io/AniverseGAME/" }
-                }
-            ]]
-        };
-        
-        // Запускаем мгновенный серверный цикл отправки через API Telegram
+        // 3. Отправляем сообщения с прикрепленной официальной WebApp кнопкой запуска игры!
         for (const userId of userIds) {
-            const tgUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-            
             try {
-                const response = await fetch(tgUrl, {
+                const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         chat_id: userId,
                         text: text,
                         parse_mode: "Markdown",
-                        reply_markup: keyboard
+                        reply_markup: {
+                            inline_keyboard: [[
+                                { 
+                                    text: "🎮 Играть в Aniverse", 
+                                    web_app: { url: "https://aniverse-game.ru/game" } 
+                                }
+                            ]]
+                        }
                     })
                 });
-                
-                if (response.ok) {
-                    successCount++;
+                const data = await res.json();
+                if (data && data.ok) {
+                    sent++;
                 } else {
-                    blockedCount++;
+                    blocked++;
                 }
-            } catch (e) {
-                blockedCount++;
+            } catch (err) {
+                blocked++;
             }
         }
         
-        return new Response(JSON.stringify({
-            success: true,
-            sent: successCount,
-            blocked: blockedCount
-        }), {
+        return new Response(JSON.stringify({ success: true, sent, blocked }), {
             headers: { 
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*"
             }
         });
-        
     } catch (err) {
         return new Response(JSON.stringify({ error: err.message }), { 
             status: 500,
-            headers: { "Access-Control-Allow-Origin": "*" }
+            headers: { 
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*" 
+            }
         });
     }
 }
 
-// CORS заглушка
 export async function onRequestOptions() {
     return new Response(null, {
         headers: {
