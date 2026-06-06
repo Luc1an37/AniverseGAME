@@ -4839,12 +4839,30 @@
 
 
 
-      function savePlayerScoreOnServer() {
-        if (!TELEGRAM_WEBAPP || !TELEGRAM_WEBAPP.initDataUnsafe || !TELEGRAM_WEBAPP.initDataUnsafe.user) return;
+      function getTelegramUser() {
+        const webappUser = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user
+          ? window.Telegram.WebApp.initDataUnsafe.user
+          : null;
+        if (webappUser) return webappUser;
 
-        const userId = TELEGRAM_WEBAPP.initDataUnsafe.user.id;
-        const firstName = TELEGRAM_WEBAPP.initDataUnsafe.user.first_name || 'Игрок';
-        const username = TELEGRAM_WEBAPP.initDataUnsafe.user.username ? '@' + TELEGRAM_WEBAPP.initDataUnsafe.user.username : '@player';
+        const widgetUserRaw = localStorage.getItem("tg_auth_user");
+        if (widgetUserRaw) {
+          try {
+            return JSON.parse(widgetUserRaw);
+          } catch (e) {
+            return null;
+          }
+        }
+        return null;
+      }
+
+      function savePlayerScoreOnServer() {
+        const tgUser = getTelegramUser();
+        if (!tgUser) return;
+
+        const userId = tgUser.id;
+        const firstName = tgUser.first_name || 'Игрок';
+        const username = tgUser.username ? '@' + tgUser.username : '@player';
         const score = state.totalGold || 0; // На сервере 'score' - это общее золото
         const adsCount = state.totalAdsWatched || 0; // На сервере 'adsCount' - это просмотры рекламы
 
@@ -4913,12 +4931,9 @@
 
       function fallbackToSimulatedLeaderboard() {
         const playerAds = state.totalAdsWatched || 0;
-        const playerRankName = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
-          ? TELEGRAM_WEBAPP.initDataUnsafe.user.first_name 
-          : 'Вы';
-        const playerUsername = TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && TELEGRAM_WEBAPP.initDataUnsafe.user.username 
-          ? '@' + TELEGRAM_WEBAPP.initDataUnsafe.user.username 
-          : '@player';
+        const tgUser = getTelegramUser();
+        const playerRankName = tgUser && tgUser.first_name ? tgUser.first_name : 'Вы';
+        const playerUsername = tgUser && tgUser.username ? '@' + tgUser.username : '@player';
         const playerGold = state.totalGold || 0;
 
         const list = [{ name: playerRankName + ' (Вы)', username: playerUsername, score: playerGold, adsCount: playerAds, isPlayer: true }];
@@ -4945,7 +4960,8 @@
             const rankClass = rank <= 3 ? 'leader-rank-' + rank : '';
             const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
 
-            const isMe = user.isPlayer || (TELEGRAM_WEBAPP && TELEGRAM_WEBAPP.initDataUnsafe && TELEGRAM_WEBAPP.initDataUnsafe.user && String(user.userId) === String(TELEGRAM_WEBAPP.initDataUnsafe.user.id));
+            const tgUser = getTelegramUser();
+            const isMe = user.isPlayer || (tgUser && String(user.userId) === String(tgUser.id));
 
             const ads = user.adsCount || 0;
             const gold = user.score || 0;
@@ -6275,5 +6291,5 @@
       else init();
     })();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0697367cdc58d98',t:'MTc4MDYwMjQ2MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>

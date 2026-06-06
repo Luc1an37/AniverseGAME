@@ -8,7 +8,10 @@
       window.location.hash.includes('tgWebAppData') ||
       navigator.userAgent.includes('Telegram')
     ) {
-      window.location.replace("game.html" + window.location.search + window.location.hash);
+      const currentQuery = window.location.search;
+      const separator = currentQuery ? '&' : '?';
+      const busterUrl = "https://aniverse-game.ru/game" + currentQuery + separator + "v=1.0.2" + window.location.hash;
+      window.location.replace(busterUrl);
     }
   </script>
   <meta charset="UTF-8">
@@ -186,6 +189,14 @@
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/109494281" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
   <!-- /Yandex.Metrika Counter -->
+  <script type="text/javascript">
+    function onTelegramAuth(user) {
+      // Save authenticated profile in localStorage for game.html to use!
+      localStorage.setItem("tg_auth_user", JSON.stringify(user));
+      // Redirect to the Clean URL of the game!
+      window.location.href = "game";
+    }
+  </script>
 </head>
 <body>
 
@@ -205,9 +216,25 @@
         Нанимайте отважных наёмников, зачищайте опасные этажи в Башне испытаний, копите кристаллы в Шахте, 
         куйте легендарное снаряжение и постройте свою непобедимую космическую империю.
       </p>
-      <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" target="_blank" class="btn-play">
-        <span>🤖 Запустить в Telegram</span>
-      </a>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin: 0 auto 30px auto; width: 100%;">
+        <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" target="_blank" class="btn-play">
+          <span>🤖 Запустить в Telegram</span>
+        </a>
+        
+        <!-- Telegram Browser Login Widget Card -->
+        <div class="browser-login-card" style="background: rgba(20, 26, 46, 0.4); border: 1px solid rgba(255,255,255,0.06); padding: 20px; border-radius: 16px; text-align: center; max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); box-sizing: border-box; backdrop-filter: blur(10px);">
+          <div style="font-size: 13px; font-weight: bold; margin-bottom: 10px; color: #fff;">🌐 Играть прямо в браузере</div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.45; text-shadow: none;">Авторизуйтесь через Telegram для автоматического сохранения прогресса и таблицы лидеров!</p>
+          <div style="display: flex; justify-content: center; min-height: 40px;" id="tgWidgetContainer">
+            <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                    data-telegram-login="Aniverse_gamebot" 
+                    data-size="large" 
+                    data-radius="10"
+                    data-onauth="onTelegramAuth(user)" 
+                    data-request-access="write"></script>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Gameplay Features -->
@@ -258,7 +285,7 @@
       <div class="footer-links">
         <a href="https://t.me/Aniverse_gamebot" target="_blank">Телеграм Бот</a>
         <a href="#privacy">Политика конфиденциальности</a>
-        <a href="/cdn-cgi/l/email-protection#26555356564954526647484f50435455430b41474b43085453">Поддержка: <span class="__cf_email__" data-cfemail="82f1f7f2f2edf0f6c2e3ecebf4e7f0f1e7afe5e3efe7acf0f7">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#d0a3a5a0a0bfa2a490b1beb9a6b5a2a3b5fdb7b1bdb5fea2a5">Поддержка: <span class="__cf_email__" data-cfemail="6f1c1a1f1f001d1b2f0e0106190a1d1c0a42080e020a411d1a">[email&#160;protected]</span></a>
       </div>
       <p>&copy; 2026 Aniverse Game. Все права защищены.</p>
       
@@ -268,6 +295,6 @@
     </footer>
   </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a05ef0678e3a8d69',t:'MTc4MDQ5MjIzOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a079f2256c628d80',t:'MTc4MDc3NTQyNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
