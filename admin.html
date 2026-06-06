@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aniverse GAME — Панель Управления & Аналитики</title>
+  <title>Aniverse GAME — Панель Управления & Бизнес-Аналитики</title>
   <style>
     :root {
-      --bg-color: #070913;
-      --card-bg: rgba(18, 22, 40, 0.85);
+      --bg-color: #05070c;
+      --card-bg: rgba(13, 17, 34, 0.9);
       --accent-color: #a855f7;
-      --accent-glow: rgba(168, 85, 247, 0.35);
+      --accent-glow: rgba(168, 85, 247, 0.4);
       --gold-color: #fbbf24;
-      --text-color: #e2e8f0;
-      --text-muted: #94a3b8;
+      --text-color: #f1f5f9;
+      --text-muted: #64748b;
       --emerald: #10b981;
-      --emerald-glow: rgba(16, 185, 129, 0.2);
+      --emerald-glow: rgba(16, 185, 129, 0.25);
     }
     * {
       margin: 0;
@@ -37,22 +37,22 @@
       width: 100%;
       max-width: 540px;
       background: var(--card-bg);
-      border: 1px solid rgba(168, 85, 247, 0.22);
-      border-radius: 22px;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 24px;
       padding: 24px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-glow);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 35px var(--accent-glow);
       margin-bottom: 20px;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
     }
     h2 {
-      font-size: 20px;
+      font-size: 21px;
       font-weight: 900;
       color: #fff;
       text-align: center;
       margin-bottom: 6px;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      background: linear-gradient(135deg, #fff, #c084fc);
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #fff, #c084fc, #a855f7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -63,11 +63,11 @@
       margin-bottom: 20px;
       line-height: 1.45;
     }
-    /* Tab Navigation Styles */
+    /* Tab Navigation */
     .tab-bar {
       display: flex;
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.05);
       padding: 4px;
       margin-bottom: 20px;
@@ -75,11 +75,11 @@
     }
     .tab-btn {
       flex: 1;
-      padding: 10px 0;
+      padding: 11px 0;
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       background: transparent;
       color: var(--text-muted);
@@ -87,13 +87,13 @@
       transition: all 0.2s ease;
     }
     .tab-btn.active {
-      background: rgba(168, 85, 247, 0.15);
-      border: 1px solid rgba(168, 85, 247, 0.25);
+      background: rgba(168, 85, 247, 0.16);
+      border: 1px solid rgba(168, 85, 247, 0.3);
       color: #fff;
-      box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
     }
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       text-align: left;
     }
     label {
@@ -107,8 +107,8 @@
     }
     input, textarea {
       width: 100%;
-      background: rgba(10, 12, 22, 0.85);
-      border: 1px solid rgba(168, 85, 247, 0.15);
+      background: rgba(8, 10, 18, 0.9);
+      border: 1px solid rgba(168, 85, 247, 0.18);
       border-radius: 12px;
       padding: 12px 14px;
       font-size: 13px;
@@ -118,7 +118,7 @@
     }
     input:focus, textarea:focus {
       border-color: var(--accent-color);
-      box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.25);
     }
     textarea {
       resize: none;
@@ -140,7 +140,7 @@
     }
     .btn-action:hover {
       transform: translateY(-1px);
-      box-shadow: 0 10px 28px rgba(168, 85, 247, 0.45);
+      box-shadow: 0 12px 30px rgba(168, 85, 247, 0.5);
     }
     .btn-action:active {
       transform: translateY(1px);
@@ -152,7 +152,7 @@
       transform: none;
     }
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--text-color);
       width: auto;
@@ -179,6 +179,11 @@
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 14px;
       text-align: center;
+      transition: all 0.2s;
+    }
+    .stat-box:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(168, 85, 247, 0.15);
     }
     .stat-box span {
       display: block;
@@ -210,6 +215,49 @@
       border-color: var(--accent-color);
       background: rgba(168, 85, 247, 0.15);
     }
+    
+    /* Diagnostics Section */
+    .diagnostic-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      margin-bottom: 18px;
+    }
+    .diag-item {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .diag-item span { font-weight: bold; color: #fff; }
+
+    /* Collapsible Markdown Helper */
+    .md-helper-trigger {
+      font-size: 10px;
+      color: var(--accent-color);
+      cursor: pointer;
+      text-align: right;
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .md-helper-box {
+      display: none;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 16px;
+      font-size: 10px;
+      text-align: left;
+      line-height: 1.45;
+    }
+
     /* Player List Styles */
     .player-row {
       display: flex;
@@ -271,6 +319,28 @@
       color: var(--text-muted);
       margin-top: 2px;
     }
+
+    /* Smartphone Frame Wrapper */
+    .phone-frame {
+      border: 6px solid #222c3c;
+      border-radius: 24px;
+      background: #0e1621;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      margin-bottom: 8px;
+    }
+    .phone-status-bar {
+      height: 20px;
+      background: #101925;
+      padding: 0 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      color: rgba(255,255,255,0.35);
+      font-weight: bold;
+    }
+
     .spinner {
       width: 20px;
       height: 20px;
@@ -289,13 +359,19 @@
     <h2>👑 Панель Управления</h2>
     <p class="sub-title" style="margin-bottom:15px;">Мгновенная аналитика и рассылка сообщений по вашему новому домену!</p>
 
+    <!-- Diagnostics / Health Panel -->
+    <div class="diagnostic-panel">
+      <div class="diag-item">Бот пинг: <span id="diagBotPing">Проверка...</span></div>
+      <div class="diag-item">БД пинг: <span id="diagDbPing">Проверка...</span></div>
+    </div>
+
     <!-- Sub-Tab Navigation Bar -->
     <div class="tab-bar">
       <button class="tab-btn active" id="btnTabBroadcast">📢 Рассылка</button>
       <button class="tab-btn" id="btnTabAnalytics">📊 Аналитика</button>
     </div>
 
-    <!-- Stats Grid (Visible in both, but loaded dynamically) -->
+    <!-- Stats Grid (Visible in both) -->
     <div class="stats-grid">
       <div class="stat-box">
         <span>Всего в топе</span>
@@ -353,10 +429,18 @@
       </div>
 
       <!-- Broadcast Message Area -->
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom: 12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
           <label for="msgText" style="margin-bottom:0;">Текст вашего пуш-сообщения</label>
           <span id="charCounter" style="font-size:9px; color:var(--text-muted); font-weight:800;">0 / 4096</span>
+        </div>
+        <span class="md-helper-trigger" id="btnToggleMdHelper">Шпаргалка разметки Telegram ▾</span>
+        <div class="md-helper-box" id="mdHelperBox">
+          • <b>Жирный текст:</b> вставьте звёздочки: <code>*Текст*</code><br>
+          • <i>Курсивный текст:</i> вставьте подчеркивания: <code>_Текст_</code><br>
+          • <code style="background:rgba(255,255,255,0.1); padding:1px 3px;">Моноширинный код:</code> вставьте апострофы: <code>\`Код\`</code><br>
+          • <a href="#" style="color:#82b1ff; text-decoration:none;">Ссылка:</a> вставьте <code>[Текст](https://ссылка.ru)</code><br>
+          • <b>Эмодзи:</b> используйте любые стандартные смайлики! 🚀🔥
         </div>
         <textarea id="msgText" placeholder="Выберите шаблон выше или напишите сообщение сами... (Markdown разметка поддерживается)"></textarea>
       </div>
@@ -364,16 +448,32 @@
       <!-- Telegram Live Preview Section -->
       <div class="form-group" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:16px;">
         <label style="margin-bottom:8px;">Предпросмотр сообщения в Telegram</label>
-        <div class="telegram-preview-container" style="background:#0e1621; border-radius:14px; padding:12px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow:inset 0 2px 8px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.04); position:relative;">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-            <div style="width:28px; height:28px; background:linear-gradient(135deg, #2aabee, #229ed9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; color:#fff;">🌌</div>
-            <div style="text-align:left;">
-              <div style="font-size:12px; font-weight:bold; color:#fff; display:flex; align-items:center; gap:4px;"><span id="previewBotName">Aniverse Bot</span> <span style="font-size:9px; background:rgba(255,255,255,0.15); color:#82b1ff; padding:1px 4px; border-radius:4px; font-weight:normal;">bot</span></div>
-              <div style="font-size:9px; color:#708499;" id="previewBotUsername">@bot</div>
+        
+        <!-- Smartphone Frame Wrapper -->
+        <div class="phone-frame">
+          <div class="phone-status-bar">
+            <span id="phoneTime">12:00</span>
+            <div style="display:flex; gap:4px; align-items:center;">
+              <span>LTE</span>
+              <span>🔋 100%</span>
             </div>
           </div>
-          <div id="telegramPreviewBubble" style="background:#182533; border-radius:0 12px 12px 12px; padding:10px; font-size:12px; color:#f5f5f5; line-height:1.45; text-align:left; word-break:break-word; max-width:92%; margin-left: 36px;">
-            Текст сообщения...
+          
+          <div class="telegram-preview-container" style="padding:12px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; position:relative;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+              <div style="width:28px; height:28px; background:linear-gradient(135deg, #2aabee, #229ed9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; color:#fff;">🌌</div>
+              <div style="text-align:left;">
+                <div style="font-size:12px; font-weight:bold; color:#fff; display:flex; align-items:center; gap:4px;"><span id="previewBotName">Aniverse Bot</span> <span style="font-size:9px; background:rgba(255,255,255,0.15); color:#82b1ff; padding:1px 4px; border-radius:4px; font-weight:normal;">bot</span></div>
+                <div style="font-size:9px; color:#708499;" id="previewBotUsername">@bot</div>
+              </div>
+            </div>
+            <div id="telegramPreviewBubble" style="background:#182533; border-radius:0 12px 12px 12px; padding:10px; font-size:12px; color:#f5f5f5; line-height:1.45; text-align:left; word-break:break-word; max-width:92%; margin-left: 36px; border: 1px solid rgba(255,255,255,0.02); box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+              Текст сообщения...
+            </div>
+            <!-- Mock WebApp Button -->
+            <div style="margin-left:36px; margin-top:6px; max-width:92%; background: #2f6ea5; color:#fff; font-size:11px; font-weight:bold; padding:8px 0; border-radius:8px; text-align:center; cursor:default; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+              🎮 Играть в Aniverse
+            </div>
           </div>
         </div>
       </div>
@@ -394,6 +494,17 @@
 
     <!-- ================= SECTION 2: ANALYTICS ================= -->
     <div id="sectionAnalytics" style="display:none;">
+      <!-- Analytical Insights Card -->
+      <div class="form-group" style="background: rgba(168,85,247,0.03); border:1px solid rgba(168,85,247,0.1); border-radius:14px; padding:12px; margin-bottom:16px; text-align:left;">
+        <label style="color:#c084fc; margin-bottom:8px; display:block;">📊 Аналитические инсайты</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px; color:rgba(255,255,255,0.7);">
+          <div>Абсолютный лидер: <b id="insightLeader" style="color:#fbbf24;">—</b></div>
+          <div>Активность (24ч): <b id="insightActive" style="color:#34d399;">—</b></div>
+          <div>Магнат лиги: <b id="insightTycoon" style="color:#a855f7;">—</b></div>
+          <div>Ср. просмотров/игрока: <b id="insightAvgAds" style="color:#60a5fa;">—</b></div>
+        </div>
+      </div>
+
       <div class="form-group">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
           <label style="margin-bottom:0;">Активные игроки (Поиск по топу)</label>
@@ -428,11 +539,26 @@
       return String(n);
     }
 
+    // Set interactive phone frame clock
+    function updatePhoneTime() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const timeEl = document.getElementById('phoneTime');
+      if (timeEl) timeEl.textContent = `${h}:${m}`;
+    }
+    setInterval(updatePhoneTime, 1000);
+
     // 1. Load active player count & analytics stats
     function loadStats() {
+      const t0_db = Date.now();
       fetch(`${API_URL}/api/leaderboard`)
         .then(res => res.json())
         .then(data => {
+          const t1_db = Date.now();
+          document.getElementById('diagDbPing').textContent = (t1_db - t0_db) + ' ms';
+          document.getElementById('diagDbPing').style.color = "#10b981";
+
           if (data && Array.isArray(data.leaderboard)) {
             rawLeaderboardData = data.leaderboard;
             document.getElementById('statPlayers').textContent = rawLeaderboardData.length;
@@ -440,15 +566,38 @@
             // Calculate sum stats
             let totalAds = 0;
             let totalGold = 0;
-            rawLeaderboardData.forEach(player => {
-              // old records might have them swapped, but in player_v2_ adsCount is ads and score is gold
-              totalAds += parseInt(player.adsCount || 0);
-              totalGold += parseInt(player.score || 0);
+            let richestPlayer = null;
+            let highestGold = -1;
+            let active24h = 0;
+            const limit24h = Date.now() - 24 * 3600 * 1000;
+
+            rawLeaderboardData.forEach((player, idx) => {
+              const ads = parseInt(player.adsCount || 0);
+              const gold = parseInt(player.score || 0);
+              totalAds += ads;
+              totalGold += gold;
+
+              if (gold > highestGold) {
+                highestGold = gold;
+                richestPlayer = player.name || 'Игрок';
+              }
+              if (player.updatedAt && player.updatedAt > limit24h) {
+                active24h++;
+              }
             });
             
             document.getElementById('statTotalAds').textContent = fmt(totalAds);
             document.getElementById('statTotalGold').textContent = fmt(totalGold) + ' $';
             
+            // Populate analytical insights
+            const absoluteLeader = rawLeaderboardData[0] ? rawLeaderboardData[0].name : '—';
+            const avgAds = rawLeaderboardData.length > 0 ? (totalAds / rawLeaderboardData.length).toFixed(1) : '0.0';
+
+            document.getElementById('insightLeader').textContent = absoluteLeader;
+            document.getElementById('insightActive').textContent = active24h;
+            document.getElementById('insightTycoon').textContent = richestPlayer || '—';
+            document.getElementById('insightAvgAds').textContent = avgAds;
+
             renderPlayerList();
           } else {
             document.getElementById('statPlayers').textContent = "0";
@@ -460,6 +609,37 @@
           document.getElementById('statPlayers').textContent = "Ошибка";
           document.getElementById('statServer').textContent = "OFFLINE";
           document.getElementById('statServer').style.color = "#ef4444";
+          document.getElementById('diagDbPing').textContent = "OFFLINE";
+          document.getElementById('diagDbPing').style.color = "#ef4444";
+        });
+    }
+
+    // Ping Telegram API and calculate latency
+    function testBotPing() {
+      const token = document.getElementById('botToken').value.trim();
+      const pingEl = document.getElementById('diagBotPing');
+      if (!token) {
+        pingEl.textContent = "Токен?";
+        pingEl.style.color = "var(--text-muted)";
+        return;
+      }
+
+      const t0 = Date.now();
+      fetch(`https://api.telegram.org/bot${token}/getMe`)
+        .then(res => res.json())
+        .then(data => {
+          const t1 = Date.now();
+          if (data && data.ok) {
+            pingEl.textContent = (t1 - t0) + ' ms';
+            pingEl.style.color = "#10b981";
+          } else {
+            pingEl.textContent = "Ошибка API";
+            pingEl.style.color = "#ef4444";
+          }
+        })
+        .catch(() => {
+          pingEl.textContent = "Сеть?";
+          pingEl.style.color = "#ef4444";
         });
     }
 
@@ -521,6 +701,19 @@
       document.getElementById('sectionBroadcast').style.display = 'none';
       document.getElementById('sectionAnalytics').style.display = 'block';
       loadStats(); // Force reload fresh analytics when opening
+    });
+
+    // Toggle Markdown Helper Box
+    document.getElementById('btnToggleMdHelper').addEventListener('click', () => {
+      const box = document.getElementById('mdHelperBox');
+      const trigger = document.getElementById('btnToggleMdHelper');
+      if (box.style.display === 'block') {
+        box.style.display = 'none';
+        trigger.textContent = 'Шпаргалка разметки Telegram ▾';
+      } else {
+        box.style.display = 'block';
+        trigger.textContent = 'Скрыть шпаргалку ▴';
+      }
     });
 
     // Search filter listener
@@ -595,7 +788,7 @@
     // Validate Telegram Bot Token Client-side
     function validateBot() {
       const token = document.getElementById('botToken').value.trim();
-      if (!token) return alert("Пожалуйста, вставьте токен вашего бота!");
+      if (!token) return;
       
       const statusInfo = document.getElementById('botStatusInfo');
       statusInfo.innerHTML = '<span class="spinner" style="width:12px; height:12px; margin:0 5px; display:inline-block; vertical-align:middle;"></span> Проверка...';
@@ -612,14 +805,19 @@
             // Sync preview box names
             document.getElementById('previewBotName').textContent = bot.first_name;
             document.getElementById('previewBotUsername').textContent = `@${bot.username}`;
+            testBotPing(); // Run ping latency diagnostic
           } else {
             statusInfo.innerHTML = `🔴 Ошибка: Неверный токен бота!`;
             statusInfo.style.color = "#ef4444";
+            document.getElementById('diagBotPing').textContent = "Неверный токен";
+            document.getElementById('diagBotPing').style.color = "#ef4444";
           }
         })
         .catch(() => {
           statusInfo.innerHTML = `🔴 Ошибка сети при проверке!`;
           statusInfo.style.color = "#ef4444";
+          document.getElementById('diagBotPing').textContent = "Ошибка сети";
+          document.getElementById('diagBotPing').style.color = "#ef4444";
         });
     }
 
@@ -773,7 +971,9 @@
       loadStats();
       loadCredentials();
       updatePreviewAndCounter();
+      updatePhoneTime();
     };
   </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
