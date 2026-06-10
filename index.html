@@ -926,7 +926,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#3e4d4b4e4e514c4a7e5f5057485b4c4d5b13595f535b104c4b" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="03707673736c717743626d6a75667170662e64626e662d7176">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#added8ddddc2dfd9edccc3c4dbc8dfdec880caccc0c883dfd8" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="790a0c0909160b0d391817100f1c0b0a1c541e18141c570b0c">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -6678,6 +6678,16 @@
         renderAnimeGrid();
 
         // Bind AniVerse UI controls
+        const btnEnterCinema = document.getElementById('btnEnterCinema');
+        if (btnEnterCinema) {
+          btnEnterCinema.addEventListener('click', () => {
+            const overlay = document.getElementById('guestWelcomeOverlay');
+            if (overlay) overlay.style.display = 'none';
+            toggleViewMode('anime'); // Instantly go to anime tab with no login!
+            triggerHaptic('medium');
+          });
+        }
+
         document.getElementById('btnThemeToggle').addEventListener('click', toggleThemeMode);
         document.getElementById('btnAppToggle').addEventListener('click', () => {
           if (currentViewMode === 'anime') toggleViewMode('game');
@@ -6792,5 +6802,5 @@
     </div>
   </div>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0980bd96a6acc81',t:'MTc4MTA5MTA1MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
