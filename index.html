@@ -93,6 +93,159 @@
     .coins-val{font-size:var(--top-number);font-weight:900;color:#ffd700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;max-width:36vw;overflow:hidden;text-overflow:ellipsis}
     .diamond-val{font-size:clamp(16px,4.5vw,20px);font-weight:800;color:#ead8ff;font-variant-numeric:tabular-nums;line-height:1}
     .rank-badge{position:static;justify-self:center;transform:none;padding:5px 12px;border-radius:999px;border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.06);font-size:10px;letter-spacing:1.2px;color:#ffd700;font-weight:800;text-transform:uppercase;white-space:nowrap;min-width:0;max-width:40vw;overflow:hidden;text-overflow:ellipsis;text-align:center}
+    /* Light Theme (Day Mode) Accents */
+    body.theme-light {
+      background: #f1f5f9 !important;
+      color: #1e293b !important;
+    }
+    body.theme-light .app {
+      background: #f1f5f9 !important;
+    }
+    body.theme-light .admin-card, 
+    body.theme-light .quest-strip, 
+    body.theme-light .bank-card, 
+    body.theme-light .ad-card, 
+    body.theme-light .profile-card, 
+    body.theme-light .shop-item,
+    body.theme-light .collection-card,
+    body.theme-light .boss-card,
+    body.theme-light .role-card,
+    body.theme-light .browser-login-card,
+    body.theme-light .filter-bar,
+    body.theme-light .codex-item-card {
+      background: #ffffff !important;
+      border: 1px solid rgba(0,0,0,0.06) !important;
+      color: #1e293b !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+    }
+    body.theme-light h2, body.theme-light h3, body.theme-light .talent-name, body.theme-light .quest-title, body.theme-light .shop-section-title {
+      color: #0f172a !important;
+    }
+    body.theme-light .sub-tab-bar {
+      background: rgba(0,0,0,0.02) !important;
+      border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+    body.theme-light .sub-tab {
+      background: #f8fafc !important;
+      border: 1px solid rgba(0,0,0,0.05) !important;
+      color: #475569 !important;
+    }
+    body.theme-light .sub-tab.active {
+      background: rgba(239, 68, 68, 0.08) !important;
+      border-color: rgba(239, 68, 68, 0.2) !important;
+      color: #ef4444 !important;
+    }
+    body.theme-light .bottom-nav {
+      background: #ffffff !important;
+      border-top: 1px solid rgba(0,0,0,0.06) !important;
+    }
+    body.theme-light .nav-icon-wrap svg {
+      fill: #64748b !important;
+    }
+    body.theme-light .nav-label {
+      color: #64748b !important;
+    }
+    body.theme-light .nav-item.active .nav-icon-wrap svg,
+    body.theme-light .nav-item.active .nav-label {
+      fill: #ef4444 !important;
+      color: #ef4444 !important;
+    }
+    body.theme-light .top-bar {
+      background: #ffffff !important;
+      border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+    }
+    body.theme-light .coins-val {
+      color: #eab308 !important;
+    }
+    body.theme-light .diamond-val {
+      color: #4f46e5 !important;
+    }
+    body.theme-light .rank-badge {
+      background: rgba(239, 68, 68, 0.05) !important;
+      border: 1px solid rgba(239, 68, 68, 0.15) !important;
+      color: #ef4444 !important;
+    }
+
+    /* Anixart-style Anime Grid CSS */
+    .anime-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      padding: var(--page-pad);
+      width: 100%;
+    }
+    @media(max-width: 380px) {
+      .anime-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .anime-card-item {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      text-align: left;
+    }
+    .anime-card-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(168,85,247,0.15);
+      border-color: rgba(168,85,247,0.25);
+    }
+    .anime-poster-wrap {
+      position: relative;
+      width: 100%;
+      padding-top: 142%; /* Aspect ratio of posters */
+      background: #111;
+      overflow: hidden;
+    }
+    .anime-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .anime-card-item:hover .anime-poster {
+      transform: scale(1.05);
+    }
+    .anime-badge-rating {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #2a6ea5;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 3px 6px;
+      border-radius: 6px;
+      z-index: 2;
+    }
+    .anime-info-box {
+      padding: 8px 10px 10px 10px;
+    }
+    .anime-card-title {
+      font-size: 11px;
+      font-weight: 900;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    body.theme-light .anime-card-title {
+      color: #0f172a;
+    }
+    .anime-card-meta {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .coin-art{--c1:#fff0a6;--c2:#ffd700;--c3:#9c6400;--mark:#5a3e00;--glow:rgba(255,215,0,.22);position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 28%,var(--c1),var(--c2) 58%,var(--c3));box-shadow:inset 0 6px 12px rgba(255,255,255,.15),inset 0 -8px 14px rgba(0,0,0,.22),0 0 18px var(--glow);overflow:hidden}
     .coin-art:before{content:'';position:absolute;top:12%;left:18%;width:42%;height:18%;border-radius:50%;transform:rotate(-18deg);background:radial-gradient(ellipse,rgba(255,255,255,.35),transparent 72%)}
     .coin-art:after{content:'';position:absolute;inset:7%;border-radius:50%;border:2px solid rgba(255,255,255,.16)}
@@ -720,6 +873,11 @@
         grid-template-columns: 1fr !important;
       }
     }
+      @media(max-width: 480px) {
+      .tree-row {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
   <!-- Telegram Browser Auth Callback -->
   <script type="text/javascript">
@@ -768,7 +926,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#d2a1a7a2a2bda0a692b3bcbba4b7a0a1b7ffb5b3bfb7fca0a7" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="d3a0a6a3a3bca1a793b2bdbaa5b6a1a0b6feb4b2beb6fda1a6">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#3e4d4b4e4e514c4a7e5f5057485b4c4d5b13595f535b104c4b" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="03707673736c717743626d6a75667170662e64626e662d7176">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -777,46 +935,6 @@
     </div>
 
   </div>
-  <div class="frenzy-overlay" id="frenzyOverlay"></div>
-  <div class="frenzy-timer-bar" id="frenzyTimerBar">
-    <span>⚡ Золотая лихорадка x5!</span>
-    <b id="frenzyTimerText">30с</b>
-  </div>
-
-
-  <div class="frenzy-overlay" id="frenzyOverlay"></div>
-  <div class="frenzy-timer-bar" id="frenzyTimerBar">
-    <span>⚡ Золотая лихорадка x5!</span>
-    <b id="frenzyTimerText">30с</b>
-  </div>
-
-  <!-- Wormhole Confirmation Modal -->
-  <div class="modal-overlay" id="wormholeModal">
-    <div class="modal-box" style="border-color:#c084fc; box-shadow: 0 0 30px rgba(192, 132, 252, 0.35); background: rgba(18,15,34,0.96);">
-      <div style="font-size:52px; animation: portalSpin 6s linear infinite; display:inline-block; margin-bottom:12px;">🌀</div>
-      <h2 class="reward-title" style="color:#c084fc; font-size:16px;">Космическая Червоточина</h2>
-      <div class="reward-text" style="font-size:11px; line-height:1.45; color:rgba(255,255,255,0.7); margin-bottom:16px; white-space:normal;">
-        Вы обнаружили пространственный разлом! Хотите запустить искривление времени и мгновенно совершить прыжок на <b>1 ЧАС</b> вперёд?<br><br>
-        Вы получите автодоход и проценты вашего банка за 60 минут прямо сейчас!
-      </div>
-      <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
-        <button class="ad-btn" id="btnWormholeJump" type="button" style="background: linear-gradient(135deg, #a855f7, #7c3aed); padding:11px; font-size:11px;">Совершить прыжок (Реклама)</button>
-        <button class="bank-btn" id="btnWormholeClose" type="button" style="width:100%; padding:10px; font-size:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:rgba(255,255,255,0.42);">Закрыть разлом</button>
-      </div>
-    </div>
-  </div>
-  <div class="frenzy-overlay" id="frenzyOverlay"></div>
-  <div class="frenzy-timer-bar" id="frenzyTimerBar">
-    <span>⚡ Золотая лихорадка x5!</span>
-    <b id="frenzyTimerText">30с</b>
-  </div>
-  <div class="loading-screen" id="loadingScreen">
-    <div class="spinner"></div>
-    <div class="loading-text">Загрузка...</div>
-  </div>
-
-  <div class="toast" id="toast"></div>
-  <div class="bg-particles" id="bgParticles"></div>
 
   <!-- Anixart-style Header for AniVerse -->
   <header class="anixart-header" style="width: 100%; max-width: 560px; height: 56px; background: rgba(18, 22, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 9999; box-sizing: border-box; backdrop-filter: blur(8px); margin: 0 auto;">
@@ -889,6 +1007,49 @@
     <!-- ================= VIEW 2: GAME PORTAL VIEW ================= -->
     <div id="game-portal-view" style="display: none; flex-direction: column; width: 100%; flex: 1;">
       <div class="top-bar">
+  <div class="frenzy-overlay" id="frenzyOverlay"></div>
+  <div class="frenzy-timer-bar" id="frenzyTimerBar">
+    <span>⚡ Золотая лихорадка x5!</span>
+    <b id="frenzyTimerText">30с</b>
+  </div>
+
+
+  <div class="frenzy-overlay" id="frenzyOverlay"></div>
+  <div class="frenzy-timer-bar" id="frenzyTimerBar">
+    <span>⚡ Золотая лихорадка x5!</span>
+    <b id="frenzyTimerText">30с</b>
+  </div>
+
+  <!-- Wormhole Confirmation Modal -->
+  <div class="modal-overlay" id="wormholeModal">
+    <div class="modal-box" style="border-color:#c084fc; box-shadow: 0 0 30px rgba(192, 132, 252, 0.35); background: rgba(18,15,34,0.96);">
+      <div style="font-size:52px; animation: portalSpin 6s linear infinite; display:inline-block; margin-bottom:12px;">🌀</div>
+      <h2 class="reward-title" style="color:#c084fc; font-size:16px;">Космическая Червоточина</h2>
+      <div class="reward-text" style="font-size:11px; line-height:1.45; color:rgba(255,255,255,0.7); margin-bottom:16px; white-space:normal;">
+        Вы обнаружили пространственный разлом! Хотите запустить искривление времени и мгновенно совершить прыжок на <b>1 ЧАС</b> вперёд?<br><br>
+        Вы получите автодоход и проценты вашего банка за 60 минут прямо сейчас!
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+        <button class="ad-btn" id="btnWormholeJump" type="button" style="background: linear-gradient(135deg, #a855f7, #7c3aed); padding:11px; font-size:11px;">Совершить прыжок (Реклама)</button>
+        <button class="bank-btn" id="btnWormholeClose" type="button" style="width:100%; padding:10px; font-size:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:rgba(255,255,255,0.42);">Закрыть разлом</button>
+      </div>
+    </div>
+  </div>
+  <div class="frenzy-overlay" id="frenzyOverlay"></div>
+  <div class="frenzy-timer-bar" id="frenzyTimerBar">
+    <span>⚡ Золотая лихорадка x5!</span>
+    <b id="frenzyTimerText">30с</b>
+  </div>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <div class="loading-text">Загрузка...</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <div class="app">
+    <div class="top-bar">
       <div class="top-left">
         <div class="coin-art coin-mini skin-classic coin-sweep" id="topCoinIcon"><span class="coin-mark" id="topCoinMark">$</span></div>
         <div class="coins-val" id="goldVal">0</div>
@@ -1412,12 +1573,7 @@
         <div class="adsgram-task-card">
           <div class="adsgram-task-title">AdsGram Task</div>
           <div class="adsgram-task-desc">Выполните рекламное задание AdsGram и получите внутриигровую награду. Сейчас за выполнение выдаётся +20 кристаллов.</div>
-          <adsgram-task
-             data-block-id='task-33936'
-             data-debug='false'
-             data-debug-console='false'
-             class='task'
-          ></adsgram-task>
+          <div id="adsgramTaskPlaceholder"></div>
         </div>
 
         <div class="bonus-info-card">
@@ -6485,8 +6641,15 @@
         triggerHaptic('light');
       }
 
-
       function init() {
+        // Toggle Guest Welcome Overlay based on Telegram Auth status
+        const tgUser = getTelegramUser();
+        const overlay = document.getElementById('guestWelcomeOverlay');
+        if (tgUser) {
+          if (overlay) overlay.style.display = 'none';
+        } else {
+          if (overlay) overlay.style.display = 'flex';
+        }
         try { if (TELEGRAM_WEBAPP && typeof TELEGRAM_WEBAPP.ready === 'function') TELEGRAM_WEBAPP.ready(); } catch (e) {}
         cacheElements();
         loadGame();
@@ -6497,6 +6660,58 @@
         state.lastAppOpenAt = Date.now();
         bindEvents();
         bindAdsgramTask();
+
+        // --- AniVerse Initializations ---
+        const insideTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+        if (insideTelegram) {
+          toggleViewMode('game'); // Default to GAME inside Telegram Mini App!
+          
+          // Dynamically insert AdsGram Task to prevent crash in external browsers!
+          const taskPlaceholder = document.getElementById('adsgramTaskPlaceholder');
+          if (taskPlaceholder) {
+            taskPlaceholder.innerHTML = `<adsgram-task data-block-id="task-33936" data-debug="false" data-debug-console="false" class="task"></adsgram-task>`;
+            bindAdsgramTask(); // Re-bind task listener!
+          }
+        } else {
+          toggleViewMode('anime'); // Default to ANIME in normal browser!
+        }
+        renderAnimeGrid();
+
+        // Bind AniVerse UI controls
+        document.getElementById('btnThemeToggle').addEventListener('click', toggleThemeMode);
+        document.getElementById('btnAppToggle').addEventListener('click', () => {
+          if (currentViewMode === 'anime') toggleViewMode('game');
+          else toggleViewMode('anime');
+        });
+        document.getElementById('btnToggleFilters').addEventListener('click', () => {
+          const filterDropdown = document.getElementById('anixartFilterDropdown');
+          if (filterDropdown) {
+            filterDropdown.style.display = filterDropdown.style.display === 'none' ? 'block' : 'none';
+            triggerHaptic('light');
+          }
+        });
+        document.getElementById('btnClosePlayerModal').addEventListener('click', () => {
+          document.getElementById('animePlayerModal').classList.remove('show');
+          document.getElementById('animeIframePlayer').src = ''; // stop player playback
+          triggerHaptic('light');
+        });
+
+        // Search & filter listeners
+        document.getElementById('animeSearchInput').addEventListener('input', (e) => {
+          const genre = document.getElementById('filterGenre').value;
+          const year = document.getElementById('filterYear').value;
+          renderAnimeGrid(e.target.value, genre, year);
+        });
+        document.getElementById('filterGenre').addEventListener('change', (e) => {
+          const query = document.getElementById('animeSearchInput').value;
+          const year = document.getElementById('filterYear').value;
+          renderAnimeGrid(query, e.target.value, year);
+        });
+        document.getElementById('filterYear').addEventListener('change', (e) => {
+          const query = document.getElementById('animeSearchInput').value;
+          const genre = document.getElementById('filterGenre').value;
+          renderAnimeGrid(query, genre, e.target.value);
+        });
         ensureQuest();
         if (state.bossIdx > getMaxUnlockedBossIdx()) state.bossIdx = getMaxUnlockedBossIdx();
         const boss = BOSSES[state.bossIdx];
@@ -6577,5 +6792,5 @@
     </div>
   </div>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a097ff58fd4bcc81',t:'MTc4MTA5MDUzOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0980bd96a6acc81',t:'MTc4MTA5MTA1MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
