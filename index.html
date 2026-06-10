@@ -171,8 +171,11 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 12px;
-      padding: var(--page-pad);
+      padding: 14px var(--page-pad) 96px var(--page-pad) !important;
       width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     @media(max-width: 380px) {
       .anime-container {
@@ -878,6 +881,11 @@
         grid-template-columns: 1fr !important;
       }
     }
+      @media(max-width: 480px) {
+      .tree-row {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
   <!-- Telegram Browser Auth Callback -->
   <script type="text/javascript">
@@ -889,36 +897,36 @@
 </head>
 <body class="theme-default">
   <!-- Unified Welcoming/Login Overlay (Visible only to guests outside Telegram) -->
-  <div id="guestWelcomeOverlay" style="position: fixed; inset: 0; background: #0a0f1e; z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: space-between; padding: 24px; overflow-y: auto; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box;">
+  <div id="guestWelcomeOverlay" style="position: fixed; inset: 0; background: #070913; z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: space-between; padding: 24px; overflow-y: auto; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box;">
     
     <!-- Top Header / Logo -->
-    <div style="margin-top: 20px;">
-      <h1 style="font-size: 32px; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); margin-bottom: 5px;">ANIVERSE <span style="color: #fbbf24;">GAME</span></h1>
-      <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;">Эпическая космическая RPG-Игра</p>
+    <div style="margin-top: 15px;">
+      <h1 style="font-size: 34px; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); margin-bottom: 5px; background: linear-gradient(135deg, #fff, #c084fc, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ANIVERSE</h1>
+      <p style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;">Мультимедийный Игровой Портал</p>
     </div>
 
-    <!-- Center Card / Welcome info -->
-    <div style="width: 100%; max-width: 440px; background: rgba(18, 22, 40, 0.7); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 25px rgba(168, 85, 247, 0.15); box-sizing: border-box; backdrop-filter: blur(10px); margin: 20px 0;">
-      <h2 style="font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 12px;">🌐 Играть в браузере с синхронизацией</h2>
-      <p style="font-size: 12px; color: #94a3b8; line-height: 1.5; margin-bottom: 20px;">
-        Добро пожаловать! Вы можете играть в Aniverse Game прямо сейчас в вашем браузере. 
-        Авторизуйтесь через безопасный виджет Telegram ниже, чтобы автоматически восстановить свой прогресс, золото, кристаллы и занять своё почётное место в глобальной таблице лидеров!
-      </p>
-
-      <!-- Telegram Login Widget -->
-      <div style="display: flex; justify-content: center; min-height: 40px; margin-bottom: 24px;">
-        <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                data-telegram-login="Aniverse_gamebot" 
-                data-size="large" 
-                data-radius="10"
-                data-onauth="onTelegramAuth(user)" 
-                data-request-access="write"></script>
+    <!-- Mode Selection Container (Two distinct clear pathways) -->
+    <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 480px; margin: 20px 0;">
+      
+      <!-- MODE 1: CINEMA MODE (🍿 Кинотеатр) -->
+      <div style="background: rgba(30, 27, 45, 0.5); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 20px; padding: 20px; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08); text-align: center; box-sizing: border-box; backdrop-filter: blur(10px);">
+        <div style="font-size: 14px; font-weight: 900; color: #ff6b6b; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">🍿 Онлайн-Кинотеатр</div>
+        <p style="font-size: 11px; color: #94a3b8; line-height: 1.45; margin-bottom: 14px;">Смотрите тысячи популярных аниме и фильмов в Full HD качестве с выбором озвучек совершенно бесплатно и без регистрации!</p>
+        <button id="btnEnterCinema" type="button" style="display: block; width: 100%; padding: 12px; font-size: 12px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25); transition: all 0.15s ease;">🍿 Смотреть Аниме</button>
       </div>
 
-      <!-- Telegram Direct Link Button -->
-      <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" target="_blank" style="display: block; width: 100%; padding: 14px; font-size: 13px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; border-radius: 12px; cursor: pointer; text-decoration: none; box-shadow: 0 8px 20px rgba(168, 85, 247, 0.25); text-align: center; transition: all 0.2s ease;">
-        🤖 Запустить в Telegram
-      </a>
+      <!-- MODE 2: GAME MODE (🎮 Игровая Вселенная) -->
+      <div style="background: rgba(18, 22, 40, 0.6); border: 1px solid rgba(168, 85, 247, 0.22); border-radius: 20px; padding: 20px; box-shadow: 0 8px 24px rgba(168, 85, 247, 0.08); text-align: center; box-sizing: border-box; backdrop-filter: blur(10px);">
+        <div style="font-size: 14px; font-weight: 900; color: #c084fc; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">🎮 Космическая Кликер-RPG</div>
+        <p style="font-size: 11px; color: #94a3b8; line-height: 1.45; margin-bottom: 14px;">Запустите игру, нанимайте наёмников, зачищайте этажи Башни Испытаний, куйте снаряжение и соревнуйтесь в Глобальном Топе!</p>
+        
+        <!-- Telegram Login Widget -->
+        <div style="display: flex; justify-content: center; min-height: 40px; margin-bottom: 12px;" id="tgWidgetContainer"></div>
+
+        <!-- Telegram Direct App Button -->
+        <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" target="_blank" style="display: block; width: 100%; padding: 12px; font-size: 12px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; border-radius: 10px; cursor: pointer; text-decoration: none; box-shadow: 0 6px 18px rgba(168, 85, 247, 0.25); text-align: center; transition: all 0.15s ease;">🤖 Запустить в Telegram</a>
+      </div>
+
     </div>
 
     <!-- Bottom Footer (Yandex Moderation Compliant!) -->
@@ -926,7 +934,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#added8ddddc2dfd9edccc3c4dbc8dfdec880caccc0c883dfd8" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="790a0c0909160b0d391817100f1c0b0a1c541e18141c570b0c">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#45363035352a373105242b2c332037362068222428206b3730" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="32414742425d404672535c5b44574041571f55535f571c4047">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -936,77 +944,31 @@
 
   </div>
 
-  <!-- Anixart-style Header for AniVerse -->
-  <header class="anixart-header" style="width: 100%; max-width: 560px; height: 56px; background: rgba(18, 22, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 9999; box-sizing: border-box; backdrop-filter: blur(8px); margin: 0 auto;">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <!-- Hamburger filter toggle -->
-      <button id="btnToggleFilters" type="button" style="background:transparent; border:none; cursor:pointer; color:#fff; display:flex; align-items:center;">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg>
-      </button>
-      <h2 style="font-size:16px; font-weight:900; letter-spacing:1px; margin:0; text-transform:uppercase; background:linear-gradient(135deg, #fff, #c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">AniVerse</h2>
-    </div>
-    
-    <div style="flex:1; max-width:200px; margin:0 10px;">
-      <input type="text" id="animeSearchInput" placeholder="Поиск аниме..." style="padding: 6px 12px; font-size:11px; border-radius:14px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.05); color:#fff; width:100%;">
-    </div>
-
-    <div style="display:flex; align-items:center; gap:10px;">
-      <!-- Theme Switcher button -->
-      <button id="btnThemeToggle" type="button" style="background:transparent; border:none; cursor:pointer; color:#ffd700; display:flex;">
-        <!-- Moon icon by default -->
-        <span id="themeToggleIcon" style="font-size:16px;">🌙</span>
-      </button>
+  <div class="app">
+    <!-- Anixart-style Header for AniVerse (Hidden inside game by default) -->
+    <header id="anixartHeader" style="width: 100%; height: 56px; background: rgba(18, 22, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.06); display: none; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 9999; box-sizing: border-box; backdrop-filter: blur(8px); flex-shrink:0;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <!-- Hamburger filter toggle -->
+        <button id="btnToggleFilters" type="button" style="background:transparent; border:none; cursor:pointer; color:#fff; display:flex; align-items:center;">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg>
+        </button>
+        <h2 style="font-size:16px; font-weight:900; letter-spacing:1px; margin:0; text-transform:uppercase; background:linear-gradient(135deg, #fff, #c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">AniVerse</h2>
+      </div>
       
-      <!-- App Switcher button -->
-      <button id="btnAppToggle" type="button" style="background:linear-gradient(135deg, #a855f7, #7c3aed); border:none; border-radius:10px; color:#fff; font-size:10px; font-weight:900; padding:6px 12px; cursor:pointer; text-transform:uppercase; box-shadow:0 0 10px rgba(168,85,247,0.3);">🎮 Игра</button>
-    </div>
-  </header>
-
-  <div class="app" style="padding-top: 0 !important; max-width: 560px; margin: 0 auto; min-height: calc(100vh - 56px);">
-    
-    <!-- ================= VIEW 1: ANIME PORTAL VIEW ================= -->
-    <div id="anime-portal-view" style="display: flex; flex-direction: column; width: 100%; flex: 1;">
-      <!-- Advanced Dropdown Filter Bar (Anixart style) -->
-      <div id="anixartFilterDropdown" style="display:none; padding: 14px var(--page-pad); background:rgba(18,22,40,0.95); border-bottom:1px solid rgba(255,255,255,0.06);">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; text-align:left;">
-          <div>
-            <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px;">Жанры</label>
-            <select id="filterGenre" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
-              <option value="all">Все жанры</option>
-              <option value="Экшен">Экшен</option>
-              <option value="Фэнтези">Фэнтези</option>
-              <option value="Приключения">Приключения</option>
-              <option value="Комедия">Комедия</option>
-              <option value="Детектив">Детектив</option>
-              <option value="Драма">Драма</option>
-              <option value="Сёнен">Сёнен</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px;">Год выпуска</label>
-            <select id="filterYear" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
-              <option value="all">Все годы</option>
-              <option value="2024">2024</option>
-              <option value="2023">2023</option>
-              <option value="2022">2022</option>
-              <option value="2020">2020</option>
-              <option value="2019">2019</option>
-              <option value="2017">2017</option>
-              <option value="2013">2013</option>
-              <option value="2004">2004</option>
-              <option value="1999">1999</option>
-            </select>
-          </div>
-        </div>
+      <div style="flex:1; max-width:200px; margin:0 10px;">
+        <input type="text" id="animeSearchInput" placeholder="Поиск аниме..." style="padding: 6px 12px; font-size:11px; border-radius:14px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.05); color:#fff; width:100%;">
       </div>
 
-      <!-- Anime Cards Grid -->
-      <div class="anime-container" id="animeGrid"></div>
-    </div>
-
-    <!-- ================= VIEW 2: GAME PORTAL VIEW ================= -->
-    <div id="game-portal-view" style="display: none; flex-direction: column; width: 100%; flex: 1;">
-      <div class="top-bar">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <!-- Theme Switcher button -->
+        <button id="btnThemeToggle" type="button" style="background:transparent; border:none; cursor:pointer; color:#ffd700; display:flex;">
+          <span id="themeToggleIcon" style="font-size:16px;">🌙</span>
+        </button>
+        
+        <!-- App Switcher button -->
+        <button id="btnAppToggle" type="button" style="background:linear-gradient(135deg, #a855f7, #7c3aed); border:none; border-radius:10px; color:#fff; font-size:10px; font-weight:900; padding:6px 12px; cursor:pointer; text-transform:uppercase; box-shadow:0 0 10px rgba(168,85,247,0.3);">🎮 Игра</button>
+      </div>
+    </header>
   <div class="frenzy-overlay" id="frenzyOverlay"></div>
   <div class="frenzy-timer-bar" id="frenzyTimerBar">
     <span>⚡ Золотая лихорадка x5!</span>
@@ -1071,6 +1033,46 @@
 
 
     <div class="pages-shell">
+      
+      <!-- ================= NEW TAB-PAGE: ANIME PORTAL ================= -->
+      <div class="tab-page" id="page-anime" style="flex-direction: column; overflow: hidden; height: 100%;">
+        <!-- Advanced Dropdown Filter Bar (Anixart style) -->
+        <div id="anixartFilterDropdown" style="display:none; padding: 14px var(--page-pad); background:rgba(18,22,40,0.95); border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; text-align:left;">
+            <div>
+              <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px;">Жанры</label>
+              <select id="filterGenre" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
+                <option value="all">Все жанры</option>
+                <option value="Экшен">Экшен</option>
+                <option value="Фэнтези">Фэнтези</option>
+                <option value="Приключения">Приключения</option>
+                <option value="Комедия">Комедия</option>
+                <option value="Детектив">Детектив</option>
+                <option value="Драма">Драма</option>
+                <option value="Сёнен">Сёнен</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px;">Год выпуска</label>
+              <select id="filterYear" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
+                <option value="all">Все годы</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2017">2017</option>
+                <option value="2013">2013</option>
+                <option value="2004">2004</option>
+                <option value="1999">1999</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anime Cards Grid -->
+        <div class="anime-container" id="animeGrid"></div>
+      </div>
     <div class="tab-page active" id="page-home">
       <!-- Location, Level progress and Stats moved here for a much more spacious layout -->
       <div class="location-block" style="padding-top: 12px;">
@@ -1625,8 +1627,7 @@
       <div class="nav-item" data-page="profile"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg></div><span class="nav-label">Профиль</span></div>
     </nav>
 
-    </div><!-- /#game-portal-view -->
-  </div><!-- /.app -->
+  </div>
 
   <div class="modal-overlay" id="chestModal">
     <div class="modal-box">
@@ -6598,25 +6599,48 @@
       // Toggle views logic
       function toggleViewMode(mode) {
         currentViewMode = mode;
-        const animeView = document.getElementById('anime-portal-view');
-        const gameView = document.getElementById('game-portal-view');
+        const header = document.getElementById('anixartHeader');
+        const topBar = document.querySelector('.top-bar');
+        const bottomNav = document.querySelector('.bottom-nav');
         const appBtn = document.getElementById('btnAppToggle');
+        
+        // Hide all tab pages
+        document.querySelectorAll('.tab-page').forEach(p => {
+          p.classList.remove('active');
+          p.style.display = 'none';
+        });
 
         if (mode === 'game') {
-          animeView.style.display = 'none';
-          gameView.style.display = 'flex';
-          appBtn.textContent = '🍿 Аниме';
-          appBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)'; // Red accent
+          // Show game layout
+          header.style.display = 'none'; // Hide Anixart header inside game to keep it 100% original!
+          topBar.style.display = 'grid'; // Show original game currencies top-bar
+          bottomNav.style.display = 'flex'; // Show original bottom-nav
           
-          // Trigger leaderboard refresh if active inside game
+          // Activate game home page
+          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+          const homeNav = document.querySelector('.nav-item[data-page="home"]');
+          if (homeNav) homeNav.classList.add('active');
+          const homePage = document.getElementById('page-home');
+          if (homePage) {
+            homePage.classList.add('active');
+            homePage.style.display = 'flex'; // Ensure flex layout is set!
+          }
+          
           if (el.goalsLeaderboardSection && el.goalsLeaderboardSection.style.display !== 'none') {
             renderLeaderboard();
           }
         } else {
-          animeView.style.display = 'flex';
-          gameView.style.display = 'none';
-          appBtn.textContent = '🎮 Игра';
-          appBtn.style.background = 'linear-gradient(135deg, #a855f7, #7c3aed)'; // Purple accent
+          // Show anime portal layout
+          header.style.display = 'flex'; // Show Anixart header
+          topBar.style.display = 'none'; // Hide original top-bar
+          bottomNav.style.display = 'none'; // Hide original bottom-nav
+          
+          // Activate anime page
+          const animePage = document.getElementById('page-anime');
+          if (animePage) {
+            animePage.classList.add('active');
+            animePage.style.display = 'flex'; // Ensure flex layout is set!
+          }
           renderAnimeGrid();
         }
         triggerHaptic('light');
@@ -6802,5 +6826,6 @@
     </div>
   </div>
 
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
