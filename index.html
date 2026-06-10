@@ -934,7 +934,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#c3b0b6b3b3acb1b783a2adaab5a6b1b0a6eea4a2aea6edb1b6" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="f98a8c8989968b8db99897908f9c8b8a9cd49e98949cd78b8c">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#ea999f9a9a85989eaa8b84839c8f98998fc78d8b878fc4989f" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="bdcec8cdcdd2cfc9fddcd3d4cbd8cfced890dadcd0d893cfc8">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -6733,6 +6733,26 @@
           const genre = document.getElementById('filterGenre').value;
           const year = document.getElementById('filterYear').value;
           renderAnimeGrid(e.target.value, genre, year);
+        });
+
+        // Show "Аниме" tab in bottom-nav if running outside Telegram (on the website!)
+        if (!insideTelegram) {
+          const animeNav = document.getElementById('navItemAnime');
+          if (animeNav) {
+            animeNav.style.display = 'flex';
+          }
+        }
+
+        // Add Escape key keyboard listener to close modal for desktop users
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            const modal = document.getElementById('animePlayerModal');
+            if (modal && modal.classList.contains('show')) {
+              modal.classList.remove('show');
+              document.getElementById('animeIframePlayer').src = ''; // stop playback
+              triggerHaptic('light');
+            }
+          }
         });
         document.getElementById('filterGenre').addEventListener('change', (e) => {
           const query = document.getElementById('animeSearchInput').value;
