@@ -46,6 +46,9 @@
     }
 
     /* Rarity glowing styles */
+    @media (max-width: 768px) {
+      .desktop-only-hint { display: none !important; }
+    }
     /* Skeleton Screen Loading Animation */
     .skeleton-box {
       background-image: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 37%, rgba(255,255,255,0.02) 63%);
@@ -1117,10 +1120,12 @@
   </div>
 
   <!-- Global Breadcrumb & Back Navigation Bar -->
-  <div id="globalNavHeader" style="display: none; width: 100%; height: 40px; background: rgba(10, 12, 22, 0.98); border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center; padding: 0 16px; box-sizing: border-box; position: sticky; top: 0; z-index: 10000; justify-content: space-between; flex-shrink: 0; animation: fadeIn 0.2s ease; margin: 0 auto; max-width: 560px;">
+  <div id="globalNavHeader" style="display: none; width: 100%; height: 40px; background: rgba(10, 12, 22, 0.98); border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center; padding: 0 16px; box-sizing: border-box; position: sticky; top: 0; z-index: 10000; justify-content: space-between; flex-shrink: 0; animation: fadeIn 0.2s ease; margin: 0 auto; max-width: 560px; position:relative;">
+    <!-- Top glowing active section indicator bar (3px height) -->
+    <div id="globalNavIndicatorBar" style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--accent-color); transition: background 0.3s ease; z-index: 11000;"></div>
     <!-- Back to Welcome button (Min 48px tap area!) -->
     <button onclick="goBackToWelcome()" type="button" style="background: transparent; border: none; cursor: pointer; color: var(--accent-color); font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px; padding: 8px 12px; min-width: 48px; min-height: 48px; margin-top:-4px; margin-bottom:-4px; outline: none; -webkit-tap-highlight-color: transparent;">
-      <span>←</span> <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:900;">Назад</span>
+      <span>←</span> <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:900;">Назад</span> <span class="desktop-only-hint" style="font-size: 8px; color: var(--text-muted); margin-left: 6px; text-transform: none; font-weight: normal; vertical-align: middle;">(ESC — На главную)</span>
     </button>
     
     <!-- Breadcrumbs -->
@@ -6503,6 +6508,10 @@
               target.classList.add('active');
               target.scrollTop = 0;
             }
+            // Save active tab inside sessionStorage for cross-nav preservation!
+            if (page !== 'anime') {
+              sessionStorage.setItem('last_active_game_tab', page);
+            }
             const shell = document.querySelector('.pages-shell');
             if (shell) shell.scrollTop = 0;
             if (page === 'shop') renderShop();
@@ -7084,89 +7093,99 @@
 
       // Toggle views logic
       function toggleViewMode(mode, pushState = true) {
-        currentViewMode = mode;
-        const header = document.getElementById('anixartHeader');
-        const topBar = document.querySelector('.top-bar');
-        const bottomNav = document.querySelector('.bottom-nav');
-        const appBtn = document.getElementById('btnAppToggle');
-        const globalHeader = document.getElementById('globalNavHeader');
-        
-        const insideTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
-
-        // Hide all tab pages by removing active class and clearing any inline display styles
-        document.querySelectorAll('.tab-page').forEach(p => {
-          p.classList.remove('active');
-          p.style.display = '';
-        });
-
-        if (mode === 'game') {
-          // Show game layout
-          header.style.display = 'none'; // Hide Anixart header inside game to keep it 100% original!
-          topBar.style.display = ''; // Show original game currencies top-bar
-          bottomNav.style.display = ''; // Ensure bottom-nav is visible
+        showTemporaryLoader(() => {
+          currentViewMode = mode;
+          const header = document.getElementById('anixartHeader');
+          const topBar = document.querySelector('.top-bar');
+          const bottomNav = document.querySelector('.bottom-nav');
+          const appBtn = document.getElementById('btnAppToggle');
+          const globalHeader = document.getElementById('globalNavHeader');
+          const indicatorBar = document.getElementById('globalNavIndicatorBar');
           
-          if (globalHeader) {
-            if (!insideTelegram) {
-              globalHeader.style.display = 'flex';
-              document.getElementById('breadcrumbCurrentView').textContent = 'Игра';
-            } else {
-              globalHeader.style.display = 'none';
+          const insideTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+
+          // Hide all tab pages by removing active class and clearing any inline display styles
+          document.querySelectorAll('.tab-page').forEach(p => {
+            p.classList.remove('active');
+            p.style.display = '';
+          });
+
+          if (mode === 'game') {
+            state.gameStartedAt = Date.now(); // Track active session duration for exit alert
+
+            // Show game layout
+            header.style.display = 'none';
+            topBar.style.display = '';
+            bottomNav.style.display = '';
+            
+            if (globalHeader) {
+              if (!insideTelegram) {
+                globalHeader.style.display = 'flex';
+                document.getElementById('breadcrumbCurrentView').textContent = 'Игра';
+                if (indicatorBar) indicatorBar.style.background = '#8A2BE2'; // Glowing violet for game!
+              } else {
+                globalHeader.style.display = 'none';
+              }
             }
-          }
 
-          // Reset active class on bottom navigation items
-          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-          const homeNav = document.querySelector('.nav-item[data-page="home"]');
-          if (homeNav) homeNav.classList.add('active');
-          
-          const homePage = document.getElementById('page-home');
-          if (homePage) {
-            homePage.classList.add('active');
-          }
-          
-          if (el.goalsLeaderboardSection && el.goalsLeaderboardSection.style.display !== 'none') {
-            renderLeaderboard();
-          }
+            // Restore last active game tab from sessionStorage!
+            const lastTab = sessionStorage.getItem('last_active_game_tab') || 'home';
 
-          if (pushState && !insideTelegram) {
-            window.history.pushState({ view: "game" }, "", "#game");
-          }
-        } else {
-          // Show anime portal layout
-          header.style.display = 'flex'; // Show Anixart header
-          topBar.style.display = 'none'; // Hide original top-bar
-          
-          if (globalHeader) {
-            if (!insideTelegram) {
-              globalHeader.style.display = 'flex';
-              document.getElementById('breadcrumbCurrentView').textContent = 'Кинотеатр';
-            } else {
-              globalHeader.style.display = 'none';
-            }
-          }
-
-          // Keep bottom-nav visible on site so browser users can switch back to the game seamlessly!
-          if (insideTelegram) {
-            bottomNav.style.display = 'none'; // Hide bottom-nav inside Telegram for clean anime view
-          } else {
-            bottomNav.style.display = 'flex'; // Show bottom-nav on website
+            // Reset active class on bottom navigation items
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            const animeNav = document.getElementById('navItemAnime');
-            if (animeNav) animeNav.classList.add('active');
-          }
-          
-          // Activate anime page
-          const animePage = document.getElementById('page-anime');
-          if (animePage) {
-            animePage.classList.add('active');
-          }
-          renderAnimeGrid();
+            const savedNav = document.querySelector(`.nav-item[data-page="${lastTab}"]`);
+            if (savedNav) savedNav.classList.add('active');
+            
+            const savedPage = document.getElementById('page-' + lastTab);
+            if (savedPage) {
+              savedPage.classList.add('active');
+            }
+            
+            if (lastTab === 'shop') renderShop();
+            if (el.goalsLeaderboardSection && el.goalsLeaderboardSection.style.display !== 'none') {
+              renderLeaderboard();
+            }
 
-          if (pushState && !insideTelegram) {
-            window.history.pushState({ view: "anime" }, "", "#anime");
+            if (pushState && !insideTelegram) {
+              window.history.pushState({ view: "game" }, "", "#game");
+            }
+          } else {
+            // Show anime portal layout
+            header.style.display = 'flex';
+            topBar.style.display = 'none';
+            
+            if (globalHeader) {
+              if (!insideTelegram) {
+                globalHeader.style.display = 'flex';
+                document.getElementById('breadcrumbCurrentView').textContent = 'Кинотеатр';
+                if (indicatorBar) indicatorBar.style.background = '#FF4500'; // Glowing red for cinema!
+              } else {
+                globalHeader.style.display = 'none';
+              }
+            }
+
+            if (insideTelegram) {
+              bottomNav.style.display = 'none';
+            } else {
+              bottomNav.style.display = 'flex';
+              document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+              const animeNav = document.getElementById('navItemAnime');
+              if (animeNav) animeNav.classList.add('active');
+            }
+            
+            // Activate anime page
+            const animePage = document.getElementById('page-anime');
+            if (animePage) {
+              animePage.classList.add('active');
+            }
+            renderAnimeGrid();
+
+            if (pushState && !insideTelegram) {
+              window.history.pushState({ view: "anime" }, "", "#anime");
+            }
           }
-        }
-        triggerHaptic('light');
+          triggerHaptic('light');
+        }, 500);
       }
 
       // Day/Night theme toggler
@@ -7194,23 +7213,35 @@
         const globalHeader = document.getElementById('globalNavHeader');
         const insideTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
 
-        if (overlay) {
-          overlay.style.display = 'flex';
-          
-          if (!insideTelegram) {
-            window.history.pushState({ view: "welcome" }, "", "#welcome");
+        // Exit confirmation logic if in active game for more than 30 seconds
+        if (currentViewMode === 'game') {
+          const sessionTime = Date.now() - (state.gameStartedAt || Date.now());
+          if (sessionTime > 30000) {
+            if (!confirm('⚠️ Прогресс сохраняется автоматически. Вы уверены, что хотите выйти из игры к меню выбора?')) {
+              return;
+            }
           }
-
-          // Stop active playback and close modal
-          closePipPlayer();
-          const iframe = document.getElementById('animeIframePlayer');
-          if (iframe) iframe.src = '';
-          const modal = document.getElementById('animePlayerModal');
-          if (modal) modal.classList.remove('show');
-
-          if (globalHeader) globalHeader.style.display = 'none';
-          triggerHaptic('medium');
         }
+
+        showTemporaryLoader(() => {
+          if (overlay) {
+            overlay.style.display = 'flex';
+            
+            if (!insideTelegram) {
+              window.history.pushState({ view: "welcome" }, "", "#welcome");
+            }
+
+            // Stop active playback and close modal
+            closePipPlayer();
+            const iframe = document.getElementById('animeIframePlayer');
+            if (iframe) iframe.src = '';
+            const modal = document.getElementById('animePlayerModal');
+            if (modal) modal.classList.remove('show');
+
+            if (globalHeader) globalHeader.style.display = 'none';
+            triggerHaptic('medium');
+          }
+        }, 500);
       };
 
       // Handle Browser/Phone BACK button press smoothly!
@@ -7453,14 +7484,33 @@
           });
         }
 
-        // Add Escape key keyboard listener to close modal for desktop users
+        // Add Escape key keyboard listener for desktop users (Close modals and goBackToWelcome)
         document.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
             const modal = document.getElementById('animePlayerModal');
+            const pip = document.getElementById('floatingPipPlayer');
+            const wModal = document.getElementById('wormholeModal');
+            const cModal = document.getElementById('chestModal');
+
             if (modal && modal.classList.contains('show')) {
               modal.classList.remove('show');
               document.getElementById('animeIframePlayer').src = ''; // stop playback
+              closePipPlayer();
               triggerHaptic('light');
+            } else if (pip && pip.style.display !== 'none') {
+              closePipPlayer();
+            } else if (wModal && wModal.classList.contains('show')) {
+              wModal.classList.remove('show');
+              triggerHaptic('light');
+            } else if (cModal && cModal.classList.contains('show')) {
+              cModal.classList.remove('show');
+              triggerHaptic('light');
+            } else {
+              // If not in modal, combat, or playback, go back to welcoming screen!
+              const isCombat = state.bossBattleActive || (towerActiveRun && towerActiveRun.state === 'fighting');
+              if (!isCombat && currentViewMode !== 'welcome') {
+                goBackToWelcome();
+              }
             }
           }
         });
