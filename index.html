@@ -24,32 +24,6 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <style>
-    /* Skeleton Screen Loading Animation */
-    .skeleton-box {
-      background-image: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.06) 37%, rgba(255,255,255,0.02) 63%);
-      background-size: 400% 100%;
-      animation: skeletonPulse 1.4s ease infinite;
-      border-radius: 12px;
-    }
-    @keyframes skeletonPulse {
-      0% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* Rarity glowing styles */
-    .rarity-common-glow { box-shadow: 0 0 10px rgba(255,255,255,0.04); }
-    .rarity-rare-glow { box-shadow: 0 0 12px rgba(56,189,248,0.18); border-color: rgba(56,189,248,0.3) !important; }
-    .rarity-epic-glow { box-shadow: 0 0 16px rgba(168,85,247,0.22); border-color: rgba(168,85,247,0.35) !important; }
-    .rarity-legendary-glow { 
-      box-shadow: 0 0 20px rgba(245,158,11,0.28); 
-      border-color: rgba(245,158,11,0.45) !important;
-      animation: legendaryShine 3s infinite alternate;
-    }
-    @keyframes legendaryShine {
-      0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.15) contrast(1.05); }
-    }
-
     .coin-aura{
       position:absolute;
       left:50%;
@@ -119,162 +93,6 @@
     .coins-val{font-size:var(--top-number);font-weight:900;color:#ffd700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;max-width:36vw;overflow:hidden;text-overflow:ellipsis}
     .diamond-val{font-size:clamp(16px,4.5vw,20px);font-weight:800;color:#ead8ff;font-variant-numeric:tabular-nums;line-height:1}
     .rank-badge{position:static;justify-self:center;transform:none;padding:5px 12px;border-radius:999px;border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.06);font-size:10px;letter-spacing:1.2px;color:#ffd700;font-weight:800;text-transform:uppercase;white-space:nowrap;min-width:0;max-width:40vw;overflow:hidden;text-overflow:ellipsis;text-align:center}
-    /* Light Theme (Day Mode) Accents */
-    body.theme-light {
-      background: #f1f5f9 !important;
-      color: #1e293b !important;
-    }
-    body.theme-light .app {
-      background: #f1f5f9 !important;
-    }
-    body.theme-light .admin-card, 
-    body.theme-light .quest-strip, 
-    body.theme-light .bank-card, 
-    body.theme-light .ad-card, 
-    body.theme-light .profile-card, 
-    body.theme-light .shop-item,
-    body.theme-light .collection-card,
-    body.theme-light .boss-card,
-    body.theme-light .role-card,
-    body.theme-light .browser-login-card,
-    body.theme-light .filter-bar,
-    body.theme-light .codex-item-card {
-      background: #ffffff !important;
-      border: 1px solid rgba(0,0,0,0.06) !important;
-      color: #1e293b !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
-    }
-    body.theme-light h2, body.theme-light h3, body.theme-light .talent-name, body.theme-light .quest-title, body.theme-light .shop-section-title {
-      color: #0f172a !important;
-    }
-    body.theme-light .sub-tab-bar {
-      background: rgba(0,0,0,0.02) !important;
-      border: 1px solid rgba(0,0,0,0.05) !important;
-    }
-    body.theme-light .sub-tab {
-      background: #f8fafc !important;
-      border: 1px solid rgba(0,0,0,0.05) !important;
-      color: #475569 !important;
-    }
-    body.theme-light .sub-tab.active {
-      background: rgba(239, 68, 68, 0.08) !important;
-      border-color: rgba(239, 68, 68, 0.2) !important;
-      color: #ef4444 !important;
-    }
-    body.theme-light .bottom-nav {
-      background: #ffffff !important;
-      border-top: 1px solid rgba(0,0,0,0.06) !important;
-    }
-    body.theme-light .nav-icon-wrap svg {
-      fill: #64748b !important;
-    }
-    body.theme-light .nav-label {
-      color: #64748b !important;
-    }
-    body.theme-light .nav-item.active .nav-icon-wrap svg,
-    body.theme-light .nav-item.active .nav-label {
-      fill: #ef4444 !important;
-      color: #ef4444 !important;
-    }
-    body.theme-light .top-bar {
-      background: #ffffff !important;
-      border-bottom: 1px solid rgba(0,0,0,0.06) !important;
-    }
-    body.theme-light .coins-val {
-      color: #eab308 !important;
-    }
-    body.theme-light .diamond-val {
-      color: #4f46e5 !important;
-    }
-    body.theme-light .rank-badge {
-      background: rgba(239, 68, 68, 0.05) !important;
-      border: 1px solid rgba(239, 68, 68, 0.15) !important;
-      color: #ef4444 !important;
-    }
-
-    /* Anixart-style Anime Grid CSS */
-    .anime-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 12px;
-      padding: 14px var(--page-pad) 96px var(--page-pad) !important;
-      width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    @media(max-width: 380px) {
-      .anime-container {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    .anime-card-item {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.03);
-      border-radius: 14px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.22s ease;
-      text-align: left;
-    }
-    .anime-card-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(168,85,247,0.15);
-      border-color: rgba(168,85,247,0.25);
-    }
-    .anime-poster-wrap {
-      position: relative;
-      width: 100%;
-      padding-top: 142%; /* Aspect ratio of posters */
-      background: #111;
-      overflow: hidden;
-    }
-    .anime-poster {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-    .anime-card-item:hover .anime-poster {
-      transform: scale(1.05);
-    }
-    .anime-badge-rating {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: #2a6ea5;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 900;
-      padding: 3px 6px;
-      border-radius: 6px;
-      z-index: 2;
-    }
-    .anime-info-box {
-      padding: 8px 10px 10px 10px;
-    }
-    .anime-card-title {
-      font-size: 11px;
-      font-weight: 900;
-      color: #fff;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    body.theme-light .anime-card-title {
-      color: #0f172a;
-    }
-    .anime-card-meta {
-      font-size: 9px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
     .coin-art{--c1:#fff0a6;--c2:#ffd700;--c3:#9c6400;--mark:#5a3e00;--glow:rgba(255,215,0,.22);position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 28%,var(--c1),var(--c2) 58%,var(--c3));box-shadow:inset 0 6px 12px rgba(255,255,255,.15),inset 0 -8px 14px rgba(0,0,0,.22),0 0 18px var(--glow);overflow:hidden}
     .coin-art:before{content:'';position:absolute;top:12%;left:18%;width:42%;height:18%;border-radius:50%;transform:rotate(-18deg);background:radial-gradient(ellipse,rgba(255,255,255,.35),transparent 72%)}
     .coin-art:after{content:'';position:absolute;inset:7%;border-radius:50%;border:2px solid rgba(255,255,255,.16)}
@@ -913,95 +731,8 @@
       }
     }
   </style>
-  <!-- Telegram Browser Auth Callback -->
-  <script type="text/javascript">
-    function onTelegramAuth(user) {
-      localStorage.setItem("tg_auth_user", JSON.stringify(user));
-      window.location.reload();
-    }
-  </script>
 </head>
 <body class="theme-default">
-  <!-- Unified Welcoming/Login Overlay (Visible only to guests outside Telegram) -->
-  <div id="guestWelcomeOverlay" style="position: fixed; inset: 0; background: #070913; z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: space-between; padding: 24px; overflow-y: auto; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box;">
-    
-    <!-- Top Header / Logo -->
-    <div style="margin-top: 15px;">
-      <h1 style="font-size: 34px; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); margin-bottom: 5px; background: linear-gradient(135deg, #fff, #c084fc, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ANIVERSE</h1>
-      <p style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;">Мультимедийный Игровой Портал</p>
-    </div>
-
-    <!-- Mode Selection Container (Two distinct clear pathways) -->
-    <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 480px; margin: 20px 0;">
-      
-      <!-- MODE 1: CINEMA MODE (🍿 Кинотеатр) -->
-      <div style="background: rgba(30, 27, 45, 0.5); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 20px; padding: 20px; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08); text-align: center; box-sizing: border-box; backdrop-filter: blur(10px);">
-        <div style="font-size: 14px; font-weight: 900; color: #ff6b6b; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">🍿 Онлайн-Кинотеатр</div>
-        <p style="font-size: 11px; color: #94a3b8; line-height: 1.45; margin-bottom: 14px;">Смотрите тысячи популярных аниме и фильмов в Full HD качестве с выбором озвучек совершенно бесплатно и без регистрации!</p>
-        <button id="btnEnterCinema" type="button" style="display: block; width: 100%; padding: 12px; font-size: 12px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 6px 18px rgba(239, 68, 68, 0.25); transition: all 0.15s ease;">🍿 Смотреть Аниме</button>
-      </div>
-
-      <!-- MODE 2: GAME MODE (🎮 Игровая Вселенная) -->
-      <div style="background: rgba(18, 22, 40, 0.6); border: 1px solid rgba(168, 85, 247, 0.22); border-radius: 20px; padding: 20px; box-shadow: 0 8px 24px rgba(168, 85, 247, 0.08); text-align: center; box-sizing: border-box; backdrop-filter: blur(10px);">
-        <div style="font-size: 14px; font-weight: 900; color: #c084fc; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">🎮 Космическая Кликер-RPG</div>
-        <p style="font-size: 11px; color: #94a3b8; line-height: 1.45; margin-bottom: 14px;">Запустите игру, нанимайте наёмников, зачищайте этажи Башни Испытаний, куйте снаряжение и соревнуйтесь в Глобальном Топе!</p>
-        
-        <!-- Telegram Login Widget -->
-        <div style="display: flex; justify-content: center; min-height: 40px; margin-bottom: 12px;" id="tgWidgetContainer"></div>
-        
-        <!-- Fallback Login Form (in case Widget is blocked by AdBlock or fails) -->
-        <div id="tgWidgetFallback" style="display:none; flex-direction:column; gap:8px; width:100%; margin-top:8px; margin-bottom:12px;">
-          <div style="font-size: 10px; color: var(--text-muted); line-height: 1.4;">Виджет заблокирован вашим AdBlock / браузером. Войдите по юзернейму:</div>
-          <input type="text" id="fallbackUsernameInput" placeholder="Введите ваш @username..." style="padding:10px; font-size:11px; border-radius:8px; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; text-align:center; outline:none;">
-          <button id="btnSubmitFallbackLogin" type="button" style="padding:10px 0; font-size:11px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold; box-shadow: 0 4px 12px rgba(16,185,129,0.2);">Войти по юзернейму ⚡</button>
-        </div>
-
-        <!-- Telegram Direct App Button -->
-        <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" target="_blank" style="display: block; width: 100%; padding: 12px; font-size: 12px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; border-radius: 10px; cursor: pointer; text-decoration: none; box-shadow: 0 6px 18px rgba(168, 85, 247, 0.25); text-align: center; transition: all 0.15s ease;">🤖 Запустить в Telegram</a>
-      </div>
-
-    </div>
-
-    <!-- Bottom Footer (Yandex Moderation Compliant!) -->
-    <div style="max-width: 500px; padding-bottom: 20px;">
-      <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
-        <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
-        <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#d3a0a6a3a3bca1a793b2bdbaa5b6a1a0b6feb4b2beb6fda1a6" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="7e0d0b0e0e110c0a3e1f1017081b0c0d1b53191f131b500c0b">[email&#160;protected]</span></a>
-      </div>
-      <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
-      <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
-        <b>Политика конфиденциальности:</b> Все игровые сохранения производятся локально на устройствах пользователей и синхронизируются через защищенную базу данных. Мы не собираем и не обрабатываем персональные данные.
-      </p>
-    </div>
-
-  </div>
-
-  <div class="app">
-    <!-- Anixart-style Header for AniVerse (Hidden inside game by default) -->
-    <header id="anixartHeader" style="width: 100%; height: 56px; background: rgba(18, 22, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.06); display: none; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 9999; box-sizing: border-box; backdrop-filter: blur(8px); flex-shrink:0;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <!-- Hamburger filter toggle -->
-        <button id="btnToggleFilters" type="button" style="background:transparent; border:none; cursor:pointer; color:#fff; display:flex; align-items:center;">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg>
-        </button>
-        <h2 style="font-size:16px; font-weight:900; letter-spacing:1px; margin:0; text-transform:uppercase; background:linear-gradient(135deg, #fff, #c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">AniVerse</h2>
-      </div>
-      
-      <div style="flex:1; max-width:200px; margin:0 10px;">
-        <input type="text" id="animeSearchInput" placeholder="Поиск аниме..." style="padding: 6px 12px; font-size:11px; border-radius:14px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.05); color:#fff; width:100%;">
-      </div>
-
-      <div style="display:flex; align-items:center; gap:10px;">
-        <!-- Theme Switcher button -->
-        <button id="btnThemeToggle" type="button" style="background:transparent; border:none; cursor:pointer; color:#ffd700; display:flex;">
-          <span id="themeToggleIcon" style="font-size:16px;">🌙</span>
-        </button>
-        
-        <!-- App Switcher button -->
-        <button id="btnAppToggle" type="button" style="background:linear-gradient(135deg, #a855f7, #7c3aed); border:none; border-radius:10px; color:#fff; font-size:10px; font-weight:900; padding:6px 12px; cursor:pointer; text-transform:uppercase; box-shadow:0 0 10px rgba(168,85,247,0.3);">🎮 Игра</button>
-      </div>
-    </header>
   <div class="frenzy-overlay" id="frenzyOverlay"></div>
   <div class="frenzy-timer-bar" id="frenzyTimerBar">
     <span>⚡ Золотая лихорадка x5!</span>
@@ -1066,128 +797,6 @@
 
 
     <div class="pages-shell">
-      
-      <!-- ================= NEW TAB-PAGE: ANIME PORTAL ================= -->
-            <!-- ================= NEW TAB-PAGE: ANIME PORTAL ================= -->
-      <div class="tab-page" id="page-anime" style="flex-direction: column; overflow: hidden; height: 100%;">
-        <!-- Advanced Dropdown Filter Bar (Anixart style) -->
-        <div id="anixartFilterDropdown" style="display:none; padding: 14px var(--page-pad); background:rgba(18,22,40,0.95); border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0;">
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; text-align:left;">
-            <div>
-              <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px;">Жанры</label>
-              <select id="filterGenre" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
-                <option value="all">Все жанры</option>
-                <option value="Экшен">Экшен</option>
-                <option value="Фэнтези">Фэнтези</option>
-                <option value="Приключения">Приключения</option>
-                <option value="Комедия">Комедия</option>
-                <option value="Детектив">Детектив</option>
-                <option value="Драма">Драма</option>
-                <option value="Сёнен">Сёнен</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px;">Год выпуска</label>
-              <select id="filterYear" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
-                <option value="all">Все годы</option>
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-                <option value="2022">2022</option>
-                <option value="2020">2020</option>
-                <option value="2019">2019</option>
-                <option value="2017">2017</option>
-                <option value="2013">2013</option>
-                <option value="2004">2004</option>
-                <option value="1999">1999</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px;">Избранное</label>
-              <button class="sub-tab" id="btnToggleBookmarkFilter" type="button" style="width:100%; height:31px; padding:0; font-size:11px; margin:0; border:1px solid rgba(255,255,255,0.08); background:#101424; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:4px; font-weight:900;">🔖 Закладки</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Scrollable Portal Content -->
-        <div style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 96px;">
-          
-          <!-- 1. Featured Slider (Карусель Трендов) -->
-          <div class="shop-section-title" style="margin-left: var(--page-pad); margin-top: 15px; text-align: left;">🔥 Горячие Тренды</div>
-          <div class="featured-slider" style="display: flex; gap: 12px; overflow-x: auto; padding: 0 var(--page-pad) 10px var(--page-pad); -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; flex-shrink: 0; scrollbar-width: none;">
-            
-            <div onclick="openAnimePlayerById('1')" style="flex: 0 0 85%; scroll-snap-align: start; background: linear-gradient(135deg, #f97316, #7c3aed); height: 130px; border-radius: 16px; border: 1px solid rgba(168, 85, 247, 0.25); display: flex; flex-direction: column; justify-content: flex-end; padding: 14px; text-align: left; box-sizing: border-box; cursor: pointer; position: relative;">
-              <span style="position:absolute; top:10px; right:10px; background:#ef4444; color:#fff; font-size:8px; font-weight:900; padding:3px 6px; border-radius:6px; text-transform:uppercase;">ТРЕНД #1</span>
-              <div style="font-size: 14px; font-weight: 900; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Магическая битва 2</div>
-              <div style="font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 3px;">Битва в Сибуе разгорается на полную мощность!</div>
-            </div>
-
-            <div onclick="openAnimePlayerById('9')" style="flex: 0 0 85%; scroll-snap-align: start; background: linear-gradient(135deg, #1e3a8a, #7c3aed); height: 130px; border-radius: 16px; border: 1px solid rgba(168, 85, 247, 0.25); display: flex; flex-direction: column; justify-content: flex-end; padding: 14px; text-align: left; box-sizing: border-box; cursor: pointer; position: relative;">
-              <span style="position:absolute; top:10px; right:10px; background:#ef4444; color:#fff; font-size:8px; font-weight:900; padding:3px 6px; border-radius:6px; text-transform:uppercase;">НОВИНКА</span>
-              <div style="font-size: 14px; font-weight: 900; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Поднятие уровня в одиночку</div>
-              <div style="font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 3px;">Из слабейшего в абсолютного повелителя теней!</div>
-            </div>
-
-            <div onclick="openAnimePlayerById('10')" style="flex: 0 0 85%; scroll-snap-align: start; background: linear-gradient(135deg, #ec4899, #4f46e5); height: 130px; border-radius: 16px; border: 1px solid rgba(168, 85, 247, 0.25); display: flex; flex-direction: column; justify-content: flex-end; padding: 14px; text-align: left; box-sizing: border-box; cursor: pointer; position: relative;">
-              <span style="position:absolute; top:10px; right:10px; background:#ef4444; color:#fff; font-size:8px; font-weight:900; padding:3px 6px; border-radius:6px; text-transform:uppercase;">ПОПУЛЯРНОЕ</span>
-              <div style="font-size: 14px; font-weight: 900; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Провожающая в последний путь Фрирен</div>
-              <div style="font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 3px;">Трогательное бессмертное эльфийское путешествие.</div>
-            </div>
-
-          </div>
-
-          <!-- 2. Weekly Release Schedule (Расписание серий) -->
-          <div class="shop-section-title" style="margin-left: var(--page-pad); margin-top: 15px; text-align: left;">📅 Расписание Серий</div>
-          <div class="weekly-schedule" style="display: flex; gap: 8px; overflow-x: auto; padding: 0 var(--page-pad) 10px var(--page-pad); -webkit-overflow-scrolling: touch; scrollbar-width: none;">
-            
-            <div style="flex: 0 0 110px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px; text-align: center; box-sizing: border-box;">
-              <div style="font-size: 9px; font-weight: 900; color: var(--accent-color); text-transform: uppercase;">Пн</div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px;">Магическая 2</div>
-              <div style="font-size: 8px; color: var(--text-muted); margin-top: 2px;">24 серия</div>
-            </div>
-
-            <div style="flex: 0 0 110px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px; text-align: center; box-sizing: border-box;">
-              <div style="font-size: 9px; font-weight: 900; color: var(--accent-color); text-transform: uppercase;">Вт</div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px;">Ван-Пис</div>
-              <div style="font-size: 8px; color: var(--text-muted); margin-top: 2px;">1115 серия</div>
-            </div>
-
-            <div style="flex: 0 0 110px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px; text-align: center; box-sizing: border-box;">
-              <div style="font-size: 9px; font-weight: 900; color: var(--accent-color); text-transform: uppercase;">Ср</div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px;">Блич</div>
-              <div style="font-size: 8px; color: var(--text-muted); margin-top: 2px;">27 серия</div>
-            </div>
-
-            <div style="flex: 0 0 110px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px; text-align: center; box-sizing: border-box;">
-              <div style="font-size: 9px; font-weight: 900; color: var(--accent-color); text-transform: uppercase;">Чт</div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px;">Фармацевт</div>
-              <div style="font-size: 8px; color: var(--text-muted); margin-top: 2px;">19 серия</div>
-            </div>
-
-            <div style="flex: 0 0 110px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px; text-align: center; box-sizing: border-box;">
-              <div style="font-size: 9px; font-weight: 900; color: var(--accent-color); text-transform: uppercase;">Пт</div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px;">Соло Лвл</div>
-              <div style="font-size: 8px; color: var(--text-muted); margin-top: 2px;">13 серия</div>
-            </div>
-
-            <div style="flex: 0 0 110px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px; text-align: center; box-sizing: border-box;">
-              <div style="font-size: 9px; font-weight: 900; color: var(--accent-color); text-transform: uppercase;">Сб</div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px;">Фрирен</div>
-              <div style="font-size: 8px; color: var(--text-muted); margin-top: 2px;">29 серия</div>
-            </div>
-
-            <div style="flex: 0 0 110px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 10px; text-align: center; box-sizing: border-box;">
-              <div style="font-size: 9px; font-weight: 900; color: var(--accent-color); text-transform: uppercase;">Вс</div>
-              <div style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 4px;">Академия 7</div>
-              <div style="font-size: 8px; color: var(--text-muted); margin-top: 2px;">6 серия</div>
-            </div>
-
-          </div>
-
-          <div class="shop-section-title" style="margin-left: var(--page-pad); margin-top: 15px; text-align: left;">🎬 Все Каталоги</div>
-          <!-- Anime Cards Grid -->
-          <div class="anime-container" id="animeGrid" style="padding-top: 4px !important; padding-bottom: 24px !important;"></div>
-        </div>
-      </div>
     <div class="tab-page active" id="page-home">
       <!-- Location, Level progress and Stats moved here for a much more spacious layout -->
       <div class="location-block" style="padding-top: 12px;">
@@ -1483,16 +1092,12 @@
             <span style="font-size:12px; font-weight:800; color:rgba(255,255,255,0.7);">Блёстки (Эффекты кликов)</span>
             <button class="ad-btn" id="btnToggleParticles" type="button" style="width:100px; padding:6px 0; font-size:10px; margin:0; border:1px solid rgba(255,255,255,0.04);">Вкл</button>
           </div>
-          <!-- Website Logout / Exit to Welcome Screen Container -->
-          <div id="btnLogOutContainer" style="display:none; margin-top:14px; border-top:1px solid rgba(255,255,255,0.06); padding-top:12px;">
-            <button class="ad-btn" id="btnLogOutProfile" type="button" style="width:100%; padding:10px 0; font-size:11px; margin:0; background:linear-gradient(135deg, #ef4444, #dc2626); color:#fff; border:none; border-radius:10px; font-weight:bold; box-shadow: 0 4px 12px rgba(239,68,68,0.25);">🚪 Выйти из аккаунта</button>
-          </div>
         </div>
 
         <!-- Adsterra 300x250 Square Banner Slot 2 -->
         <div style="display: flex; justify-content: center; margin: 15px 0;">
           <div style="width: 300px; height: 250px; background: rgba(18, 22, 40, 0.7); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
-            <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript">
+            <script type="text/javascript">
               atOptions = {
                 'key' : '11db4febd0ee37a031f2e03afadafa8d',
                 'format' : 'iframe',
@@ -1648,8 +1253,7 @@
             <h3 style="color:#a855f7; font-size:14px; margin:0;">🔋 Оффлайн-Аккумулятор</h3>
             <span id="offlineLimitText" style="font-size:10px; font-weight:900; background:rgba(168, 85, 247, 0.15); color:#a855f7; padding:3px 8px; border-radius:6px;">2 ЧАСА</span>
           </div>
-          <p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px; display:none;" id="batteryInfoText">По умолчанию оффлайн-доход копится только первые 2 часа после выхода. Заряжайте аккумулятор просмотром рекламы на +1 час для следующего выхода (макс. 12 часов)! При входе в игру заряд сбросится до базовых 2 часов.</p>
-          <span onclick="toggleBatteryInfo()" style="font-size:10px; color:var(--accent-color); cursor:pointer; display:block; margin-bottom:10px; font-weight:800; text-align:left;" id="btnBatteryInfoToggle">Читать правила аккумулятора ℹ️</span>
+          <p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px;">По умолчанию оффлайн-доход копится только первые 2 часа после выхода. Заряжайте аккумулятор просмотром рекламы на +1 час для следующего выхода (макс. 12 часов)! При входе в игру заряд сбросится до базовых 2 часов.</p>
           <button class="ad-btn" id="btnChargeOfflineBattery" type="button" style="padding:10px 0; font-size:11px; background:linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; width:100%;">Зарядить аккумулятор на +1 час 📺</button>
         </div>
 
@@ -1695,7 +1299,12 @@
         <div class="adsgram-task-card">
           <div class="adsgram-task-title">AdsGram Task</div>
           <div class="adsgram-task-desc">Выполните рекламное задание AdsGram и получите внутриигровую награду. Сейчас за выполнение выдаётся +20 кристаллов.</div>
-          <div id="adsgramTaskPlaceholder"></div>
+          <adsgram-task
+             data-block-id='task-33936'
+             data-debug='false'
+             data-debug-console='false'
+             class='task'
+          ></adsgram-task>
         </div>
 
         <div class="bonus-info-card">
@@ -5313,11 +4922,7 @@
         if (leaderboardLoadingInProgress) return;
         leaderboardLoadingInProgress = true;
 
-        el.leaderboardList.innerHTML = `
-          <div class="skeleton-box" style="height:50px; margin-bottom:8px; width:100%;"></div>
-          <div class="skeleton-box" style="height:50px; margin-bottom:8px; width:100%;"></div>
-          <div class="skeleton-box" style="height:50px; margin-bottom:8px; width:100%;"></div>
-        `;
+        el.leaderboardList.innerHTML = '<div style="text-align:center; padding: 20px 0; font-size:11px; color:rgba(255,255,255,0.4);"><div class="spinner" style="border-top-color:#fbbf24; width:20px; height:20px; margin:0 auto 8px auto;"></div>Загрузка топа...</div>';
 
         fetch('/api/leaderboard', {
           mode: 'cors',
@@ -5705,13 +5310,6 @@
 
         el.goldVal.textContent = fmt(state.gold);
         el.gemsVal.textContent = fmt(state.gems);
-
-        const elWood = document.getElementById('matWoodVal');
-        const elOre = document.getElementById('matOreVal');
-        const elScale = document.getElementById('matScaleVal');
-        if (elWood) elWood.textContent = fmt(state.materials.wood || 0);
-        if (elOre) elOre.textContent = fmt(state.materials.ore || 0);
-        if (elScale) elScale.textContent = fmt(state.materials.scale || 0);
         el.cpsVal.textContent = fmt(getAutoIncome());
         el.cpcVal.textContent = fmt(getClickPower());
         el.comboVal.textContent = 'x' + getComboMult().toFixed(2);
@@ -6302,112 +5900,7 @@
           });
         });
 
-            // --- Premium UX Polish & Mock Comments ---
-      const MOCK_COMMENTS = {
-        '1': [
-          { author: 'SatoruFan', text: 'Огонь! Сибуя — лучшая арка в истории аниме!' },
-          { author: 'ProClicker', text: 'Потрясающая рисовка и анимация драк!' }
-        ],
-        '2': [
-          { author: 'ZoroMyHero', text: 'Gear 5 — это исторический момент!' },
-          { author: 'LuffyKing', text: 'Ван Пис бессмертен.' }
-        ],
-        '9': [
-          { author: 'ShadowKing', text: 'Сон Джин Ву просто имба! Анимация 10/10.' },
-          { author: 'SoloPlayer', text: 'Жду 2 сезон с нетерпением!' }
-        ]
-      };
-
-      function renderComments(animeId) {
-        const listEl = document.getElementById('animeCommentsList');
-        if (!listEl) return;
-
-        const base = MOCK_COMMENTS[animeId] || [
-          { author: 'AnimeBoy', text: 'Отличная серия! Рекомендую к просмотру.' },
-          { author: 'Sakura_Chan', text: 'Очень трогательный и эмоциональный сюжет.' }
-        ];
-
-        let userComments = [];
-        try {
-          const raw = localStorage.getItem(`comments_anime_${animeId}`);
-          if (raw) userComments = JSON.parse(raw);
-        } catch(e) {}
-
-        const all = base.concat(userComments);
-
-        let html = '';
-        all.forEach(c => {
-          html += `
-            <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.02); border-radius:8px; padding:6px 10px; margin-bottom:6px; font-size:11px; text-align:left;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
-                <b style="color:var(--accent-color); font-size:9px;">${c.author}</b>
-                <span style="font-size:8px; color:var(--text-muted);">сейчас</span>
-              </div>
-              <div style="color:rgba(255,255,255,0.8); line-height:1.3;">${c.text}</div>
-            </div>
-          `;
-        });
-        listEl.innerHTML = html;
-        listEl.scrollTop = listEl.scrollHeight;
-      }
-
-      window.minimizeToPip = function() {
-        const modal = document.getElementById('animePlayerModal');
-        const pip = document.getElementById('floatingPipPlayer');
-        const iframe = document.getElementById('animeIframePlayer');
-        const pipIframe = document.getElementById('pipIframePlayer');
-        const pipTitle = document.getElementById('pipAnimeTitle');
-        const modalTitle = document.getElementById('modalAnimeTitle').textContent;
-
-        if (modal && pip && iframe && pipIframe) {
-          pipIframe.src = iframe.src;
-          iframe.src = '';
-          pipTitle.textContent = modalTitle;
-          modal.classList.remove('show');
-          pip.style.display = 'flex';
-          showToast('Плеер свёрнут в мини-окно!');
-        }
-      };
-
-      window.maximizePipPlayer = function() {
-        const modal = document.getElementById('animePlayerModal');
-        const pip = document.getElementById('floatingPipPlayer');
-        const iframe = document.getElementById('animeIframePlayer');
-        const pipIframe = document.getElementById('pipIframePlayer');
-
-        if (modal && pip && iframe && pipIframe) {
-          iframe.src = pipIframe.src;
-          pipIframe.src = '';
-          pip.style.display = 'none';
-          modal.classList.add('show');
-        }
-      };
-
-      window.closePipPlayer = function() {
-        const pip = document.getElementById('floatingPipPlayer');
-        const pipIframe = document.getElementById('pipIframePlayer');
-        if (pip && pipIframe) {
-          pipIframe.src = '';
-          pip.style.display = 'none';
-          showToast('Плеер закрыт');
-        }
-      };
-
-      window.toggleBatteryInfo = function() {
-        const text = document.getElementById('batteryInfoText');
-        const trigger = document.getElementById('btnBatteryInfoToggle');
-        if (text) {
-          if (text.style.display === 'none') {
-            text.style.display = 'block';
-            trigger.textContent = 'Свернуть правила ▴';
-          } else {
-            text.style.display = 'none';
-            trigger.textContent = 'Читать правила аккумулятора ℹ️';
-          }
-        }
-      };
-
-      // --- Profile Sub-Tabs Switching Logic ---
+            // --- Profile Sub-Tabs Switching Logic ---
         const btnProfileTabChar = document.getElementById('btnProfileTabChar');
         const btnProfileTabGoals = document.getElementById('btnProfileTabGoals');
         const btnProfileTabCol = document.getElementById('btnProfileTabCol');
@@ -6529,16 +6022,6 @@
 
         if (el.btnChargeOfflineBattery) {
           el.btnChargeOfflineBattery.addEventListener('click', chargeOfflineBatteryAd);
-        }
-
-        const btnLogOut = document.getElementById('btnLogOutProfile');
-        if (btnLogOut) {
-          btnLogOut.addEventListener('click', e => {
-            e.preventDefault();
-            if (!confirm('Вы действительно хотите выйти из аккаунта и вернуться к стартовому меню выбора?')) return;
-            localStorage.removeItem("tg_auth_user"); // Clear browser credentials
-            window.location.reload(); // Reload page to show welcome overlay!
-          });
         }
 
         el.btnReset.addEventListener('click', e => {
@@ -6762,195 +6245,7 @@
 
       function hideLoading() { el.loadingScreen.classList.add('hidden'); }
 
-      // ================= ANIVERSE ANIME PORTAL CONTROLLER =================
-      const ANIME_DB = [
-        { id: '1', title: 'Магическая битва 2', year: 2023, genre: 'Экшен, Сёнен, Фэнтези', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/51009.jpg', description: 'Второй сезон Магической битвы, рассказывающий о трагических событиях в Сибуе и прошлом Сатору Годзё.', kinoboxId: '51009' },
-        { id: '2', title: 'Ван-Пис', year: 1999, genre: 'Приключения, Комедия, Сёнен', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/21.jpg', description: 'Манки Д. Луффи отправляется в плавание, чтобы собрать команду и найти легендарное сокровище Ван-Пис.', kinoboxId: '21' },
-        { id: '3', title: 'Блич', year: 2004, genre: 'Экшен, Сёнен, Мистика', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/269.jpg', description: 'Ичего Куросаки случайно получает силу Синигами и вступает в борьбу со злыми духами — Пустыми.', kinoboxId: '269' },
-        { id: '4', title: 'Монолог фармацевта', year: 2023, genre: 'Драма, Детектив, Исторический', rating: '9.8', poster: 'https://shikimori.one/system/animes/original/54492.jpg', description: 'Маомао, похищенная и проданная в императорский дворец, использует свои знания фармацевтики, чтобы расследовать интриги.', kinoboxId: '54492' },
-        { id: '5', title: 'Чёрный клевер', year: 2017, genre: 'Сёнен, Экшен, Фэнтези', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/34572.jpg', description: 'Аста и Юно, два сироты в мире магии, соревнуются за звание Короля Магов.', kinoboxId: '34572' },
-        { id: '6', title: 'Магическая битва 1', year: 2020, genre: 'Экшен, Сёнен, Мистика', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/40748.jpg', description: 'Итадори Юдзи поглощает палец могущественного проклятия Сукуны и вступает в мир шаманов.', kinoboxId: '40748' },
-        { id: '7', title: 'Истребитель демонов', year: 2019, genre: 'Экшен, Сёнен, Исторический', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/38000.jpg', description: 'Тандзиро Камадо становится истребителем демонов, чтобы спасти свою сестру Нэдзуко, обращённую в демона.', kinoboxId: '38000' },
-        { id: '8', title: 'Атака титанов', year: 2013, genre: 'Драма, Детектив, Экшен', rating: '9.8', poster: 'https://shikimori.one/system/animes/original/16498.jpg', description: 'Человечество борется за выживание против гигантских гуманоидных титанов за массивными стенами.', kinoboxId: '16498' },
-        { id: '9', title: 'Поднятие уровня в одиночку', year: 2024, genre: 'Экшен, Фэнтези, Сёнен', rating: '9.7', poster: 'https://shikimori.one/system/animes/original/52299.jpg', description: 'Слабейший охотник человечества Сон Джин Ву получает уникальную способность прокачиваться в реальном времени.', kinoboxId: '52299' },
-        { id: '10', title: 'Провожающая в последний путь Фрирен', year: 2023, genre: 'Фэнтези, Приключения, Драма', rating: '9.8', poster: 'https://shikimori.one/system/animes/original/52991.jpg', description: 'Бессмертная эльфийка Фрирен отправляется в путешествие по местам боевой славы, чтобы понять людей и быстротечность их жизни.', kinoboxId: '52991' },
-        { id: '11', title: 'Человек-бензопила', year: 2022, genre: 'Экшен, Ужасы, Комедия', rating: '9.4', poster: 'https://shikimori.one/system/animes/original/44511.jpg', description: 'Дэндзи заключает контракт с демонической собакой Потитой и получает способность превращать конечности в бензопилы.', kinoboxId: '44511' },
-        { id: '12', title: 'Моя геройская академия 7', year: 2024, genre: 'Экшен, Сёнен, Фэнтези', rating: '9.3', poster: 'https://shikimori.one/system/animes/original/55026.jpg', description: 'Изуку Мидория и ученики класса 1-А вступают в финальную войну против Альянса Злодеев.', kinoboxId: '55026' }
-      ];
-
-      let currentViewMode = 'anime'; // 'anime' or 'game'
-      let currentThemeMode = 'dark'; // 'dark' or 'light'
-
-      function renderAnimeGrid(searchQuery = '', filterGenre = 'all', filterYear = 'all') {
-        const grid = document.getElementById('animeGrid');
-        if (!grid) return;
-
-        const query = searchQuery.toLowerCase().trim();
-        const filtered = ANIME_DB.filter(anime => {
-          const matchQuery = anime.title.toLowerCase().includes(query) || anime.genre.toLowerCase().includes(query);
-          const matchGenre = filterGenre === 'all' || anime.genre.includes(filterGenre);
-          const matchYear = filterYear === 'all' || String(anime.year) === String(filterYear);
-          return matchQuery && matchGenre && matchYear;
-        });
-
-        if (filtered.length === 0) {
-          grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px 0; color: var(--text-muted); font-size:13px;">Ничего не найдено. Попробуйте изменить параметры поиска!</div>';
-          return;
-        }
-
-        let html = '';
-        filtered.forEach(anime => {
-          html += `
-            <div class="anime-card-item" onclick="openAnimePlayerById('${anime.id}')">
-              <div class="anime-poster-wrap">
-                <span class="anime-badge-rating">⭐️ ${anime.rating}</span>
-                <img class="anime-poster" src="${anime.poster}" alt="${anime.title}" loading="lazy">
-              </div>
-              <div class="anime-info-box">
-                <div class="anime-card-title">${anime.title}</div>
-                <div class="anime-card-meta">${anime.year}, ${anime.genre.split(',')[0]}</div>
-              </div>
-            </div>
-          `;
-        });
-        grid.innerHTML = html;
-      }
-      window.openAnimePlayerById = function(id) {
-        const anime = ANIME_DB.find(item => item.id === id);
-        if (!anime) return;
-        
-        document.getElementById('modalAnimeTitle').textContent = anime.title;
-        document.getElementById('modalAnimeGenre').textContent = anime.genre;
-        document.getElementById('modalAnimeDesc').textContent = anime.description;
-        
-        // Kinobox free responsive player API load
-        const playerUrl = `https://kinobox.tv/api/players?shikimori=${anime.kinoboxId}`;
-        document.getElementById('animeIframePlayer').src = playerUrl;
-        
-        // Show Adsterra 300x250 inside player modal for monetization
-        const adBox = document.getElementById('playerAdBox');
-        if (adBox) {
-          adBox.innerHTML = `
-            <div style="width:300px; height:80px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-              <!-- Simulated banner, can load Adsterra script here -->
-              <span style="font-size:10px; color:var(--text-muted);">РЕКЛАМА • РСЯ / Adsterra</span>
-            </div>
-          `;
-        }
-
-        // Load comments for this anime
-        renderComments(anime.id);
-
-        // Bind comment submission form
-        const btnSubmitComment = document.getElementById('btnSubmitAnimeComment');
-        if (btnSubmitComment) {
-          // Clear any old listeners
-          const newBtn = btnSubmitComment.cloneNode(true);
-          btnSubmitComment.parentNode.replaceChild(newBtn, btnSubmitComment);
-          
-          newBtn.addEventListener('click', () => {
-            const input = document.getElementById('animeCommentInput');
-            const commentText = input.value.trim();
-            if (!commentText) return;
-
-            const tgUser = getTelegramUser();
-            const authorName = tgUser && tgUser.first_name ? tgUser.first_name : 'Гость';
-
-            let userComments = [];
-            try {
-              const raw = localStorage.getItem(`comments_anime_${anime.id}`);
-              if (raw) userComments = JSON.parse(raw);
-            } catch(e) {}
-
-            userComments.push({ author: authorName, text: commentText });
-            localStorage.setItem(`comments_anime_${anime.id}`, JSON.stringify(userComments));
-            
-            input.value = '';
-            renderComments(anime.id);
-            triggerHaptic('light');
-          });
-        }
-
-        document.getElementById('animePlayerModal').classList.add('show');
-        triggerHaptic('medium');
-      };
-
-      // Toggle views logic
-      function toggleViewMode(mode) {
-        currentViewMode = mode;
-        const header = document.getElementById('anixartHeader');
-        const topBar = document.querySelector('.top-bar');
-        const bottomNav = document.querySelector('.bottom-nav');
-        const appBtn = document.getElementById('btnAppToggle');
-        
-        // Hide all tab pages by removing active class and clearing any inline display styles
-        document.querySelectorAll('.tab-page').forEach(p => {
-          p.classList.remove('active');
-          p.style.display = '';
-        });
-
-        if (mode === 'game') {
-          // Show game layout
-          header.style.display = 'none'; // Hide Anixart header inside game to keep it 100% original!
-          topBar.style.display = ''; // Show original game currencies top-bar
-          bottomNav.style.display = ''; // Show original bottom-nav
-          
-          // Activate game home page
-          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-          const homeNav = document.querySelector('.nav-item[data-page="home"]');
-          if (homeNav) homeNav.classList.add('active');
-          const homePage = document.getElementById('page-home');
-          if (homePage) {
-            homePage.classList.add('active');
-          }
-          
-          if (el.goalsLeaderboardSection && el.goalsLeaderboardSection.style.display !== 'none') {
-            renderLeaderboard();
-          }
-        } else {
-          // Show anime portal layout
-          header.style.display = 'flex'; // Show Anixart header
-          topBar.style.display = 'none'; // Hide original top-bar
-          bottomNav.style.display = 'none'; // Hide original bottom-nav
-          
-          // Activate anime page
-          const animePage = document.getElementById('page-anime');
-          if (animePage) {
-            animePage.classList.add('active');
-          }
-          renderAnimeGrid();
-        }
-        triggerHaptic('light');
-      }
-
-      // Day/Night theme toggler
-      function toggleThemeMode() {
-        const body = document.body;
-        const icon = document.getElementById('themeToggleIcon');
-        
-        if (currentThemeMode === 'dark') {
-          currentThemeMode = 'light';
-          body.classList.add('theme-light');
-          icon.textContent = '☀️';
-          icon.style.color = '#ef4444'; // Red accent
-        } else {
-          currentThemeMode = 'dark';
-          body.classList.remove('theme-light');
-          icon.textContent = '🌙';
-          icon.style.color = '#ffd700'; // Yellow
-        }
-        triggerHaptic('light');
-      }
-
       function init() {
-        // Toggle Guest Welcome Overlay based on Telegram Auth status
-        const tgUser = getTelegramUser();
-        const overlay = document.getElementById('guestWelcomeOverlay');
-        if (tgUser) {
-          if (overlay) overlay.style.display = 'none';
-        } else {
-          if (overlay) overlay.style.display = 'flex';
-        }
         try { if (TELEGRAM_WEBAPP && typeof TELEGRAM_WEBAPP.ready === 'function') TELEGRAM_WEBAPP.ready(); } catch (e) {}
         cacheElements();
         loadGame();
@@ -6961,135 +6256,6 @@
         state.lastAppOpenAt = Date.now();
         bindEvents();
         bindAdsgramTask();
-
-        // --- AniVerse Initializations ---
-        const insideTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
-        if (insideTelegram) {
-          toggleViewMode('game'); // Default to GAME inside Telegram Mini App!
-          
-          // Dynamically insert AdsGram Task to prevent crash in external browsers!
-          const taskPlaceholder = document.getElementById('adsgramTaskPlaceholder');
-          if (taskPlaceholder) {
-            taskPlaceholder.innerHTML = `<adsgram-task data-block-id="task-33936" data-debug="false" data-debug-console="false" class="task"></adsgram-task>`;
-            bindAdsgramTask(); // Re-bind task listener!
-          }
-        } else {
-          toggleViewMode('anime'); // Default to ANIME in normal browser!
-        }
-        renderAnimeGrid();
-
-        // Check if the Telegram Widget loaded successfully or got blocked by AdBlocker after 2.5 seconds
-        setTimeout(() => {
-          const container = document.getElementById("tgWidgetContainer");
-          const iframe = container ? container.querySelector("iframe") : null;
-          // If the container has no iframe (meaning the script was blocked by AdBlock or failed to render!)
-          if (!container || !iframe || container.innerHTML.trim() === '') {
-            const fallback = document.getElementById("tgWidgetFallback");
-            if (fallback) fallback.style.display = "flex";
-          }
-        }, 2500);
-
-        // Handle Fallback Username Login
-        const btnFallback = document.getElementById("btnSubmitFallbackLogin");
-        if (btnFallback) {
-          btnFallback.addEventListener("click", () => {
-            let username = document.getElementById("fallbackUsernameInput").value.trim();
-            if (!username) return alert("Пожалуйста, введите ваш @username!");
-            if (!username.startsWith("@")) username = "@" + username;
-
-            // Simple robust string hashing function to generate a consistent, deterministic ID
-            function getDeterministicId(str) {
-              let hash = 0;
-              for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = (hash << 5) - hash + char;
-                hash = hash & hash; // Convert to 32bit integer
-              }
-              return Math.abs(hash);
-            }
-
-            // Generate a safe, consistent simulated Telegram user object based on their username!
-            const normalizedUsername = username.toLowerCase();
-            const mockUser = {
-              id: getDeterministicId(normalizedUsername), // Always the same ID for the same username!
-              first_name: username.substring(1),
-              username: username
-            };
-
-            localStorage.setItem("tg_auth_user", JSON.stringify(mockUser));
-            window.location.reload(); // reload to instantly log in!
-          });
-        }
-
-        // Bind AniVerse UI controls
-        const btnEnterCinema = document.getElementById('btnEnterCinema');
-        if (btnEnterCinema) {
-          btnEnterCinema.addEventListener('click', () => {
-            const overlay = document.getElementById('guestWelcomeOverlay');
-            if (overlay) overlay.style.display = 'none';
-            toggleViewMode('anime'); // Instantly go to anime tab with no login!
-            triggerHaptic('medium');
-          });
-        }
-
-        document.getElementById('btnThemeToggle').addEventListener('click', toggleThemeMode);
-        document.getElementById('btnAppToggle').addEventListener('click', () => {
-          if (currentViewMode === 'anime') toggleViewMode('game');
-          else toggleViewMode('anime');
-        });
-        document.getElementById('btnToggleFilters').addEventListener('click', () => {
-          const filterDropdown = document.getElementById('anixartFilterDropdown');
-          if (filterDropdown) {
-            filterDropdown.style.display = filterDropdown.style.display === 'none' ? 'block' : 'none';
-            triggerHaptic('light');
-          }
-        });
-        document.getElementById('btnClosePlayerModal').addEventListener('click', () => {
-          document.getElementById('animePlayerModal').classList.remove('show');
-          document.getElementById('animeIframePlayer').src = ''; // stop player playback
-          triggerHaptic('light');
-        });
-
-        // Search & filter listeners
-        document.getElementById('animeSearchInput').addEventListener('input', (e) => {
-          const genre = document.getElementById('filterGenre').value;
-          const year = document.getElementById('filterYear').value;
-          renderAnimeGrid(e.target.value, genre, year);
-        });
-
-        // Show "Аниме" tab in bottom-nav if running outside Telegram (on the website!)
-        if (!insideTelegram) {
-          const animeNav = document.getElementById('navItemAnime');
-          if (animeNav) {
-            animeNav.style.display = 'flex';
-          }
-          const logOutContainer = document.getElementById('btnLogOutContainer');
-          if (logOutContainer) {
-            logOutContainer.style.display = 'block';
-          }
-        }
-
-        // Add Escape key keyboard listener to close modal for desktop users
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            const modal = document.getElementById('animePlayerModal');
-            if (modal && modal.classList.contains('show')) {
-              modal.classList.remove('show');
-              document.getElementById('animeIframePlayer').src = ''; // stop playback
-              triggerHaptic('light');
-            }
-          }
-        });
-        document.getElementById('filterGenre').addEventListener('change', (e) => {
-          const query = document.getElementById('animeSearchInput').value;
-          const year = document.getElementById('filterYear').value;
-          renderAnimeGrid(query, e.target.value, year);
-        });
-        document.getElementById('filterYear').addEventListener('change', (e) => {
-          const query = document.getElementById('animeSearchInput').value;
-          const genre = document.getElementById('filterGenre').value;
-          renderAnimeGrid(query, genre, e.target.value);
-        });
         ensureQuest();
         if (state.bossIdx > getMaxUnlockedBossIdx()) state.bossIdx = getMaxUnlockedBossIdx();
         const boss = BOSSES[state.bossIdx];
@@ -7150,60 +6316,6 @@
       else init();
     })();
   </script>
-  <!-- AniVerse Anime Player Modal -->
-  <div class="modal-overlay" id="animePlayerModal" style="z-index: 9999999;">
-    <div class="modal-box" style="border-color:#a855f7; box-shadow: 0 0 35px rgba(168,85,247,0.35); background: rgba(10,12,22,0.98); width:100%; max-width:500px; padding:18px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <h2 id="modalAnimeTitle" style="color:#fff; font-size:16px; margin:0; text-align:left;">Название аниме</h2>
-        <button id="btnModalBookmarkToggle" type="button" style="background:transparent; border:none; cursor:pointer; font-size:18px; margin:0; padding:4px;">🤍</button>
-      </div>
-      <div id="modalAnimeGenre" style="font-size:9px; color:var(--accent-color); font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:12px;">Жанры</div>
-      
-      <!-- Video Player Container (Iframe) -->
-      <div style="position:relative; width:100%; padding-top:56.25%; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
-        <iframe id="animeIframePlayer" src="" style="position:absolute; inset:0; width:100%; height:100%; border:none;" allowfullscreen></iframe>
-      </div>
-
-      <p id="modalAnimeDesc" style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.45; text-align:left; margin-bottom:12px; max-height:80px; overflow-y:auto; white-space:normal;">Описание аниме...</p>
-      
-      <!-- Live Comments Section -->
-      <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top:12px; margin-bottom: 12px; text-align:left;">
-        <span style="font-size:10px; font-weight:900; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:8px;">💬 Обсуждение серии</span>
-        
-        <!-- List of comments -->
-        <div id="animeCommentsList" style="max-height: 120px; overflow-y:auto; margin-bottom:12px; padding-right:4px;"></div>
-
-        <!-- Add a comment form -->
-        <div style="display:flex; gap:8px;">
-          <input type="text" id="animeCommentInput" placeholder="Напишите ваш комментарий..." style="padding:8px 12px; font-size:11px; border-radius:8px; flex:1; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff;">
-          <button class="btn-secondary" id="btnSubmitAnimeComment" type="button" style="padding:6px 12px; border-radius:8px; font-size:10px; margin:0;">Отправить</button>
-        </div>
-      </div>
-      
-      <!-- Embedded Ad Slot in player for monetization -->
-      <div style="display:flex; justify-content:center; margin-bottom:12px;" id="playerAdBox"></div>
-
-      <div style="display:flex; gap:8px; margin-top:8px;">
-        <button class="btn-action" onclick="minimizeToPip()" type="button" style="padding:10px 0; font-size:11px; background: linear-gradient(135deg, var(--accent-color), #7c3aed); flex: 1;">Свернуть в окно 🔳</button>
-        <button class="btn-action" id="btnClosePlayerModal" type="button" style="padding:10px 0; font-size:11px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); color: #fff; flex: 1;">Закрыть плеер</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Floating Picture-in-Picture (PiP) Anime Player -->
-  <div id="floatingPipPlayer" style="position: fixed; bottom: 80px; right: 16px; width: 180px; height: 110px; background: #0e1621; border: 2px solid var(--accent-color); border-radius: 12px; box-shadow: 0 10px 24px rgba(0,0,0,0.5); z-index: 999999; display: none; flex-direction: column; overflow: hidden; border-color: var(--accent-color);">
-    <div style="height: 20px; background: rgba(0,0,0,0.4); display: flex; justify-content: space-between; align-items: center; padding: 0 8px; flex-shrink: 0;">
-      <span style="font-size: 8px; font-weight: bold; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100px;" id="pipAnimeTitle">Аниме</span>
-      <div style="display: flex; gap: 4px; align-items: center;">
-        <button onclick="maximizePipPlayer()" type="button" style="background:transparent; border:none; cursor:pointer; color:#fff; font-size:9px; padding:2px;">🔳</button>
-        <button onclick="closePipPlayer()" type="button" style="background:transparent; border:none; cursor:pointer; color:#ef4444; font-size:9px; padding:2px;">❌</button>
-      </div>
-    </div>
-    <div style="flex: 1; position: relative; background: #000;">
-      <iframe id="pipIframePlayer" src="" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
-    </div>
-  </div>
-
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0a2399abced32d9',t:'MTc4MTE5Nzc4Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0a26d170ce1c100',t:'MTc4MTE5OTg5MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
 </html>
