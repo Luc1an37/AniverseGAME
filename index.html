@@ -1096,6 +1096,16 @@
       <span onclick="quickNavTo('leaderboard')" style="font-size:10px; font-weight:bold; color:#fbbf24; cursor:pointer; background:rgba(251,191,36,0.1); padding:5px 12px; border-radius:8px; border:1px solid rgba(251,191,36,0.2);">🏆 Рейтинг игроков</span>
     </div>
 
+    <!-- Custom PWA Install Prompt Card -->
+    <div id="pwaInstallPrompt" style="display: none; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 16px; padding: 16px; text-align: center; max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 20px; width: 100%; box-sizing: border-box; backdrop-filter: blur(10px); animation: fadeInUp 0.5s ease-out;">
+      <div style="font-size: 12px; font-weight: 900; color: #fff; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">📱 Установить ANIVERSE</div>
+      <p style="font-size: 10px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; text-shadow:none;">Установите приложение на главный экран для быстрого запуска и стабильного оффлайн-геймплея!</p>
+      <div style="display:flex; gap:8px;">
+        <button id="btnPwaLater" type="button" style="flex:1; padding:8px 0; font-size:10px; font-weight:bold; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:8px; color:var(--text-muted); cursor:pointer;">Позже</button>
+        <button id="btnPwaInstall" type="button" style="flex:1; padding:8px 0; font-size:10px; font-weight:bold; background:linear-gradient(135deg, #10b981, #059669); border:none; border-radius:8px; color:#fff; cursor:pointer; box-shadow: 0 4px 10px rgba(16,185,129,0.2);">Установить</button>
+      </div>
+    </div>
+
     <!-- Bottom Footer (Yandex Moderation Compliant!) -->
     <div style="max-width: 500px; padding-bottom: 20px; z-index:2; position:relative;">
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
@@ -6747,6 +6757,38 @@
           el.btnChargeOfflineBattery.addEventListener('click', chargeOfflineBatteryAd);
         }
 
+        // Bind PWA Install Prompt buttons
+        const btnPwaLater = document.getElementById('btnPwaLater');
+        const btnPwaInstall = document.getElementById('btnPwaInstall');
+        const pwaPromptCard = document.getElementById('pwaInstallPrompt');
+
+        if (btnPwaLater && pwaPromptCard) {
+          btnPwaLater.addEventListener('click', (e) => {
+            e.preventDefault();
+            pwaPromptCard.style.display = 'none';
+            triggerHaptic('light');
+          });
+        }
+
+        if (btnPwaInstall && pwaPromptCard) {
+          btnPwaInstall.addEventListener('click', (e) => {
+            e.preventDefault();
+            pwaPromptCard.style.display = 'none';
+            triggerHaptic('heavy');
+            if (deferredPrompt) {
+              deferredPrompt.prompt();
+              deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                  console.log('[PWA] User accepted the install prompt');
+                } else {
+                  console.log('[PWA] User dismissed the install prompt');
+                }
+                deferredPrompt = null;
+              });
+            }
+          });
+        }
+
         const btnLogOut = document.getElementById('btnLogOutProfile');
         if (btnLogOut) {
           btnLogOut.addEventListener('click', e => {
@@ -7206,6 +7248,74 @@
         }
         triggerHaptic('light');
       }
+
+      // --- Mobile Gestures Support (Swipe down and Swipe right) ---
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchEndX = 0;
+      let touchEndY = 0;
+
+      document.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        touchEndY = e.changedTouches[0].clientY;
+        handleGesture();
+      }, { passive: true });
+
+      function handleGesture() {
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
+        
+        // 1. Swipe Right = Back (if swipe distance is at least 120px and vertical drift is minimal)
+        if (diffX > 120 && Math.abs(diffY) < 50) {
+          const isCombat = state.bossBattleActive || (towerActiveRun && towerActiveRun.state === 'fighting');
+          if (!isCombat && currentViewMode !== 'welcome') {
+            goBackToWelcome();
+          }
+        }
+        
+        // 2. Swipe Down = Pull to Refresh (if on scroll-top, swipe distance is at least 150px)
+        if (diffY > 150 && Math.abs(diffX) < 50 && window.scrollY === 0) {
+          // Trigger a beautiful soft refresh!
+          showTemporaryLoader(() => {
+            window.location.reload();
+          }, 800);
+        }
+      }
+
+      // --- PWA Service Worker & Install Prompt Logic ---
+      let deferredPrompt = null;
+      
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('[PWA] Service Worker registered successfully:', reg.scope))
+            .catch(err => console.error('[PWA] Service Worker registration failed:', err));
+        });
+      }
+
+      // Track application visits count
+      let appVisits = parseInt(localStorage.getItem('pwa_app_visits') || '0');
+      appVisits++;
+      localStorage.setItem('pwa_app_visits', String(appVisits));
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        deferredPrompt = e;
+        
+        // Only show custom install prompt banner on 2nd visit onwards!
+        if (appVisits >= 2) {
+          const promptCard = document.getElementById('pwaInstallPrompt');
+          if (promptCard) promptCard.style.display = 'block';
+        }
+      });
 
       // --- Global Navigation & Browser History Support ---
       window.goBackToWelcome = function() {

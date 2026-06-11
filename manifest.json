@@ -1,0 +1,24 @@
+{
+  "name": "ANIVERSE - Игровой Портал",
+  "short_name": "ANIVERSE",
+  "description": "Эпическая космическая RPG-Игра и Онлайн-Кинотеатр в одном флаконе!",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f0f1a",
+  "theme_color": "#8A2BE2",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/192/000000/space-shuttle.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://img.icons8.com/color/512/000000/space-shuttle.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
