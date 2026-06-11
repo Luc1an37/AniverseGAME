@@ -922,6 +922,13 @@
         
         <!-- Telegram Login Widget -->
         <div style="display: flex; justify-content: center; min-height: 40px; margin-bottom: 12px;" id="tgWidgetContainer"></div>
+        
+        <!-- Fallback Login Form (in case Widget is blocked by AdBlock or fails) -->
+        <div id="tgWidgetFallback" style="display:none; flex-direction:column; gap:8px; width:100%; margin-top:8px; margin-bottom:12px;">
+          <div style="font-size: 10px; color: var(--text-muted); line-height: 1.4;">Виджет заблокирован вашим AdBlock / браузером. Войдите по юзернейму:</div>
+          <input type="text" id="fallbackUsernameInput" placeholder="Введите ваш @username..." style="padding:10px; font-size:11px; border-radius:8px; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; text-align:center; outline:none;">
+          <button id="btnSubmitFallbackLogin" type="button" style="padding:10px 0; font-size:11px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold; box-shadow: 0 4px 12px rgba(16,185,129,0.2);">Войти по юзернейму ⚡</button>
+        </div>
 
         <!-- Telegram Direct App Button -->
         <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" target="_blank" style="display: block; width: 100%; padding: 12px; font-size: 12px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a855f7, #7c3aed); border: none; border-radius: 10px; cursor: pointer; text-decoration: none; box-shadow: 0 6px 18px rgba(168, 85, 247, 0.25); text-align: center; transition: all 0.15s ease;">🤖 Запустить в Telegram</a>
@@ -934,7 +941,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#087b7d7878677a7c486966617e6d7a7b6d256f69656d267a7d" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="2a595f5a5a45585e6a4b44435c4f58594f074d4b474f04585f">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#80f3f5f0f0eff2f4c0e1eee9f6e5f2f3e5ade7e1ede5aef2f5" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="cebdbbbebea1bcba8eafa0a7b8abbcbdabe3a9afa3abe0bcbb">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -6780,6 +6787,37 @@
           toggleViewMode('anime'); // Default to ANIME in normal browser!
         }
         renderAnimeGrid();
+
+        // Check if the Telegram Widget loaded successfully or got blocked by AdBlocker after 2.5 seconds
+        setTimeout(() => {
+          const container = document.getElementById("tgWidgetContainer");
+          const iframe = container ? container.querySelector("iframe") : null;
+          // If the container has no iframe (meaning the script was blocked by AdBlock or failed to render!)
+          if (!container || !iframe || container.innerHTML.trim() === '') {
+            const fallback = document.getElementById("tgWidgetFallback");
+            if (fallback) fallback.style.display = "flex";
+          }
+        }, 2500);
+
+        // Handle Fallback Username Login
+        const btnFallback = document.getElementById("btnSubmitFallbackLogin");
+        if (btnFallback) {
+          btnFallback.addEventListener("click", () => {
+            let username = document.getElementById("fallbackUsernameInput").value.trim();
+            if (!username) return alert("Пожалуйста, введите ваш @username!");
+            if (!username.startsWith("@")) username = "@" + username;
+
+            // Generate a safe simulated Telegram user object
+            const mockUser = {
+              id: Math.floor(100000000 + Math.random() * 900000000), // unique random ID
+              first_name: username.substring(1),
+              username: username
+            };
+
+            localStorage.setItem("tg_auth_user", JSON.stringify(mockUser));
+            window.location.reload(); // reload to instantly log in!
+          });
+        }
 
         // Bind AniVerse UI controls
         const btnEnterCinema = document.getElementById('btnEnterCinema');
