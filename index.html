@@ -988,7 +988,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#ea999f9a9a85989eaa8b84839c8f98998fc78d8b878fc4989f" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="b7c4c2c7c7d8c5c3f7d6d9dec1d2c5c4d29ad0d6dad299c5c2">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#b3c0c6c3c3dcc1c7f3d2dddac5d6c1c0d69ed4d2ded69dc1c6" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="7f0c0a0f0f100d0b3f1e1116091a0d0c1a52181e121a510d0a">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -6684,7 +6684,7 @@
         // Hide all tab pages
         document.querySelectorAll('.tab-page').forEach(p => {
           p.classList.remove('active');
-          p.style.display = 'none';
+          p.style.display = '';
         });
 
         if (mode === 'game') {
@@ -6700,7 +6700,7 @@
           const homePage = document.getElementById('page-home');
           if (homePage) {
             homePage.classList.add('active');
-            homePage.style.display = 'flex';
+            homePage.style.display = '';
           }
           
           if (el.goalsLeaderboardSection && el.goalsLeaderboardSection.style.display !== 'none') {
@@ -6716,7 +6716,7 @@
           const animePage = document.getElementById('page-anime');
           if (animePage) {
             animePage.classList.add('active');
-            animePage.style.display = 'flex';
+            animePage.style.display = '';
           }
           renderAnimeGrid();
         }
