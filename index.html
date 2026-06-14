@@ -1242,7 +1242,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#7b080e0b0b14090f3b1a15120d1e09081e561c1a161e55090e" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="93e0e6e3e3fce1e7d3f2fdfae5f6e1e0f6bef4f2fef6bde1e6">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#6f1c1a1f1f001d1b2f0e0106190a1d1c0a42080e020a411d1a" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="a6d5d3d6d6c9d4d2e6c7c8cfd0c3d4d5c38bc1c7cbc388d4d3">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -1993,6 +1993,9 @@
         return {
           gold: 0,
           gems: 0,
+          rewardedAdsToday: 0,
+          lastAdWatchedAt: 0,
+          adsLastDayChecked: '',
           bankDep: 0,
           bankLifetime: 0,
           totalClicks: 0,
@@ -3331,6 +3334,27 @@
           showToast('Reward работает внутри Telegram Mini App');
           return;
         }
+
+        // Daily Limit Check (max 15 per day) & Cooldown Check (15 seconds)
+        if (typeof state !== 'undefined') {
+          const todayStr = new Date().toDateString();
+          if (state.adsLastDayChecked !== todayStr) {
+            state.rewardedAdsToday = 0;
+            state.adsLastDayChecked = todayStr;
+          }
+          if (state.rewardedAdsToday >= 15) {
+            showToast('🚫 Дневной лимит рекламы исчерпан (15/день)!');
+            return;
+          }
+          const now = Date.now();
+          const elapsed = now - (state.lastAdWatchedAt || 0);
+          if (elapsed < 15000) {
+            const wait = Math.ceil((15000 - elapsed) / 1000);
+            showToast('⏳ Подождите ' + wait + ' сек.');
+            return;
+          }
+        }
+
         if (rewardAdInProgress) {
           showToast('Реклама уже запускается');
           return;
@@ -3347,6 +3371,11 @@
 
         controller.show()
           .then(() => {
+            if (typeof state !== 'undefined') {
+              state.rewardedAdsToday = (state.rewardedAdsToday || 0) + 1;
+              state.lastAdWatchedAt = Date.now();
+              saveGame();
+            }
             onReward();
           })
           .catch(result => {
@@ -5985,6 +6014,14 @@
           if (!Array.isArray(state.ownedPets) || !state.ownedPets.length) state.ownedPets = ['pet_none'];
           if (!Array.isArray(state.ownedAuras) || !state.ownedAuras.length) state.ownedAuras = ['aura_none'];
           if (!state.currentAura) state.currentAura = 'aura_none';
+          if (state.rewardedAdsToday === undefined) state.rewardedAdsToday = 0;
+          if (state.lastAdWatchedAt === undefined) state.lastAdWatchedAt = 0;
+          if (state.adsLastDayChecked === undefined) state.adsLastDayChecked = '';
+          const todayStr = new Date().toDateString();
+          if (state.adsLastDayChecked !== todayStr) {
+            state.rewardedAdsToday = 0;
+            state.adsLastDayChecked = todayStr;
+          }
           if (!state.expeditionId) state.expeditionId = 'none';
           if (!state.expeditionEnd) state.expeditionEnd = 0;
           if (state.particlesEnabled === undefined) state.particlesEnabled = true;
@@ -7285,5 +7322,5 @@
   </div>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0bac281bec4cc81',t:'MTc4MTQ1NTA0Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
