@@ -93,6 +93,25 @@
     .coins-val{font-size:var(--top-number);font-weight:900;color:#ffd700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;max-width:36vw;overflow:hidden;text-overflow:ellipsis}
     .diamond-val{font-size:clamp(16px,4.5vw,20px);font-weight:800;color:#ead8ff;font-variant-numeric:tabular-nums;line-height:1}
     .rank-badge{position:static;justify-self:center;transform:none;padding:5px 12px;border-radius:999px;border:1px solid rgba(255,215,0,.2);background:rgba(255,215,0,.06);font-size:10px;letter-spacing:1.2px;color:#ffd700;font-weight:800;text-transform:uppercase;white-space:nowrap;min-width:0;max-width:40vw;overflow:hidden;text-overflow:ellipsis;text-align:center}
+    /* === GLOBAL PREMIUM VARIABLES === */
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a25;
+      --accent-purple: #8A2BE2;
+      --accent-cyan: #00FFFF;
+      --accent-gold: #FFD700;
+      --accent-red: #FF4500;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b0;
+      --border-color: #2a2a3a;
+      --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --shadow-glow: 0 0 20px rgba(138, 43, 226, 0.3);
+      --radius: 16px;
+    }
+
     /* Hide redundant original top-bar to save space and eliminate double elements! */
     .top-bar {
       display: none !important;
@@ -106,34 +125,228 @@
       padding: 4px 6px !important;
     }
 
-    /* Set spacious bottom padding for game tab pages to prevent any overlap with the permanent banner! */
+    /* Set spacious bottom padding for game tab pages (50px ad + 56px menu + extra = 140px) */
     .tab-page {
-      padding-bottom: 340px !important;
+      padding-bottom: 140px !important;
     }
 
-    /* Compact padding for the Cinema tab page (which hides the bottom banner) to maximize viewing space! */
+    /* Compact padding for the Cinema tab page (50px ad + extra = 96px) */
     #page-anime {
       padding-bottom: 96px !important;
     }
 
-    /* Permanent Static Bottom Banner Panel styles */
+    /* Permanent Bottom Ad Panel - sits at the absolute bottom of the viewport (height 50px) */
     #bottomAdPanel {
       position: fixed;
-      bottom: 56px; /* Exactly sits above `.bottom-nav` which is 56px high */
+      bottom: 0;
       left: 50%;
       transform: translate3d(-50%, 0, 0);
       width: 100%;
       max-width: 560px;
-      height: 264px; /* 250px for Adsterra banner + 14px for a thin label 'РЕКЛАМА • Adsterra' */
+      height: 50px;
       background: #070913;
       border-top: 1px solid rgba(255,255,255,0.08);
-      z-index: 998;
+      z-index: 1000; /* Stays on top of everything! */
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       overflow: hidden;
       box-sizing: border-box;
+    }
+
+    /* Bottom navigation bar - pushed ABOVE the banner (bottom: 50px) */
+    .bottom-nav {
+      position: fixed !important;
+      bottom: 50px !important; /* Pushed above the 50px ad panel! */
+      left: 50% !important;
+      transform: translate3d(-50%, 0, 0) !important;
+      width: 100% !important;
+      max-width: 560px !important;
+      height: 56px !important;
+      display: flex !important;
+      justify-content: space-around !important;
+      align-items: center !important;
+      padding: 4px 2px calc(4px + env(safe-area-inset-bottom,0px)) !important;
+      background: rgba(8, 12, 24, 0.95) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+      z-index: 999 !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    /* Cosmic Background & Floating Particles */
+    .cosmic-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        var(--bg-primary);
+    }
+    .particle {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: floatParticle 16s infinite ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes floatParticle {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      25% { transform: translateY(-100px) translateX(50px); }
+      50% { transform: translateY(-50px) translateX(-50px); }
+      75% { transform: translateY(-150px) translateX(30px); }
+    }
+
+    /* Premium Header / Logo and Tagline */
+    .logo {
+      font-size: 40px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(138, 43, 226, 0.4);
+      animation: logoPulse 3s infinite;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    @keyframes logoPulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.22); }
+    }
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+    }
+
+    /* Real-time Online Counter Badge */
+    .online-counter {
+      background: linear-gradient(135deg, var(--accent-red), #ff6b35);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 11px;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 69, 0, 0.35);
+      animation: buttonPulse 2s infinite;
+    }
+    @keyframes buttonPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    /* Premium Welcome Section Cards */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .section-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-1);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .section-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-glow);
+      border-color: var(--accent-purple);
+    }
+    .section-card:hover::before {
+      opacity: 1;
+    }
+    .section-card.cinema::before {
+      background: linear-gradient(90deg, #ff6b6b, #feca57);
+    }
+    .section-card.game::before {
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+    }
+    .section-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 11px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    /* Welcome Section Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.22);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    .btn-cinema {
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      color: white;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+    .btn-cinema:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 107, 107, 0.45);
+    }
+    .btn-game {
+      background: linear-gradient(135deg, var(--accent-purple), #6a0dad);
+      color: white;
+      box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+    }
+    .btn-game:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(138, 43, 226, 0.45);
     }
 
     /* Light Theme (Day Mode) Accents */
@@ -305,22 +518,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    /* Scroll Performance and Hardware-acceleration fixes */
-    .tab-page {
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-    }
-    .pages-shell {
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
-    }
-    .bg-particles {
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
     }
 
     .coin-art{--c1:#fff0a6;--c2:#ffd700;--c3:#9c6400;--mark:#5a3e00;--glow:rgba(255,215,0,.22);position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 28%,var(--c1),var(--c2) 58%,var(--c3));box-shadow:inset 0 6px 12px rgba(255,255,255,.15),inset 0 -8px 14px rgba(0,0,0,.22),0 0 18px var(--glow);overflow:hidden}
@@ -972,72 +1169,70 @@
 </head>
 <body class="theme-default">
   <!-- Unified Welcoming/Login Overlay (Visible only to guests outside Telegram) -->
-  <div id="guestWelcomeOverlay" style="position: fixed; inset: 0; background: radial-gradient(circle at center, #0f0a21 0%, #04050a 100%); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 24px; overflow-y: auto; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; animation: fadeIn 0.4s ease;">
+  <div id="guestWelcomeOverlay" style="position: fixed; inset: 0; background: var(--bg-primary); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 24px; overflow-y: auto; text-align: center; box-sizing: border-box; animation: fadeIn 0.4s ease;">
+    <!-- Cosmic animated particles background -->
+    <div class="cosmic-bg" id="particles"></div>
     
-    <!-- Animated space background effect inside overlay -->
-    <div style="position:absolute; inset:0; background: url('https://www.transparenttextures.com/patterns/black-thread.png'); opacity:0.15; pointer-events:none;"></div>
-
     <!-- Top Header / Logo -->
-    <div style="margin-top: 24px; position:relative; z-index:2;">
-      <h1 class="neon-logo" style="font-size: 36px; font-weight: 900; letter-spacing: 3px; color: #fff; text-transform: uppercase; margin-bottom: 6px; transition: all 0.3s; text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); background: linear-gradient(135deg, #fff, #c084fc, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ANIVERSE</h1>
-      <p style="font-size: 10px; color: rgba(148, 163, 184, 0.7); text-transform: uppercase; letter-spacing: 2px; font-weight: 800;">Мультимедийный Игровой Портал</p>
-      
-      <!-- Live players online counter -->
-      <div style="display:inline-flex; align-items:center; gap:6px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 999px; padding: 4px 14px; margin-top: 14px; font-size: 10px; font-weight: bold; color: #34d399; box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);">
-        <span>🔥 Сейчас онлайн: <span id="onlineCounterVal">1,247</span> игроков</span>
+    <header class="header" style="background: transparent; border-bottom: none; box-shadow: none; margin-top: 30px; margin-bottom: 20px; z-index: 2; width: 100%;">
+      <div class="header-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+        <h1 class="logo">ANIVERSE</h1>
+        <p class="tagline">Мультимедийный Игровой Портал</p>
+        <div class="online-counter" id="online-counter" style="margin-top: 15px;">
+          🔥 Сейчас онлайн: загрузка...
+        </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Mode Selection Container (Two distinct clear pathways) -->
-    <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 480px; margin: 24px 0; position:relative; z-index:2;">
-      
-      <!-- MODE 1: CINEMA MODE (🍿 Кинотеатр) -->
-      <div class="fade-in-up-1" style="background: rgba(18, 22, 40, 0.7); border: 1px solid rgba(255, 69, 0, 0.15); border-radius: 22px; padding: 22px; text-align: center; box-sizing: border-box; backdrop-filter: blur(12px); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 30px rgba(255, 69, 0, 0.15)'; this.style.borderColor='rgba(255, 69, 0, 0.45)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(255, 69, 0, 0.15)';" id="cardCinema">
-        <div style="font-size: 34px; margin-bottom: 8px;">🍿</div>
-        <div style="font-size: 14px; font-weight: 900; color: #ff6b6b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">🍿 Онлайн-Кинотеатр</div>
-        <p style="font-size: 11px; color: #94a3b8; line-height: 1.5; margin-bottom: 16px; text-shadow: none;">Смотрите тысячи популярных аниме и фильмов в Full HD качестве с выбором озвучек совершенно бесплатно и без регистрации!</p>
-        <button id="btnEnterCinema" type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px 32px; font-size: 13px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #ff6b6b, #ff4500); border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 20px rgba(255, 69, 0, 0.35); transition: all 0.2s ease; outline:none;">
-          <span>🍿</span> СМОТРЕТЬ АНИМЕ
+    <!-- Cards Container -->
+    <div style="display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; z-index: 2; margin-bottom: 40px;">
+      <!-- Карточка кинотеатра -->
+      <div class="section-card cinema" id="cardCinema">
+        <span class="section-icon">🍿</span>
+        <h2 class="section-title">Онлайн-Кинотеатр</h2>
+        <p class="section-desc">
+          Смотрите тысячи популярных аниме и фильмов в Full HD качестве с выбором озвучек совершенно бесплатно и без регистрации!
+        </p>
+        <button id="btnEnterCinema" type="button" class="btn btn-cinema" style="width: 100%;">
+          <span>🍿</span> Смотреть Аниме
         </button>
       </div>
 
-      <!-- MODE 2: GAME MODE (🎮 Игровая Вселенная) -->
-      <div class="fade-in-up-2" style="background: rgba(18, 22, 40, 0.7); border: 1px solid rgba(168, 85, 247, 0.15); border-radius: 22px; padding: 22px; text-align: center; box-sizing: border-box; backdrop-filter: blur(12px); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 30px rgba(168, 85, 247, 0.18)'; this.style.borderColor='rgba(168, 85, 247, 0.45)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(168, 85, 247, 0.15)';" id="cardGame">
-        <div style="font-size: 34px; margin-bottom: 8px;">🎮</div>
-        <div style="font-size: 14px; font-weight: 900; color: #c084fc; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">🎮 Космическая Кликер-RPG</div>
-        <p style="font-size: 11px; color: #94a3b8; line-height: 1.5; margin-bottom: 16px; text-shadow: none;">Запустите игру, нанимайте наёмников, зачищайте этажи Башни Испытаний, куйте снаряжение и соревнуйтесь в Глобальном Топе!</p>
-        
-        <!-- Telegram Login Widget -->
+      <!-- Карточка игры -->
+      <div class="section-card game" id="cardGame">
+        <span class="section-icon">🎮</span>
+        <h2 class="section-title">Космическая Кликер-RPG</h2>
+        <p class="section-desc">
+          Запустите игру, нанимайте наёмников, зачищайте этажи Башни Испытаний, куйте снаряжение и соревнуйтесь в Глобальном Топе!
+        </p>
         <div style="display: flex; justify-content: center; min-height: 40px; margin-bottom: 12px;" id="tgWidgetContainer"></div>
         
         <!-- Fallback Login Form -->
         <div id="tgWidgetFallback" style="display:none; flex-direction:column; gap:8px; width:100%; margin-top:8px; margin-bottom:12px;">
-          <div style="font-size: 10px; color: var(--text-muted); line-height: 1.4;">Виджет заблокирован вашим AdBlock / браузером. Войдите по юзернейму:</div>
-          <input type="text" id="fallbackUsernameInput" placeholder="Введите ваш @username..." style="padding:10px; font-size:11px; border-radius:8px; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; text-align:center; outline:none;">
+          <div style="font-size: 10px; color: var(--text-secondary); line-height: 1.4;">Виджет заблокирован вашим AdBlock. Войдите по юзернейму:</div>
+          <input type="text" id="fallbackUsernameInput" placeholder="Введите ваш @username..." style="padding:10px; font-size:11px; border-radius:8px; background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.05); color:#fff; text-align:center; outline:none; font-family:inherit;">
           <button id="btnSubmitFallbackLogin" type="button" style="padding:10px 0; font-size:11px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold; box-shadow: 0 4px 12px rgba(16,185,129,0.2);">Войти по юзернейму ⚡</button>
         </div>
 
-        <!-- Telegram Direct App Button -->
-        <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px 32px; font-size: 13px; font-weight: 900; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #9d4edd, #5a189a); border: none; border-radius: 12px; cursor: pointer; text-decoration: none; box-shadow: 0 6px 20px rgba(168, 85, 247, 0.35); text-align: center; transition: all 0.2s ease; outline:none;">
-          <span>🤖</span> ЗАПУСТИТЬ В TELEGRAM
+        <a href="https://t.me/Aniverse_gamebot/Aniverse_GAME" class="btn btn-game" target="_blank" style="width: 100%;">
+          <span>🤖</span> Запустить в Telegram
         </a>
       </div>
-
     </div>
 
     <!-- Quick Navigation Links (Yandex Moderation Booster!) -->
     <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin-bottom:20px; z-index:2; position:relative;">
-      <span onclick="quickNavTo('schedule')" style="font-size:10px; font-weight:bold; color:var(--accent-color); cursor:pointer; background:rgba(168,85,247,0.1); padding:5px 12px; border-radius:8px; border:1px solid rgba(168,85,247,0.2);">📅 Расписание серий</span>
-      <span onclick="quickNavTo('catalog')" style="font-size:10px; font-weight:bold; color:#ff6b6b; cursor:pointer; background:rgba(255,107,107,0.1); padding:5px 12px; border-radius:8px; border:1px solid rgba(255,107,107,0.2);">🍿 Топ аниме</span>
-      <span onclick="quickNavTo('leaderboard')" style="font-size:10px; font-weight:bold; color:#fbbf24; cursor:pointer; background:rgba(251,191,36,0.1); padding:5px 12px; border-radius:8px; border:1px solid rgba(251,191,36,0.2);">🏆 Рейтинг игроков</span>
+      <span onclick="quickNavTo('schedule')" style="font-size:10px; font-weight:bold; color:var(--accent-cyan); cursor:pointer; background:rgba(0,255,255,0.08); padding:5px 12px; border-radius:8px; border:1px solid rgba(0,255,255,0.15);">📅 Расписание серий</span>
+      <span onclick="quickNavTo('catalog')" style="font-size:10px; font-weight:bold; color:#ff6b6b; cursor:pointer; background:rgba(255,107,107,0.08); padding:5px 12px; border-radius:8px; border:1px solid rgba(255,107,107,0.15);">🍿 Топ аниме</span>
+      <span onclick="quickNavTo('leaderboard')" style="font-size:10px; font-weight:bold; color:#ffd700; cursor:pointer; background:rgba(255,215,0,0.08); padding:5px 12px; border-radius:8px; border:1px solid rgba(255,215,0,0.15);">🏆 Рейтинг игроков</span>
     </div>
 
     <!-- Custom PWA Install Prompt Card -->
-    <div id="pwaInstallPrompt" style="display: none; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 16px; padding: 16px; text-align: center; max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 20px; width: 100%; box-sizing: border-box; backdrop-filter: blur(10px); animation: fadeInUp 0.5s ease-out; z-index:2; position:relative;">
+    <div id="pwaInstallPrompt" style="display: none; background: rgba(138, 43, 226, 0.08); border: 1px solid rgba(138, 43, 226, 0.2); border-radius: 16px; padding: 16px; text-align: center; max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 20px; width: 100%; box-sizing: border-box; backdrop-filter: blur(10px); animation: fadeInUp 0.5s ease-out; z-index:2; position:relative;">
       <div style="font-size: 12px; font-weight: 900; color: #fff; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">📱 Установить ANIVERSE</div>
-      <p style="font-size: 10px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; text-shadow:none;">Установите приложение на главный экран для быстрого запуска и стабильного оффлайн-геймплея!</p>
+      <p style="font-size: 10px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 12px; text-shadow:none;">Установите приложение на главный экран для быстрого запуска и стабильного оффлайн-геймплея!</p>
       <div style="display:flex; gap:8px;">
-        <button id="btnPwaLater" type="button" style="flex:1; padding:8px 0; font-size:10px; font-weight:bold; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:8px; color:var(--text-muted); cursor:pointer;">Позже</button>
+        <button id="btnPwaLater" type="button" style="flex:1; padding:8px 0; font-size:10px; font-weight:bold; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:8px; color:var(--text-secondary); cursor:pointer;">Позже</button>
         <button id="btnPwaInstall" type="button" style="flex:1; padding:8px 0; font-size:10px; font-weight:bold; background:linear-gradient(135deg, #10b981, #059669); border:none; border-radius:8px; color:#fff; cursor:pointer; box-shadow: 0 4px 10px rgba(16,185,129,0.2);">Установить</button>
       </div>
     </div>
@@ -1045,16 +1240,15 @@
     <!-- Bottom Footer (Yandex Moderation Compliant!) -->
     <div style="max-width: 500px; padding-bottom: 20px; z-index:2; position:relative;">
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
-        <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
+        <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#e4979194948b9690a4858a8d9281969781c983858981ca9691" style="color: #64748b; text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="6f1c1a1f1f001d1b2f0e0106190a1d1c0a42080e020a411d1a">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#7b080e0b0b14090f3b1a15120d1e09081e561c1a161e55090e" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="93e0e6e3e3fce1e7d3f2fdfae5f6e1e0f6bef4f2fef6bde1e6">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
         <b>Политика конфиденциальности:</b> Все игровые сохранения производятся локально на устройствах пользователей и синхронизируются через защищенную базу данных. Мы не собираем и не обрабатываем персональные данные.
       </p>
     </div>
-
   </div>
 
   <div class="app" style="padding-top: 0 !important; max-width: 560px; margin: 0 auto; min-height: calc(100vh - 56px); height: calc(100vh - 56px);">
@@ -1395,7 +1589,7 @@
             <div id="towerInsuranceBox" style="display:none; flex-direction:column; align-items:center; text-align:center; padding:15px; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.25); border-radius:14px; margin-bottom:12px;">
               <div style="font-size:26px; margin-bottom:8px;">🌋</div>
               <h3 style="color:#fca5a5; font-size:13px; margin:0 0 6px 0; text-transform:uppercase; letter-spacing:0.8px;">Обвал подземелья!</h3>
-              <p style="font-size:10px; color:rgba(255,255,255,0.42); line-height:1.45; margin-bottom:12px;">Время вышло! Используйте страховку РСЯ/AdsGram, чтобы добавить +10 секунд к таймеру и продолжить бой прямо сейчас!</p>
+              <p style="font-size:10px; color:rgba(255,255,255,0.42); line-height:1.45; margin-bottom:12px;">Время вышло! Используйте страховку, чтобы добавить +10 секунд к таймеру и продолжить бой прямо сейчас!</p>
               <div style="display:flex; gap:8px; width:100%;">
                 <button class="ad-btn" id="btnClaimInsurance" type="button" style="flex:1.2; padding:8px 0; font-size:10px; background: linear-gradient(135deg, #10b981, #059669);">Спасти поход (Реклама)</button>
                 <button class="ad-btn" id="btnRejectInsurance" type="button" style="flex:1; padding:8px 0; font-size:10px; background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04);">Сдаться</button>
@@ -1692,7 +1886,7 @@
         </div>
 
         <div class="adsgram-task-card">
-          <div class="adsgram-task-title">AdsGram Task</div>
+          <div class="adsgram-task-title">Рекламное задание</div>
           <div class="adsgram-task-desc">Выполните рекламное задание AdsGram и получите внутриигровую награду. Сейчас за выполнение выдаётся +20 кристаллов.</div>
           <div id="adsgramTaskPlaceholder"></div>
         </div>
@@ -4235,7 +4429,7 @@
         });
 
         taskEl.addEventListener('onError', () => {
-          showToast('Ошибка AdsGram Task');
+          showToast('Ошибка рекламного задания');
         });
 
         taskEl.addEventListener('onBannerNotFound', () => {
@@ -5075,7 +5269,7 @@
             el.btnStartTower.disabled = true;
             el.btnStartTower.textContent = 'Используйте страховку!';
             el.towerReward.textContent = 'Поход в опасности!';
-            el.towerHintText.textContent = 'Используйте страховку Яндекса/AdsGram для спасения похода или сдайтесь.';
+            el.towerHintText.textContent = 'Используйте страховку AdsGram для спасения похода или сдайтесь.';
           } else {
             if (el.towerInsuranceBox) el.towerInsuranceBox.style.display = 'none';
             if (el.towerSprite) el.towerSprite.style.display = 'inline-block';
@@ -6656,6 +6850,77 @@
       let currentViewMode = 'game'; // 'game' | 'anime'
       let currentThemeMode = 'dark'; // 'dark' | 'light'
 
+      // === REAL-TIME ONLINE COUNTER ===
+      const OnlineCounter = {
+        userId: null,
+        pingInterval: null,
+        
+        init() {
+          // Generate a consistent ID for the user
+          this.userId = localStorage.getItem('aniverse_uid') || 
+                        'user_' + Math.random().toString(36).substr(2, 9);
+          localStorage.setItem('aniverse_uid', this.userId);
+          
+          // Send heartbeat immediately, then every 15 seconds
+          this.pingServer();
+          this.pingInterval = setInterval(() => this.pingServer(), 15000);
+          
+          // Fetch the online counter immediately, then every 30 seconds
+          this.updateOnlineCount();
+          setInterval(() => this.updateOnlineCount(), 30000);
+
+          // Render premium cosmic background particles dynamically!
+          this.initWelcomeParticles();
+        },
+        
+        pingServer() {
+          fetch('/api/online/ping', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({userId: this.userId})
+          }).catch(() => {});
+        },
+        
+        async updateOnlineCount() {
+          try {
+            const response = await fetch('/api/online/count');
+            const data = await response.json();
+            const count = data.count || 1;
+            
+            // Update both elements in UI
+            const onlineElement = document.getElementById('online-counter') || document.getElementById('onlineCounterVal');
+            if (onlineElement) {
+              onlineElement.textContent = `🔥 Сейчас онлайн: ${this.formatNumber(count)} игроков`;
+            }
+          } catch(e) {
+            console.warn('Online counter error:', e);
+          }
+        },
+        
+        formatNumber(num) {
+          return num.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, " ");
+        },
+
+        initWelcomeParticles() {
+          const particlesContainer = document.getElementById('particles');
+          if (particlesContainer) {
+            particlesContainer.innerHTML = '';
+            for (let i = 0; i < 40; i++) {
+              const p = document.createElement('div');
+              p.className = 'particle';
+              const size = Math.random() * 3;
+              p.style.width = size + 'px';
+              p.style.height = size + 'px';
+              p.style.left = Math.random() * 100 + '%';
+              p.style.top = Math.random() * 100 + '%';
+              p.style.animationDelay = Math.random() * 20 + 's';
+              p.style.animationDuration = (15 + Math.random() * 10) + 's';
+              particlesContainer.appendChild(p);
+            }
+          }
+        }
+      };
+
       // Quick Nav for welcoming screen links
       window.quickNavTo = function(target) {
         const overlay = document.getElementById('guestWelcomeOverlay');
@@ -6732,7 +6997,7 @@
         if (adBox) {
           adBox.innerHTML = `
             <div style="width:300px; height:80px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-              <span style="font-size:10px; color:var(--text-muted);">РЕКЛАМА • РСЯ / Adsterra</span>
+              <span style="font-size:10px; color:var(--text-muted);">РЕКЛАМА • Adsterra</span>
             </div>
           `;
         }
@@ -6747,7 +7012,6 @@
         const header = document.getElementById('anixartHeader');
         const bottomNav = document.querySelector('.bottom-nav');
         const resBar = document.getElementById('globalResourcesBar');
-        const adPanel = document.getElementById('bottomAdPanel');
         
         // Hide all tab pages
         document.querySelectorAll('.tab-page').forEach(p => {
@@ -6759,8 +7023,7 @@
           // Show game layout
           if (header) header.style.display = 'none';
           if (bottomNav) bottomNav.style.display = 'flex';
-          if (resBar) resBar.style.display = 'flex'; // Show unified resource-and-rank bar inside game!
-          if (adPanel) adPanel.style.display = 'flex'; // Show permanent adsterra panel!
+          if (resBar) resBar.style.display = 'flex'; // Show unified resource bar!
           
           // Activate game home page
           document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -6779,8 +7042,7 @@
           // Show anime portal layout
           if (header) header.style.display = 'flex';
           if (bottomNav) bottomNav.style.display = 'none';
-          if (resBar) resBar.style.display = 'none'; // Hide resource bar in Cinema to maximize space!
-          if (adPanel) adPanel.style.display = 'none'; // Hide adsterra panel in Cinema!
+          if (resBar) resBar.style.display = 'none'; // Hide resource bar in Cinema!
           
           // Activate anime page
           const animePage = document.getElementById('page-anime');
@@ -6838,12 +7100,34 @@
           bindEvents();
           bindAdsgramTask();
 
+          // Initialize Real-time Online Counter!
+          OnlineCounter.init();
+
+          // Friendly AdBlock Detector
+          setTimeout(() => {
+            const ad = document.createElement('div');
+            ad.className = 'adsbox';
+            ad.style.display = 'none';
+            document.body.appendChild(ad);
+            
+            setTimeout(() => {
+              const isBlocked = ad.offsetHeight === 0;
+              if (isBlocked) {
+                const msg = document.createElement('div');
+                msg.style.cssText = 'position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 16px 24px; border-radius: 12px; text-align: center; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 90%; width: 400px; font-family: sans-serif;';
+                msg.innerHTML = '<strong>🛡️ ANIVERSE нуждается в вас!</strong><br><small style="font-size:11px; display:block; margin: 6px 0 10px; opacity:0.85;">Мы бесплатны благодаря рекламе. Отключите AdBlock для получения <strong>+50 💎 кристаллов</strong>!</small><button onclick="this.parentElement.remove(); addGems(50); updateUI(); saveGame();" style="padding:8px 16px; border:none; border-radius:8px; background:white; color:#764ba2; font-weight:bold; cursor:pointer; font-size:11px; -webkit-tap-highlight-color: transparent;">Получить бонус</button>';
+                document.body.appendChild(msg);
+              }
+              ad.remove();
+            }, 100);
+          }, 4000);
+
           // --- AniVerse Initializations ---
           const insideTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
           if (insideTelegram) {
             toggleViewMode('game'); // Default to GAME inside Telegram Mini App!
             
-            // Dynamically insert AdsGram Task to prevent crash in external browsers!
+            // Dynamically insert Рекламное задание to prevent crash in external browsers!
             const taskPlaceholder = document.getElementById('adsgramTaskPlaceholder');
             if (taskPlaceholder) {
               taskPlaceholder.innerHTML = `<adsgram-task data-block-id="task-33936" data-debug="false" data-debug-console="false" class="task"></adsgram-task>`;
@@ -6963,27 +7247,20 @@
       else init();
     })();
   </script>
-  <!-- Permanent Static Bottom Banner Panel -->
+  <!-- Permanent Static Bottom Banner Panel (320x50 Mobile Format) -->
   <div id="bottomAdPanel">
-    <!-- Thin Ad Label -->
-    <div style="height: 14px; width: 100%; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.03);">
-      <span style="font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">РЕКЛАМА • Adsterra</span>
-    </div>
-    <!-- Banner Container -->
-    <div style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; padding-bottom: 4px;">
-      <div style="width: 300px; height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.35);">
-        <!-- Adsterra 300x250 Square Banner -->
-        <script type="text/javascript">
-          atOptions = {
-            'key' : '11db4febd0ee37a031f2e03afadafa8d',
-            'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
-            'params' : {}
-          };
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/11db4febd0ee37a031f2e03afadafa8d/invoke.js"></script>
-      </div>
+    <div style="width: 320px; height: 50px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #000;">
+      <!-- Adsterra 320x50 Mobile Banner -->
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '11db4febd0ee37a031f2e03afadafa8d', // Вставьте сюда ваш 320x50 ключ от Adsterra при наличии
+          'format' : 'iframe',
+          'height' : 50,
+          'width' : 320,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/11db4febd0ee37a031f2e03afadafa8d/invoke.js"></script>
     </div>
   </div>
 
@@ -7008,5 +7285,5 @@
   </div>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0bac281bec4cc81',t:'MTc4MTQ1NTA0Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
