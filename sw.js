@@ -1,8 +1,8 @@
-const CACHE_NAME = 'aniverse-v2';
+const CACHE_NAME = 'aniverse-v3'; // Incremented to v3 to force browsers to fetch the fresh index.html from network!
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/welcome_banner.jpg',
+  '/favicon.svg',
   'https://telegram.org/js/telegram-web-app.js',
   'https://sad.adsgram.ai/js/sad.min.js'
 ];
@@ -35,13 +35,11 @@ self.addEventListener('activate', (event) => {
 
 // 3. Fetch Event - network-first fallback to cache
 self.addEventListener('fetch', (event) => {
-  // Skip cross-origin POST requests (like API calls)
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // Cache clone of successful response
         if (response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -51,13 +49,11 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => {
-        // Fallback to cache on network failure
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
           }
-          // If completely offline and no asset in cache
-          if (event.request.headers.get('accept').includes('text/html')) {
+          if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
             return new Response(`
               <!DOCTYPE html>
               <html lang="ru">
