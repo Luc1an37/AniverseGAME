@@ -191,6 +191,182 @@
       padding-bottom: 96px !important;
     }
 
+    /* Cosmic Background & Floating Particles */
+    .cosmic-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(ellipse at 20% 80%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        var(--bg-primary);
+    }
+    .particle {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: floatParticle 16s infinite ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes floatParticle {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      25% { transform: translateY(-100px) translateX(50px); }
+      50% { transform: translateY(-50px) translateX(-50px); }
+      75% { transform: translateY(-150px) translateX(30px); }
+    }
+
+    /* Premium Header / Logo and Tagline */
+    .logo {
+      font-size: 40px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(138, 43, 226, 0.4);
+      animation: logoPulse 3s infinite;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    @keyframes logoPulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.22); }
+    }
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+    }
+
+    /* Real-time Online Counter Badge */
+    .online-counter {
+      background: linear-gradient(135deg, var(--accent-red), #ff6b35);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 11px;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 69, 0, 0.35);
+      animation: buttonPulse 2s infinite;
+    }
+    @keyframes buttonPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    /* Premium Welcome Section Cards */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .section-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-1);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .section-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-glow);
+      border-color: var(--accent-purple);
+    }
+    .section-card:hover::before {
+      opacity: 1;
+    }
+    .section-card.cinema::before {
+      background: linear-gradient(90deg, #ff6b6b, #feca57);
+    }
+    .section-card.game::before {
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+    }
+    .section-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 11px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    /* Welcome Section Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.22);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    .btn-cinema {
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
+      color: white;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+    .btn-cinema:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 107, 107, 0.45);
+    }
+    .btn-game {
+      background: linear-gradient(135deg, var(--accent-purple), #6a0dad);
+      color: white;
+      box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+    }
+    .btn-game:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(138, 43, 226, 0.45);
+    }
+
     /* Light Theme (Day Mode) Accents */
     body.theme-light {
       background: #f1f5f9 !important;
@@ -360,22 +536,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    /* Scroll Performance and Hardware-acceleration fixes */
-    .tab-page {
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-    }
-    .pages-shell {
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
-    }
-    .bg-particles {
-      will-change: transform;
-      transform: translate3d(0, 0, 0);
     }
 
     .coin-art{--c1:#fff0a6;--c2:#ffd700;--c3:#9c6400;--mark:#5a3e00;--glow:rgba(255,215,0,.22);position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 28%,var(--c1),var(--c2) 58%,var(--c3));box-shadow:inset 0 6px 12px rgba(255,255,255,.15),inset 0 -8px 14px rgba(0,0,0,.22),0 0 18px var(--glow);overflow:hidden}
@@ -1017,18 +1177,6 @@
       }
     }
   </style>
-  <!-- ===== ФАВИКОН И PWA МЕТА-ДАННЫЕ ===== -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://img.icons8.com/color/180/000000/space-shuttle.png">
-  <link rel="manifest" href="/manifest.json">
-  <!-- Для Android -->
-  <meta name="theme-color" content="#8A2BE2">
-  <meta name="mobile-web-app-capable" content="yes">
-  <!-- Для iOS -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="ANIVERSE">
-
   <!-- Telegram Browser Auth Callback -->
   <script type="text/javascript">
     function onTelegramAuth(user) {
@@ -1112,7 +1260,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#7a090f0a0a15080e3a1b14130c1f08091f571d1b171f54080f" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="7c0f090c0c130e083c1d12150a190e0f19511b1d1119520e09">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#02717772726d707642636c6b74677071672f65636f672c7077" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="bbc8cecbcbd4c9cffbdad5d2cddec9c8de96dcdad6de95c9ce">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -1121,7 +1269,7 @@
     </div>
   </div>
 
-  <div class="app" style="padding-top: 0 !important; max-width: 560px; margin: 0 auto; min-height: calc(100vh - 56px); height: calc(100vh - 56px);">
+  <div class="app" id="mainApp" style="padding-top: 0 !important; max-width: 560px; margin: 0 auto; min-height: calc(100vh - 56px); height: calc(100vh - 56px);">
     <!-- Sleek Compact Unified Resources and Rank Bar (No more vertical waste!) -->
     <div class="global-resources-bar" id="globalResourcesBar" style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(18, 22, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.06); font-family: monospace; font-size: 11px; font-weight: bold; width: 100%; box-sizing: border-box; z-index: 10; flex-shrink: 0;">
       <div style="display: flex; align-items: center; gap: 10px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
@@ -6800,11 +6948,27 @@
             // Update both elements in UI
             const onlineElement = document.getElementById('online-counter') || document.getElementById('onlineCounterVal');
             if (onlineElement) {
-              onlineElement.textContent = `🔥 Сейчас онлайн: ${this.formatNumber(count)} игроков`;
+              const decl = this.getDeclension(count);
+              onlineElement.textContent = `🔥 Сейчас онлайн: ${this.formatNumber(count)} ${decl}`;
             }
           } catch(e) {
             console.warn('Online counter error:', e);
           }
+        },
+
+        getDeclension(num) {
+          const lastDigit = num % 10;
+          const lastTwoDigits = num % 100;
+          if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+            return 'игроков';
+          }
+          if (lastDigit === 1) {
+            return 'игрок';
+          }
+          if (lastDigit >= 2 && lastDigit <= 4) {
+            return 'игрока';
+          }
+          return 'игроков';
         },
         
         formatNumber(num) {
@@ -6834,8 +6998,12 @@
       window.goBackToWelcome = function() {
         const overlay = document.getElementById('guestWelcomeOverlay');
         if (overlay) overlay.style.display = 'flex';
+        const app = document.getElementById('mainApp');
+        if (app) app.style.display = 'none';
         const btn = document.getElementById('backToHome');
         if (btn) btn.style.display = 'none';
+        const adPanel = document.getElementById('bottomAdPanel');
+        if (adPanel) adPanel.style.display = 'none';
       };
 
       window.goHome = function() {
@@ -7011,13 +7179,20 @@
         // Toggle Guest Welcome Overlay based on Telegram Auth status
         const tgUser = getTelegramUser();
         const overlay = document.getElementById('guestWelcomeOverlay');
+        const app = document.getElementById('mainApp');
         const btn = document.getElementById('backToHome');
+        const adPanel = document.getElementById('bottomAdPanel');
+        
         if (tgUser) {
           if (overlay) overlay.style.display = 'none';
+          if (app) app.style.display = 'block';
           if (btn) btn.style.display = 'block';
+          if (adPanel) adPanel.style.display = 'flex';
         } else {
           if (overlay) overlay.style.display = 'flex';
+          if (app) app.style.display = 'none';
           if (btn) btn.style.display = 'none';
+          if (adPanel) adPanel.style.display = 'none';
         }
 
         try {
@@ -7031,6 +7206,22 @@
           state.lastAppOpenAt = Date.now();
           bindEvents();
           bindAdsgramTask();
+
+          // Global modal overlay click-to-close handler for elite UX!
+          document.querySelectorAll('.modal-overlay, #animePlayerModal').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+              if (e.target === overlay || e.target.classList.contains('modal-overlay')) {
+                e.preventDefault();
+                overlay.classList.remove('show');
+                // Special handling for video player to stop playback!
+                if (overlay.id === 'animePlayerModal') {
+                  const playerFrame = document.getElementById('animeIframePlayer');
+                  if (playerFrame) playerFrame.src = '';
+                }
+                triggerHaptic('light');
+              }
+            });
+          });
 
           // Initialize Real-time Online Counter!
           OnlineCounter.init();
@@ -7076,8 +7267,12 @@
             btnEnterCinema.addEventListener('click', () => {
               const overlay = document.getElementById('guestWelcomeOverlay');
               if (overlay) overlay.style.display = 'none';
+              const app = document.getElementById('mainApp');
+              if (app) app.style.display = 'block';
               const btn = document.getElementById('backToHome');
               if (btn) btn.style.display = 'block';
+              const adPanel = document.getElementById('bottomAdPanel');
+              if (adPanel) adPanel.style.display = 'flex';
               toggleViewMode('anime'); // Instantly go to anime tab with no login!
               triggerHaptic('medium');
             });
@@ -7222,5 +7417,5 @@
   </div>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0bf72fe8f43cc81',t:'MTc4MTUwNDIxOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
