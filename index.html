@@ -1156,21 +1156,9 @@
       0%, 100% { transform: scale(1); box-shadow: 0 0 30px #c084fc; }
       50% { transform: scale(1.12); box-shadow: 0 0 45px #c084fc, 0 0 10px #fff; }
     }
-      @media(max-width: 480px) {
-      .tree-row {
-        grid-template-columns: 1fr !important;
-      }
-    }
-      @media(max-width: 480px) {
-      .tree-row {
-        grid-template-columns: 1fr !important;
-      }
-    }
-      @media(max-width: 480px) {
-      .tree-row {
-        grid-template-columns: 1fr !important;
-      }
-    }
+
+
+
       @media(max-width: 480px) {
       .tree-row {
         grid-template-columns: 1fr !important;
@@ -1260,7 +1248,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#added8ddddc2dfd9edccc3c4dbc8dfdec880caccc0c883dfd8" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="d4a7a1a4a4bba6a094b5babda2b1a6a7b1f9b3b5b9b1faa6a1">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#40333530302f323400212e2936253233256d27212d256e3235" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="b9caccc9c9d6cbcdf9d8d7d0cfdccbcadc94ded8d4dc97cbcc">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -1277,8 +1265,8 @@
           #globalResourcesBar::-webkit-scrollbar { display: none; }
           .res-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
         </style>
-        <div class="res-item" style="color: #ffd700;">💰 <span id="goldVal">0</span></div>
-        <div class="res-item" style="color: #ead8ff;">💎 <span id="gemsVal">0</span></div>
+        <div class="res-item" style="color: #ffd700;">💰 <span id="barGoldVal">0</span></div>
+        <div class="res-item" style="color: #ead8ff;">💎 <span id="barGemsVal">0</span></div>
         <div class="res-item" style="color: #fca5a5;">🪵 <span id="matWoodVal">0</span></div>
         <div class="res-item" style="color: #93c5fd;">🪨 <span id="matOreVal">0</span></div>
         <div class="res-item" style="color: #fcd34d;">🐉 <span id="matScaleVal">0</span></div>
@@ -1368,7 +1356,7 @@
         <div class="coin-art coin-mini skin-classic coin-sweep" id="topCoinIcon"><span class="coin-mark" id="topCoinMark">$</span></div>
         <div class="coins-val" id="goldVal">0</div>
       </div>
-      <div class="rank-badge" id="rankBadge">БЕДНЯК</div>
+      <div class="rank-badge" id="rankBadgeHidden">БЕДНЯК</div>
       <div class="top-right">
         <div style="width:20px;height:20px;display:flex;align-items:center;justify-content:center">
           <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
@@ -2045,6 +2033,13 @@
           hatchingEggType: null,
           hatchingEndsAt: 0,
           tonWalletAddress: null,
+          petLevels: {},
+          wheelLastSpinAt: 0,
+          refineJobType: null,
+          refineJobEndsAt: 0,
+          lastBossDefeatedAt: 0,
+          soundEnabled: true,
+          vibrationEnabled: true,
           bankDep: 0,
           bankLifetime: 0,
           totalClicks: 0,
@@ -2354,7 +2349,7 @@
 
       function cacheElements() {
         Object.assign(el, {
-          goldVal: document.getElementById('goldVal'), gemsVal: document.getElementById('gemsVal'), rankBadge: document.getElementById('rankBadge'),
+          goldVal: document.getElementById('goldVal'), gemsVal: document.getElementById('gemsVal'), barGoldVal: document.getElementById('barGoldVal'), barGemsVal: document.getElementById('barGemsVal'), rankBadge: document.getElementById('rankBadge'),
           tonWalletModal: document.getElementById('tonWalletModal'),
           tonWalletOptionsBox: document.getElementById('tonWalletOptionsBox'),
           tonWalletLoadingBox: document.getElementById('tonWalletLoadingBox'),
@@ -2490,7 +2485,7 @@
       }
 
       function getDayDiff(fromTs, toTs = Date.now()) {
-        return Math.floor((getDayStart(toTs) - getDayStart(fromTs)) / DAY_MS);
+        return Math.max(0, Math.floor((getDayStart(toTs) - getDayStart(fromTs)) / DAY_MS));
       }
 
       function showToast(msg) {
@@ -5490,6 +5485,10 @@
           vol = 0.005;
         }
 
+        if (synthInterval) {
+          clearInterval(synthInterval);
+          synthInterval = null;
+        }
         synthInterval = setInterval(() => {
           if (!state.soundEnabled) {
             stopChiptune();
@@ -5512,6 +5511,16 @@
       }
 
       // --- Leagues & Leaderboard Logic ---
+      function escapeHtml(text) {
+        if (!text) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
       function getLeagueBankBonus() {
         const floor = state.towerMaxFloorReached || 0;
         if (floor >= 15) return 40; // Legendary: +40%
@@ -5661,8 +5670,8 @@
             html += '<div class="leader-row' + (isMe ? ' player' : '') + '">'
               + '<div class="leader-rank ' + rankClass + '">' + rankEmoji + '</div>'
               + '<div style="flex:1; text-align:left; margin-left:12px;">'
-              + '<div style="font-size:12px; font-weight:900; color:#fff;">' + (user.firstName || user.name || 'Игрок') + '</div>'
-              + '<div style="font-size:9px; color:rgba(255,255,255,0.4);">' + user.username + '</div>'
+              + '<div style="font-size:12px; font-weight:900; color:#fff;">' + escapeHtml(user.firstName || user.name || 'Игрок') + '</div>'
+              + '<div style="font-size:9px; color:rgba(255,255,255,0.4);">' + escapeHtml(user.username || '') + '</div>'
               + '</div>'
               + '<div style="text-align:right; min-width:80px;">'
               + '<div style="font-size:12px; font-weight:900; color:#c084fc;">📺 ' + ads + '</div>'
@@ -5980,6 +5989,8 @@
 
         el.goldVal.textContent = fmt(state.gold);
         el.gemsVal.textContent = fmt(state.gems);
+        if (el.barGoldVal) el.barGoldVal.textContent = fmt(state.gold);
+        if (el.barGemsVal) el.barGemsVal.textContent = fmt(state.gems);
         if (el.matWoodVal) el.matWoodVal.textContent = fmt(state.materials.wood || 0);
         if (el.matOreVal) el.matOreVal.textContent = fmt(state.materials.ore || 0);
         if (el.matScaleVal) el.matScaleVal.textContent = fmt(state.materials.scale || 0);
@@ -7499,6 +7510,6 @@
     </div>
   </div>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c421a99ce3cc81',t:'MTc4MTU1MzMxNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-</body>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c44e57fb1acc81',t:'MTc4MTU1NTE0Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
