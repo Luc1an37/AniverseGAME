@@ -1131,6 +1131,22 @@
       }
     }
   </style>
+  <!-- ===== ФАВИКОН И PWA МЕТА-ДАННЫЕ ===== -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://img.icons8.com/color/180/000000/space-shuttle.png">
+  <link rel="manifest" href="/manifest.json">
+  <!-- Для Android -->
+  <meta name="theme-color" content="#8A2BE2">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- Для iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ANIVERSE">
+
+  <!-- Upgraded Native VideoJS HTML5 Custom Player CDN & Styles -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/html/cdn/video-ui.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@videojs/html/cdn/video-ui.css">
+
   <!-- Telegram Browser Auth Callback -->
   <script type="text/javascript">
     function onTelegramAuth(user) {
@@ -1214,7 +1230,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#becdcbceced1cccafedfd0d7c8dbcccddb93d9dfd3db90cccb" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="b5c6c0c5c5dac7c1f5d4dbdcc3d0c7c6d098d2d4d8d09bc7c0">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#84f7f1f4f4ebf6f0c4e5eaedf2e1f6f7e1a9e3e5e9e1aaf6f1" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="4e3d3b3e3e213c3a0e2f2027382b3c3d2b63292f232b603c3b">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -6954,7 +6970,7 @@
 
       // ================= ANIVERSE ANIME PORTAL CONTROLLER =================
       const ANIME_DB = [
-        { id: '1', title: 'Магическая битва 2', year: 2023, genre: 'Экшен, Сёнен, Фэнтези', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/51009.jpg', description: 'Второй сезон Магической битвы, рассказывающий о трагических событиях в Сибуе и прошлом Сатору Годзё.', kinoboxId: '51009' },
+        { id: '1', title: 'Магическая битва 2 (Трейлер)', year: 2023, genre: 'Экшен, Сёнен, Фэнтези', rating: '9.6', poster: 'https://image.mux.com/BV3YZtogl89mg9VcNBhhnHm02Y34zI1nlMuMQfAbl3dM/thumbnail.webp', description: 'Второй сезон Магической битвы, рассказывающий о трагических событиях в Сибуе и прошлом Сатору Годзё. Нажмите, чтобы запустить флагманский анимированный трейлер в нашем премиум-плеере!', kinoboxId: '51009', videoUrl: 'https://stream.mux.com/BV3YZtogl89mg9VcNBhhnHm02Y34zI1nlMuMQfAbl3dM/highest.mp4' },
         { id: '2', title: 'Ван-Пис', year: 1999, genre: 'Приключения, Комедия, Сёнен', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/21.jpg', description: 'Манки Д. Луффи отправляется в плавание, чтобы собрать команду и найти легендарное сокровище Ван-Пис.', kinoboxId: '21' },
         { id: '3', title: 'Блич', year: 2004, genre: 'Экшен, Сёнен, Мистика', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/269.jpg', description: 'Ичего Куросаки случайно получает силу Синигами и вступает в борьбу со злыми духами — Пустыми.', kinoboxId: '269' },
         { id: '4', title: 'Монолог фармацевта', year: 2023, genre: 'Драма, Детектив, Исторический', rating: '9.8', poster: 'https://shikimori.one/system/animes/original/54492.jpg', description: 'Маомао, похищенная и проданная в императорский дворец, использует свои знания фармацевтики, чтобы расследовать интриги.', kinoboxId: '54492' },
@@ -7140,22 +7156,51 @@
         });
       }
 
-      // Open PiP-ready Kinobox Video Player Modal
+      // Open PiP-ready Kinobox Video Player Modal or Native Premium Custom Player!
       function openAnimePlayer(anime) {
         document.getElementById('modalAnimeTitle').textContent = anime.title;
         document.getElementById('modalAnimeGenre').textContent = anime.genre;
         document.getElementById('modalAnimeDesc').textContent = anime.description;
         
-        // Load secure player iframe via Kinobox CDN api
+        const iframeContainer = document.getElementById('iframePlayerContainer');
+        const nativeContainer = document.getElementById('nativePlayerContainer');
         const playerFrame = document.getElementById('animeIframePlayer');
-        playerFrame.src = `https://kinobox.tv/embed/shikimori/${anime.kinoboxId}`;
+        const nativeVideo = document.getElementById('nativeVideoElement');
+        const nativePoster = document.getElementById('nativeVideoPoster');
+
+        if (anime.videoUrl) {
+          // Native Custom Player Mode
+          if (iframeContainer) iframeContainer.style.display = 'none';
+          if (playerFrame) playerFrame.src = ''; // Clear iframe
+          
+          if (nativeContainer) nativeContainer.style.display = 'block';
+          if (nativeVideo) {
+            nativeVideo.src = anime.videoUrl;
+            nativeVideo.load();
+          }
+          if (nativePoster && anime.poster) {
+            nativePoster.src = anime.poster;
+          }
+        } else {
+          // Secure Kinobox Iframe Mode
+          if (nativeContainer) nativeContainer.style.display = 'none';
+          if (nativeVideo) {
+            nativeVideo.pause();
+            nativeVideo.src = ''; // Clear video
+          }
+          
+          if (iframeContainer) iframeContainer.style.display = 'block';
+          if (playerFrame) {
+            playerFrame.src = `https://kinobox.tv/embed/shikimori/${anime.kinoboxId}`;
+          }
+        }
 
         // Insert Adsterra 300x250 square banner inside player dynamically to maximize revenue!
         const adBox = document.getElementById('playerAdBox');
         if (adBox) {
           adBox.innerHTML = `
             <div style="width:300px; height:80px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-              <span style="font-size:10px; color:var(--text-muted);">РЕКЛАМА • РСЯ / Adsterra</span>
+              <span style="font-size:10px; color:var(--text-muted);">РЕКЛАМА • Adsterra</span>
             </div>
           `;
         }
@@ -7430,15 +7475,139 @@
     </div>
   </div>
 
-  <!-- AniVerse Anime Player Modal -->
+  <!-- AniVerse Anime Player Modal with Dual-Mode (Iframe & Native Premium Custom Player) -->
   <div class="modal-overlay" id="animePlayerModal" style="z-index: 9999999;">
     <div class="modal-box" style="border-color:#a855f7; box-shadow: 0 0 35px rgba(168,85,247,0.35); background: rgba(10,12,22,0.98); width:100%; max-width:500px; padding:18px;">
       <h2 id="modalAnimeTitle" style="color:#fff; font-size:16px; margin-bottom:4px; text-align:left;">Название аниме</h2>
       <div id="modalAnimeGenre" style="font-size:9px; color:var(--accent-color); font-weight:900; text-transform:uppercase; text-align:left; margin-bottom:12px;">Жанры</div>
       
-      <!-- Video Player Container (Iframe) -->
-      <div style="position:relative; width:100%; padding-top:56.25%; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
+      <!-- DUAL-MODE CONTAINER -->
+      
+      <!-- 1. Secure Kinobox Iframe Container -->
+      <div id="iframePlayerContainer" style="position:relative; width:100%; padding-top:56.25%; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
         <iframe id="animeIframePlayer" src="" style="position:absolute; inset:0; width:100%; height:100%; border:none;" allowfullscreen></iframe>
+      </div>
+
+      <!-- 2. Custom Premium HTML5 Native Player Container -->
+      <div id="nativePlayerContainer" style="display:none; position:relative; width:100%; padding-top:56.25%; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
+        <div style="position:absolute; inset:0; width:100%; height:100%;">
+          <video-player id="nativeVideoPlayer" style="width:100%; height:100%; display:block; --media-primary-color: #a855f7;">
+            <media-container class="media-default-skin media-default-skin--video" style="width:100%; height:100%; display:block;">
+              <video id="nativeVideoElement" src="" playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+              <media-poster>
+                <img id="nativeVideoPoster" src="" style="width:100%; height:100%; object-fit:cover;" />
+              </media-poster>
+              <media-buffering-indicator class="media-buffering-indicator">
+                <div class="media-surface">
+                  <media-icon name="spinner" class="media-icon"></media-icon>
+                </div>
+              </media-buffering-indicator>
+              <media-error-dialog class="media-error">
+                <div class="media-error__dialog media-surface">
+                  <div class="media-error__content">
+                    <media-alert-dialog-title class="media-error__title">Something went wrong.</media-alert-dialog-title>
+                    <media-alert-dialog-description class="media-error__description"></media-alert-dialog-description>
+                  </div>
+                  <div class="media-error__actions">
+                    <media-alert-dialog-close class="media-button media-button--primary">OK</media-alert-dialog-close>
+                  </div>
+                </div>
+              </media-error-dialog>
+              <media-controls class="media-surface media-controls">
+                <media-tooltip-group>
+                  <div class="media-button-group">
+                    <media-play-button commandfor="play-tooltip" class="media-button media-button--subtle media-button--icon media-button--play">
+                      <media-icon name="restart" class="media-icon media-icon--restart"></media-icon>
+                      <media-icon name="play" class="media-icon media-icon--play"></media-icon>
+                      <media-icon name="pause" class="media-icon media-icon--pause"></media-icon>
+                    </media-play-button>
+                    <media-tooltip id="play-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
+                    <media-seek-button commandfor="seek-backward-tooltip" seconds="-10" class="media-button media-button--subtle media-button--icon media-button--seek">
+                      <span class="media-icon__container">
+                        <media-icon name="seek" class="media-icon media-icon--flipped"></media-icon>
+                        <span class="media-icon__label">10</span>
+                      </span>
+                    </media-seek-button>
+                    <media-tooltip id="seek-backward-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
+                    <media-seek-button commandfor="seek-forward-tooltip" seconds="10" class="media-button media-button--subtle media-button--icon media-button--seek">
+                      <span class="media-icon__container">
+                        <media-icon name="seek" class="media-icon"></media-icon>
+                        <span class="media-icon__label">10</span>
+                      </span>
+                    </media-seek-button>
+                    <media-tooltip id="seek-forward-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
+                  </div>
+                  <div class="media-time-controls">
+                    <media-time type="current" class="media-time"></media-time>
+                    <media-time-slider class="media-slider">
+                      <media-slider-track class="media-slider__track">
+                        <media-slider-fill class="media-slider__fill"></media-slider-fill>
+                        <media-slider-buffer class="media-slider__buffer"></media-slider-buffer>
+                      </media-slider-track>
+                      <media-slider-thumb class="media-slider__thumb"></media-slider-thumb>
+                      <div class="media-surface media-preview media-slider__preview">
+                        <media-slider-thumbnail class="media-preview__thumbnail"></media-slider-thumbnail>
+                        <media-slider-value type="pointer" class="media-time media-preview__time"></media-slider-value>
+                        <media-icon name="spinner" class="media-preview__spinner media-icon"></media-icon>
+                      </div>
+                    </media-time-slider>
+                    <media-time type="duration" class="media-time"></media-time>
+                  </div>
+                  <div class="media-button-group">
+                    <media-playback-rate-menu-trigger commandfor="playback-rate-menu" class="media-button media-button--subtle media-button--icon media-button--playback-rate"></media-playback-rate-menu-trigger>
+                    <media-playback-rate-menu id="playback-rate-menu" side="top" align="center" class="media-surface media-popover media-menu media-menu--playback-rate">
+                      <media-playback-rate-options class="media-menu__group">
+                        <template>
+                          <media-menu-radio-item class="media-menu__item">
+                            <span data-part="label"></span>
+                            <media-menu-item-indicator force-mount class="media-menu__indicator">
+                              <media-icon name="check" class="media-icon"></media-icon>
+                            </media-menu-item-indicator>
+                          </media-menu-radio-item>
+                        </template>
+                      </media-playback-rate-options>
+                    </media-playback-rate-menu>
+                    <media-mute-button commandfor="video-volume-popover" class="media-button media-button--subtle media-button--icon media-button--mute">
+                      <media-icon name="volume-off" class="media-icon media-icon--volume-off"></media-icon>
+                      <media-icon name="volume-low" class="media-icon media-icon--volume-low"></media-icon>
+                      <media-icon name="volume-high" class="media-icon media-icon--volume-high"></media-icon>
+                    </media-mute-button>
+                    <media-popover id="video-volume-popover" open-on-hover delay="200" close-delay="100" side="top" class="media-surface media-popover media-popover--volume">
+                      <media-volume-slider class="media-slider" orientation="vertical" thumb-alignment="edge">
+                        <media-slider-track class="media-slider__track">
+                          <media-slider-fill class="media-slider__fill"></media-slider-fill>
+                        </media-slider-track>
+                        <media-slider-thumb class="media-slider__thumb media-slider__thumb--persistent"></media-slider-thumb>
+                      </media-volume-slider>
+                    </media-popover>
+                    <media-captions-button commandfor="captions-tooltip" class="media-button media-button--subtle media-button--icon media-button--captions">
+                      <media-icon name="captions-off" class="media-icon media-icon--captions-off"></media-icon>
+                      <media-icon name="captions-on" class="media-icon media-icon--captions-on"></media-icon>
+                    </media-captions-button>
+                    <media-tooltip id="captions-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
+                    <media-pip-button commandfor="pip-tooltip" class="media-button media-button--subtle media-button--icon media-button--pip">
+                      <media-icon name="pip-enter" class="media-icon media-icon--pip-enter"></media-icon>
+                      <media-icon name="pip-exit" class="media-icon media-icon--pip-exit"></media-icon>
+                    </media-pip-button>
+                    <media-tooltip id="pip-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
+                    <media-fullscreen-button commandfor="fullscreen-tooltip" class="media-button media-button--subtle media-button--icon media-button--fullscreen">
+                      <media-icon name="fullscreen-enter" class="media-icon media-icon--fullscreen-enter"></media-icon>
+                      <media-icon name="fullscreen-exit" class="media-icon media-icon--fullscreen-exit"></media-icon>
+                    </media-fullscreen-button>
+                    <media-tooltip id="fullscreen-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
+                  </div>
+                </media-tooltip-group>
+              </media-controls>
+              <div class="media-overlay"></div>
+              <media-hotkey keys="Space" action="togglePaused"></media-hotkey>
+              <media-hotkey keys="k" action="togglePaused"></media-hotkey>
+              <media-hotkey keys="m" action="toggleMuted"></media-hotkey>
+              <media-hotkey keys="f" action="toggleFullscreen"></media-hotkey>
+              <media-gesture type="tap" action="togglePaused" pointer="mouse" region="center"></media-gesture>
+              <media-gesture type="tap" action="toggleControls" pointer="touch"></media-gesture>
+            </media-container>
+          </video-player>
+        </div>
       </div>
 
       <p id="modalAnimeDesc" style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.45; text-align:left; margin-bottom:16px; max-height:80px; overflow-y:auto; white-space:normal;">Описание аниме...</p>
@@ -7450,6 +7619,6 @@
     </div>
   </div>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c4af63ac90cc81',t:'MTc4MTU1OTEyMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
