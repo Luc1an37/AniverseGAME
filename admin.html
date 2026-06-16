@@ -764,7 +764,26 @@
     }
 
     // Tab toggling logic
-        // Cached section elements
+            // Custom beautiful glowing Toast notification system
+    function showToast(msg) {
+      let toast = document.getElementById('adminToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'adminToast';
+        toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(18, 22, 40, 0.96); border: 1px solid rgba(168, 85, 247, 0.3); padding: 12px 24px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; z-index: 999999; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+      clearTimeout(window._adminToastTimer);
+      window._adminToastTimer = setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+        toast.style.opacity = '0';
+      }, 3000);
+    }
+
+    // Cached section elements
     const sectionBroadcast = document.getElementById('sectionBroadcast');
     const sectionAnime = document.getElementById('sectionAnime');
     const sectionAnalytics = document.getElementById('sectionAnalytics');
