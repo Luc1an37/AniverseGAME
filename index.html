@@ -1230,7 +1230,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#85f6f0f5f5eaf7f1c5e4ebecf3e0f7f6e0a8e2e4e8e0abf7f0" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="3e4d4b4e4e514c4a7e5f5057485b4c4d5b13595f535b104c4b">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#3f4c4a4f4f504d4b7f5e5156495a4d4c5a12585e525a114d4a" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="44373134342b363004252a2d322136372169232529216a3631">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -7166,7 +7166,6 @@
         const nativeContainer = document.getElementById('nativePlayerContainer');
         const playerFrame = document.getElementById('animeIframePlayer');
         const nativeVideo = document.getElementById('nativeVideoElement');
-        const nativePoster = document.getElementById('nativeVideoPoster');
 
         if (anime.videoUrl) {
           // Native Custom Player Mode
@@ -7176,10 +7175,12 @@
           if (nativeContainer) nativeContainer.style.display = 'block';
           if (nativeVideo) {
             nativeVideo.src = anime.videoUrl;
+            if (anime.poster) {
+              nativeVideo.setAttribute('poster', anime.poster);
+            } else {
+              nativeVideo.removeAttribute('poster');
+            }
             nativeVideo.load();
-          }
-          if (nativePoster && anime.poster) {
-            nativePoster.src = anime.poster;
           }
         } else {
           // Secure Kinobox Iframe Mode
@@ -7491,122 +7492,7 @@
       <!-- 2. Custom Premium HTML5 Native Player Container -->
       <div id="nativePlayerContainer" style="display:none; position:relative; width:100%; padding-top:56.25%; background:#000; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
         <div style="position:absolute; inset:0; width:100%; height:100%;">
-          <video-player id="nativeVideoPlayer" style="width:100%; height:100%; display:block; --media-primary-color: #a855f7;">
-            <media-container class="media-default-skin media-default-skin--video" style="width:100%; height:100%; display:block;">
-              <video id="nativeVideoElement" src="" playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-              <media-poster>
-                <img id="nativeVideoPoster" src="" style="width:100%; height:100%; object-fit:cover;" />
-              </media-poster>
-              <media-buffering-indicator class="media-buffering-indicator">
-                <div class="media-surface">
-                  <media-icon name="spinner" class="media-icon"></media-icon>
-                </div>
-              </media-buffering-indicator>
-              <media-error-dialog class="media-error">
-                <div class="media-error__dialog media-surface">
-                  <div class="media-error__content">
-                    <media-alert-dialog-title class="media-error__title">Something went wrong.</media-alert-dialog-title>
-                    <media-alert-dialog-description class="media-error__description"></media-alert-dialog-description>
-                  </div>
-                  <div class="media-error__actions">
-                    <media-alert-dialog-close class="media-button media-button--primary">OK</media-alert-dialog-close>
-                  </div>
-                </div>
-              </media-error-dialog>
-              <media-controls class="media-surface media-controls">
-                <media-tooltip-group>
-                  <div class="media-button-group">
-                    <media-play-button commandfor="play-tooltip" class="media-button media-button--subtle media-button--icon media-button--play">
-                      <media-icon name="restart" class="media-icon media-icon--restart"></media-icon>
-                      <media-icon name="play" class="media-icon media-icon--play"></media-icon>
-                      <media-icon name="pause" class="media-icon media-icon--pause"></media-icon>
-                    </media-play-button>
-                    <media-tooltip id="play-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
-                    <media-seek-button commandfor="seek-backward-tooltip" seconds="-10" class="media-button media-button--subtle media-button--icon media-button--seek">
-                      <span class="media-icon__container">
-                        <media-icon name="seek" class="media-icon media-icon--flipped"></media-icon>
-                        <span class="media-icon__label">10</span>
-                      </span>
-                    </media-seek-button>
-                    <media-tooltip id="seek-backward-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
-                    <media-seek-button commandfor="seek-forward-tooltip" seconds="10" class="media-button media-button--subtle media-button--icon media-button--seek">
-                      <span class="media-icon__container">
-                        <media-icon name="seek" class="media-icon"></media-icon>
-                        <span class="media-icon__label">10</span>
-                      </span>
-                    </media-seek-button>
-                    <media-tooltip id="seek-forward-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
-                  </div>
-                  <div class="media-time-controls">
-                    <media-time type="current" class="media-time"></media-time>
-                    <media-time-slider class="media-slider">
-                      <media-slider-track class="media-slider__track">
-                        <media-slider-fill class="media-slider__fill"></media-slider-fill>
-                        <media-slider-buffer class="media-slider__buffer"></media-slider-buffer>
-                      </media-slider-track>
-                      <media-slider-thumb class="media-slider__thumb"></media-slider-thumb>
-                      <div class="media-surface media-preview media-slider__preview">
-                        <media-slider-thumbnail class="media-preview__thumbnail"></media-slider-thumbnail>
-                        <media-slider-value type="pointer" class="media-time media-preview__time"></media-slider-value>
-                        <media-icon name="spinner" class="media-preview__spinner media-icon"></media-icon>
-                      </div>
-                    </media-time-slider>
-                    <media-time type="duration" class="media-time"></media-time>
-                  </div>
-                  <div class="media-button-group">
-                    <media-playback-rate-menu-trigger commandfor="playback-rate-menu" class="media-button media-button--subtle media-button--icon media-button--playback-rate"></media-playback-rate-menu-trigger>
-                    <media-playback-rate-menu id="playback-rate-menu" side="top" align="center" class="media-surface media-popover media-menu media-menu--playback-rate">
-                      <media-playback-rate-options class="media-menu__group">
-                        <template>
-                          <media-menu-radio-item class="media-menu__item">
-                            <span data-part="label"></span>
-                            <media-menu-item-indicator force-mount class="media-menu__indicator">
-                              <media-icon name="check" class="media-icon"></media-icon>
-                            </media-menu-item-indicator>
-                          </media-menu-radio-item>
-                        </template>
-                      </media-playback-rate-options>
-                    </media-playback-rate-menu>
-                    <media-mute-button commandfor="video-volume-popover" class="media-button media-button--subtle media-button--icon media-button--mute">
-                      <media-icon name="volume-off" class="media-icon media-icon--volume-off"></media-icon>
-                      <media-icon name="volume-low" class="media-icon media-icon--volume-low"></media-icon>
-                      <media-icon name="volume-high" class="media-icon media-icon--volume-high"></media-icon>
-                    </media-mute-button>
-                    <media-popover id="video-volume-popover" open-on-hover delay="200" close-delay="100" side="top" class="media-surface media-popover media-popover--volume">
-                      <media-volume-slider class="media-slider" orientation="vertical" thumb-alignment="edge">
-                        <media-slider-track class="media-slider__track">
-                          <media-slider-fill class="media-slider__fill"></media-slider-fill>
-                        </media-slider-track>
-                        <media-slider-thumb class="media-slider__thumb media-slider__thumb--persistent"></media-slider-thumb>
-                      </media-volume-slider>
-                    </media-popover>
-                    <media-captions-button commandfor="captions-tooltip" class="media-button media-button--subtle media-button--icon media-button--captions">
-                      <media-icon name="captions-off" class="media-icon media-icon--captions-off"></media-icon>
-                      <media-icon name="captions-on" class="media-icon media-icon--captions-on"></media-icon>
-                    </media-captions-button>
-                    <media-tooltip id="captions-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
-                    <media-pip-button commandfor="pip-tooltip" class="media-button media-button--subtle media-button--icon media-button--pip">
-                      <media-icon name="pip-enter" class="media-icon media-icon--pip-enter"></media-icon>
-                      <media-icon name="pip-exit" class="media-icon media-icon--pip-exit"></media-icon>
-                    </media-pip-button>
-                    <media-tooltip id="pip-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
-                    <media-fullscreen-button commandfor="fullscreen-tooltip" class="media-button media-button--subtle media-button--icon media-button--fullscreen">
-                      <media-icon name="fullscreen-enter" class="media-icon media-icon--fullscreen-enter"></media-icon>
-                      <media-icon name="fullscreen-exit" class="media-icon media-icon--fullscreen-exit"></media-icon>
-                    </media-fullscreen-button>
-                    <media-tooltip id="fullscreen-tooltip" side="top" class="media-surface media-tooltip"></media-tooltip>
-                  </div>
-                </media-tooltip-group>
-              </media-controls>
-              <div class="media-overlay"></div>
-              <media-hotkey keys="Space" action="togglePaused"></media-hotkey>
-              <media-hotkey keys="k" action="togglePaused"></media-hotkey>
-              <media-hotkey keys="m" action="toggleMuted"></media-hotkey>
-              <media-hotkey keys="f" action="toggleFullscreen"></media-hotkey>
-              <media-gesture type="tap" action="togglePaused" pointer="mouse" region="center"></media-gesture>
-              <media-gesture type="tap" action="toggleControls" pointer="touch"></media-gesture>
-            </media-container>
-          </video-player>
+          <video id="nativeVideoElement" src="" playsinline controls style="width:100%; height:100%; object-fit:cover; border-radius:12px; background:#000; display:block; outline:none;"></video>
         </div>
       </div>
 
