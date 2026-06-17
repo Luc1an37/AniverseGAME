@@ -739,7 +739,7 @@
         Вы получите автодоход и проценты вашего банка за 60 минут прямо сейчас!
       </div>
       <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
-        <button class="ad-btn" id="btnWormholeJump" type="button" style="background: linear-gradient(135deg, #a855f7, #7c3aed); padding:11px; font-size:11px;">Совершить прыжок (Реклама)</button>
+        <button class="ad-btn" id="btnWormholeJump" data-reward-button="wormholeJump" type="button" style="background: linear-gradient(135deg, #a855f7, #7c3aed); padding:11px; font-size:11px;">Совершить прыжок (Реклама)</button>
         <button class="bank-btn" id="btnWormholeClose" type="button" style="width:100%; padding:10px; font-size:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:rgba(255,255,255,0.42);">Закрыть разлом</button>
       </div>
     </div>
@@ -1222,8 +1222,8 @@
               <div class="level-fill" id="expeditionProgressFill" style="width:0%; background:linear-gradient(90deg, #3b82f6, #60a5fa); height:100%; border-radius:6px;"></div>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-              <button class="ad-btn" id="btnExpeditionSpeedup" type="button" style="padding:8px 0; font-size:10px; margin:0; width:100%;">Ускорить в 2 раза 📺</button>
-              <button class="ad-btn" id="btnExpeditionInstant" type="button" style="padding:8px 0; font-size:10px; margin:0; width:100%;">Вернуть мгновенно 📺</button>
+              <button class="ad-btn" id="btnExpeditionSpeedup" data-reward-button="expeditionSpeedup" type="button" style="padding:8px 0; font-size:10px; margin:0; width:100%;">Ускорить в 2 раза 📺</button>
+              <button class="ad-btn" id="btnExpeditionInstant" data-reward-button="expeditionInstant" type="button" style="padding:8px 0; font-size:10px; margin:0; width:100%;">Вернуть мгновенно 📺</button>
             </div>
             <button class="ad-btn" id="btnExpeditionClaim" type="button" style="margin-top:8px; padding:10px 0; font-size:11px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; width:100%;" disabled>Забрать награду</button>
           </div>
@@ -1260,7 +1260,7 @@
             <span id="offlineLimitText" style="font-size:10px; font-weight:900; background:rgba(168, 85, 247, 0.15); color:#a855f7; padding:3px 8px; border-radius:6px;">2 ЧАСА</span>
           </div>
           <p style="font-size:11px; color:rgba(255,255,255,0.38); line-height:1.45; margin-bottom:12px;">По умолчанию оффлайн-доход копится только первые 2 часа после выхода. Заряжайте аккумулятор просмотром рекламы на +1 час для следующего выхода (макс. 12 часов)! При входе в игру заряд сбросится до базовых 2 часов.</p>
-          <button class="ad-btn" id="btnChargeOfflineBattery" type="button" style="padding:10px 0; font-size:11px; background:linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; width:100%;">Зарядить аккумулятор на +1 час 📺</button>
+          <button class="ad-btn" id="btnChargeOfflineBattery" data-reward-button="chargeOfflineBattery" type="button" style="padding:10px 0; font-size:11px; background:linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; width:100%;">Зарядить аккумулятор на +1 час 📺</button>
         </div>
 
         <!-- Imperial Gem Mine Card -->
@@ -1285,7 +1285,7 @@
             <button class="ad-btn" id="btnClaimMine" type="button" style="background: linear-gradient(135deg, #a855f7, #7c3aed); font-size:11px; padding:10px;">Собрать кристаллы</button>
             <div style="display:flex; gap:8px;">
               <button class="ad-btn" id="btnUpgradeMine" type="button" style="flex:1.3; font-size:9px; padding:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">Улучшить шахту</button>
-              <button class="ad-btn" id="btnBoostMine" type="button" style="flex:1; font-size:9px; padding:8px; background: linear-gradient(135deg, #10b981, #059669);">Ускорить</button>
+              <button class="ad-btn" id="btnBoostMine" data-reward-button="boostMine" type="button" style="flex:1; font-size:9px; padding:8px; background: linear-gradient(135deg, #10b981, #059669);">Ускорить</button>
             </div>
           </div>
         </div>
@@ -4198,11 +4198,28 @@
         scale: { id: 'scale', name: 'Драконья чешуя', icon: '🐉', costMsg: '5 Кристаллов', durationMins: 20, rewardMsg: '+1 Чешуя', check: () => state.materials.crystal >= 5, deduct: () => { state.materials.crystal -= 5; }, grant: () => { state.materials.scale += 1; } }
       };
 
+      let _lastOvenReadyState = null;
+
       function updateRefineOven() {
         if (!state.refineJobType) return;
-        if (Date.now() >= state.refineJobEndsAt) {
-          // Finished!
-          return;
+        const tmpl = REFINE_TEMPLATES[state.refineJobType];
+        if (!tmpl) return;
+
+        const remaining = Math.max(0, state.refineJobEndsAt - Date.now());
+        const totalDur = tmpl.durationMins * 60 * 1000;
+        const progressPct = Math.min(100, Math.floor((totalDur - remaining) / totalDur * 100));
+        const ready = remaining <= 0;
+
+        if (el.ovenJobTimer) {
+          el.ovenJobTimer.textContent = ready ? 'Готово!' : fmtSeconds(Math.ceil(remaining / 1000));
+        }
+        if (el.ovenJobFill) {
+          el.ovenJobFill.style.width = (ready ? 100 : progressPct) + '%';
+        }
+
+        if (_lastOvenReadyState !== ready) {
+          _lastOvenReadyState = ready;
+          renderRefineOven(); // Rebuild button layout only on state changes!
         }
       }
 
@@ -4275,7 +4292,6 @@
           });
           el.ovenControlsBox.innerHTML = html;
         } else {
-          updateRefineOven();
           const tmpl = REFINE_TEMPLATES[job];
           el.ovenStateText.textContent = 'В работе';
           el.ovenStateText.style.background = 'rgba(245, 158, 11, 0.15)';
@@ -4286,6 +4302,7 @@
           const totalDur = tmpl.durationMins * 60 * 1000;
           const progressPct = Math.min(100, Math.floor((totalDur - remaining) / totalDur * 100));
           const ready = remaining <= 0;
+          _lastOvenReadyState = ready;
 
           el.ovenJobTitle.textContent = 'Плавка: ' + tmpl.name;
           el.ovenJobTimer.textContent = ready ? 'Готово!' : fmtSeconds(Math.ceil(remaining / 1000));
@@ -5587,8 +5604,8 @@
           const limitMs = (state.offlineLimitHours || 2) * 3600 * 1000;
           const elapsed = Math.min(Date.now() - (state.lastSave || Date.now()), limitMs);
           const offline = Math.floor(getAutoIncome() * (elapsed / 1000) * 0.5);
-          if (elapsed > 30000 && offline > 0) { addGold(offline); setTimeout(() => showToast('Оффлайн: +' + fmt(offline) + ' монет'), 800); }
-          state.offlineLimitHours = 2; // Сбрасываем заряд аккумулятора до базовых 2 часов после входа!
+          if (elapsed > 30000 && offline > 0) { addGold(offline); setTimeout(() => showToast('Оффлайн: +' + fmt(offline) + ' монет'), 800); state.offlineLimitHours = 2; }
+          
           updateGemMineProduction();
         } catch (e) {
           ensureQuest(true);
@@ -6356,7 +6373,7 @@
           updateUI();
           saveGame();
           showToast('Аккумулятор заряжен на +1 час для следующего выхода! Теперь: ' + state.offlineLimitHours + ' ч.');
-        });
+        }, 'chargeOfflineBattery');
       }
 
 
@@ -6440,6 +6457,6 @@
       else init();
     })();
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0c4aefbcf38cc81',t:'MTc4MTU1OTEwNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0cdd10fca358d76',t:'MTc4MTY1NDg3Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
 </html>
