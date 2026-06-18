@@ -4,10 +4,10 @@ export async function onRequestGet(context) {
     const db = context.env.LEADERBOARD_DB;
     
     try {
-        // Получаем список всех активных ключей онлайна
+        // List all active online users with the prefix
         const list = await db.list({ prefix: "online_user_" });
         
-        // Как минимум сам игрок сейчас в сети, поэтому минимум = 1
+        // At least the current player is online, so minimum count is 1
         const count = Math.max(1, list.keys.length);
         
         return new Response(JSON.stringify({ count }), {

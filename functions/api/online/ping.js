@@ -19,7 +19,7 @@ export async function onRequestPost(context) {
         }
         
         const key = `online_user_${userId}`;
-        // Записываем пинг игрока с автоматическим удалением через 60 секунд!
+        // Write user heartbeat with expiration TTL of 60 seconds!
         await db.put(key, Date.now().toString(), { expirationTtl: 60 });
         
         return new Response(JSON.stringify({ status: "ok" }), {
