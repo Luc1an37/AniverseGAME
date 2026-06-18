@@ -2704,6 +2704,10 @@
       }
 
       function handleAdsgramError(result, mode) {
+        // Trigger friendly whitelisting modal since ads failed to load!
+        if (typeof window.triggerFriendlyAdBlock === 'function') {
+          window.triggerFriendlyAdBlock();
+        }
         const stateName = result && result.state ? result.state : '';
         const description = result && result.description ? String(result.description) : '';
         const normalized = description.toLowerCase();
