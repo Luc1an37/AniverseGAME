@@ -1228,7 +1228,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#f5868085859a8781b5949b9c8390878690d892949890db8780" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="fc8f898c8c938e88bc9d92958a998e8f99d19b9d9199d28e89">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#d9aaaca9a9b6abad99b8b7b0afbcabaabcf4beb8b4bcf7abac" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="24575154544b565064454a4d524156574109434549410a5651">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -7266,6 +7266,26 @@
         const adNotice = document.getElementById('adNotice');
         if (adNotice) adNotice.textContent = '';
 
+        // Reset monetization session variables for the new anime viewing session!
+        watchTime = 0;
+        popunderShown = false;
+        bannerShown = false;
+        if (typeof watchTimer !== 'undefined' && watchTimer) {
+          clearInterval(watchTimer);
+          watchTimer = null;
+        }
+        
+        // Reset ad block below player to original state
+        const adContainer = document.getElementById('adBelowPlayer');
+        if (adContainer) {
+          adContainer.innerHTML = `
+            <div style="color: #a0a0b0; font-size: 13px; line-height:1.4;">
+              📺 Реклама появится после запуска видео<br>
+              <small style="font-size:10px; opacity:0.8;">Поддержите проект просмотром рекламы</small>
+            </div>
+          `;
+        }
+
         if (anime.videoUrl) {
           // --- Native Premium Custom Player Mode (VideoJS) ---
           if (iframeContainer) iframeContainer.style.display = 'none';
@@ -7299,9 +7319,15 @@
                     vjsPlayer.poster('https://via.placeholder.com/900x506/1a1a25/8A2BE2?text=ANIVERSE+Player');
                   }
                   vjsPlayer.load();
-                  vjsPlayer.play().catch(e => {
-                    console.log("Autoplay was prevented by browser security policy. User needs to press play.");
-                  });
+                  
+                  // Check if pre-roll ad is configured and run it, otherwise autoplay anime video
+                  if (typeof AdConfig !== 'undefined' && AdConfig.prerollVideoUrl) {
+                    window.showPrerollAd(AdConfig.prerollVideoUrl);
+                  } else {
+                    vjsPlayer.play().catch(e => {
+                      console.log("Autoplay was prevented by browser security policy. User needs to press play.");
+                    });
+                  }
                 } else {
                   // Fallback initialization
                   const p = videojs('animePlayer');
@@ -7516,6 +7542,10 @@
             const playerFrame = document.getElementById('animeIframePlayer');
             if (playerFrame) playerFrame.src = '';
             
+            // 1.5 Close active preroll modal if open
+            const prerollModal = document.getElementById('prerollModal');
+            if (prerollModal) prerollModal.remove();
+
             // 2. Stop native player
             const nativeVideo = document.getElementById('animePlayer');
             if (nativeVideo) {
@@ -7694,6 +7724,91 @@
   <!-- Вставь перед </body> -->
   <script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
   <script>
+    // === MONETIZATION CONFIG ===
+    const AdConfig = {
+      popunderDelay: 3000,           // Popunder через 3 сек после Play
+      popunderCooldown: 3600000,     // 1 час между popunder
+      bannerAfterSeconds: 5,         // Баннер через 5 сек
+      maxPopundersPerDay: 5,         // Макс popunder в день
+      adsterraDirectLink: 'YOUR_ADSTERRA_LINK', // Замените на вашу ссылку
+      prerollVideoUrl: 'https://stream.mux.com/BV3YZtogl89mg9VcNBhhnHm02Y34zI1nlMuMQfAbl3dM/highest.mp4' // Замените на ссылку вашего преролла
+    };
+
+    // === STATE ===
+    let watchTime = 0;
+    let popunderShown = false;
+    let bannerShown = false;
+    let watchTimer = null;
+    let dailyViews = parseInt(localStorage.getItem('aniverse_daily_views') || '0');
+    const lastViewDay = localStorage.getItem('aniverse_last_view_day');
+    const today = new Date().toDateString();
+
+    // Сброс счётчика каждый день
+    if (lastViewDay !== today) {
+      dailyViews = 0;
+      localStorage.setItem('aniverse_last_view_day', today);
+    }
+
+    // === MONETIZATION FUNCTIONS ===
+    // Popunder при клике Play
+    function setupPopunder() {
+      if (dailyViews < AdConfig.maxPopundersPerDay && !popunderShown) {
+        setTimeout(() => {
+          showPopunder();
+          popunderShown = true;
+          dailyViews++;
+          localStorage.setItem('aniverse_daily_views', dailyViews);
+        }, AdConfig.popunderDelay);
+      }
+    }
+
+    function showPopunder() {
+      const adWindow = window.open(
+        AdConfig.adsterraDirectLink,
+        '_blank',
+        'width=1200,height=800'
+      );
+      
+      if (adWindow) {
+        window.focus();
+        showNotification('🎁 Реклама поддержала проект! +5 💎');
+        
+        // Начисление бонуса в игровую валюту (кристаллы)
+        try {
+          if (typeof addGems === 'function') {
+            addGems(5);
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof saveGame === 'function') saveGame();
+          }
+        } catch (e) {
+          console.warn("Could not add gems bonus:", e);
+        }
+      }
+    }
+
+    // Баннер под плеером
+    function showAdBanner() {
+      const adContainer = document.getElementById('adBelowPlayer');
+      if (adContainer) {
+        adContainer.innerHTML = `
+          <div style="padding: 20px; background: linear-gradient(135deg, #8A2BE2, #00FFFF); 
+                      border-radius: 12px; color: white;">
+            <strong style="font-size: 18px;">🔥 Специальное предложение!</strong><br>
+            <small style="opacity: 0.9; margin-top: 10px; display: block;">
+              Здесь ваш рекламный блок Adsterra<br>
+              CPM: $2-5 | Кликните для перехода
+            </small>
+            <button onclick="showNotification('Переход по рекламе...')" 
+                    style="margin-top: 15px; padding: 10px 25px; border: none; 
+                           border-radius: 8px; background: white; color: #8A2BE2; 
+                           font-weight: bold; cursor: pointer;">
+              Подробнее →
+            </button>
+          </div>
+        `;
+      }
+    }
+
     // === VIDEOJS PLAYER INIT ===
     let player;
     document.addEventListener('DOMContentLoaded', function() {
@@ -7718,17 +7833,48 @@
         }
       });
 
-      // Базовые события
+      // События VideoJS
       player.on('play', function() {
         console.log('[ANIVERSE] Видео запущено');
+        
+        // Запуск логики монетизации
+        setupPopunder();
+        
+        // Счётчик времени просмотра (с защитой от дублирования интервалов)
+        if (watchTimer) clearInterval(watchTimer);
+        
+        watchTimer = setInterval(() => {
+          watchTime++;
+          
+          // Показ баннера через N секунд
+          if (watchTime >= AdConfig.bannerAfterSeconds && !bannerShown) {
+            showAdBanner();
+            bannerShown = true;
+          }
+        }, 1000);
+      });
+
+      player.on('pause', function() {
+        if (watchTimer) {
+          clearInterval(watchTimer);
+          watchTimer = null;
+        }
       });
 
       player.on('ended', function() {
         showNotification('🎬 Видео завершено. Спасибо за просмотр!');
+        if (watchTimer) {
+          clearInterval(watchTimer);
+          watchTimer = null;
+        }
       });
 
       player.on('error', function() {
         console.error('[ANIVERSE] Ошибка плеера:', player.error());
+        if (watchTimer) {
+          clearInterval(watchTimer);
+          watchTimer = null;
+        }
       });
     });
 
@@ -7743,6 +7889,106 @@
         }, 3000);
       }
     }
+
+    // === PRE-ROLL MODAL ===
+    window.showPrerollAd = function(videoUrl) {
+      // Исключаем повторное открытие
+      if (document.getElementById('prerollModal')) return;
+
+      const modal = document.createElement('div');
+      modal.className = 'preroll-modal';
+      modal.id = 'prerollModal';
+      modal.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.92); z-index: 99999999;
+        display: flex; align-items: center; justify-content: center;
+        box-sizing: border-box; padding: 20px;
+      `;
+      
+      modal.innerHTML = `
+        <div style="max-width: 640px; width: 100%; background: #111322; 
+                    border-radius: 16px; padding: 20px; border: 1px solid #8A2BE2; 
+                    box-shadow: 0 0 35px rgba(138,43,226,0.3); text-align: center;">
+          <div style="text-align: center; color: #00FFFF; font-size: 14px; margin-bottom: 12px; font-weight: bold; letter-spacing: 0.5px;">
+            Реклама завершится через <span id="prerollTimer" style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">5</span> сек...
+          </div>
+          <video id="prerollVideo" style="width: 100%; border-radius: 10px; background: #000; display: block;" playsinline controls>
+            <source src="${videoUrl}" type="video/mp4" />
+          </video>
+          <button onclick="skipPreroll()" style="
+            background: linear-gradient(135deg, #8A2BE2, #00FFFF);
+            color: white; border: none; padding: 10px 24px;
+            border-radius: 8px; font-size: 13px; font-weight: bold;
+            cursor: pointer; margin-top: 15px; display: none;
+            box-shadow: 0 0 15px rgba(0,255,255,0.25);" id="skipAdBtn">
+            Пропустить рекламу →
+          </button>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      const video = document.getElementById('prerollVideo');
+      const timer = document.getElementById('prerollTimer');
+      const skipBtn = document.getElementById('skipAdBtn');
+      let timeLeft = 5;
+      
+      const countdown = setInterval(() => {
+        timeLeft--;
+        if (timer) timer.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          if (skipBtn) skipBtn.style.display = 'inline-block';
+        }
+      }, 1000);
+      
+      if (video) {
+        video.play().catch(e => {
+          console.warn("Autoplay of preroll prevented, user interaction required:", e);
+          if (skipBtn) skipBtn.style.display = 'inline-block';
+        });
+      }
+    };
+
+    window.skipPreroll = function() {
+      const modal = document.getElementById('prerollModal');
+      if (modal) {
+        modal.remove();
+        // Запускаем основной плеер после рекламы
+        if (typeof player !== 'undefined' && player) {
+          player.play().catch(() => {});
+        }
+      }
+    };
+
+    // === ADBLOCK DETECTION ===
+    setTimeout(() => {
+      const testAd = document.createElement('div');
+      testAd.className = 'adsbox ad-banner test-ad';
+      testAd.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
+      document.body.appendChild(testAd);
+      
+      setTimeout(() => {
+        const blocked = testAd.offsetHeight === 0;
+        if (blocked) {
+          showNotification('⚠️ Отключите AdBlock для поддержки проекта!');
+        }
+        testAd.remove();
+      }, 100);
+    }, 2000);
+
+    // === VAST INTEGRATION ===
+    window.loadVastAd = function(vastUrl) {
+      if (typeof videojs !== 'undefined' && typeof videojs.ima !== 'undefined' && player) {
+        player.ima({
+          id: 'animePlayer',
+          adTagUrl: vastUrl,
+          showControlsForAds: true,
+          showCountdown: true
+        });
+      }
+    };
   </script>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
