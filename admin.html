@@ -511,6 +511,15 @@
         
         <input type="hidden" id="animeFormId" value="">
         
+        <!-- One-click import from Anixart.site -->
+        <div style="margin-bottom: 16px; padding: 12px; background: rgba(0,255,255,0.03); border: 1px solid rgba(0,255,255,0.1); border-radius: 10px;">
+          <label style="font-size:10px; color:#00FFFF; display:block; margin-bottom:6px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase;">🔌 Авто-импорт с Anixart.site</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="anixartUrlInput" placeholder="Вставьте ссылку на страницу аниме (например: https://anixart.site/77-...)" style="flex:1; padding:10px; font-size:11px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.06); color:#fff; border-radius:8px; outline:none;">
+            <button id="btnAnixartImport" type="button" style="background:linear-gradient(135deg, #00FFFF, #8A2BE2); border:none; border-radius:8px; color:#fff; font-size:10px; font-weight:bold; padding:0 14px; cursor:pointer; box-shadow:0 4px 10px rgba(0,255,255,0.2); -webkit-tap-highlight-color: transparent;">Импортировать 🍿</button>
+          </div>
+        </div>
+        
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
           <div>
             <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Название аниме</label>
@@ -933,6 +942,135 @@
       document.getElementById('formAnimeLabel').textContent = '🍿 Добавить новое аниме';
       document.getElementById('btnSaveAnimeForm').textContent = 'Сохранить в список ➕';
     }
+
+    // Automatic metadata fetching & parsing from Anixart.site with background Shikimori ID lookup!
+    document.getElementById('btnAnixartImport').addEventListener('click', () => {
+      const url = document.getElementById('anixartUrlInput').value.trim();
+      if (!url) {
+        showToast('❌ Пожалуйста, вставьте ссылку на аниме с Anixart.site!');
+        return;
+      }
+      if (!url.includes('anixart.site') && !url.includes('anixart-tv.org') && !url.includes('anixart.one')) {
+        showToast('❌ Ссылка должна вести на домен anixart.site!');
+        return;
+      }
+
+      const importBtn = document.getElementById('btnAnixartImport');
+      const origText = importBtn.innerHTML;
+      importBtn.innerHTML = '🔌 Импорт...';
+      importBtn.disabled = true;
+
+      // Use a public robust CORS proxy to fetch the HTML of the page
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+      
+      fetch(proxyUrl)
+        .then(res => {
+          if (!res.ok) throw new Error('Ошибка сети при загрузке страницы');
+          return res.json();
+        })
+        .then(json => {
+          const html = json.contents;
+          if (!html) throw new Error('Пустой контент страницы');
+
+          // Parse raw HTML using DOMParser
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // 1. Title
+          let title = '';
+          const h1 = doc.querySelector('h1');
+          if (h1) title = h1.textContent.trim();
+          if (!title) {
+            const ogTitle = doc.querySelector('meta[property="og:title"]');
+            if (ogTitle) title = ogTitle.getAttribute('content');
+          }
+
+          // 2. Year
+          let year = '';
+          doc.querySelectorAll('li').forEach(li => {
+            if (li.textContent.includes('Год:')) {
+              const match = li.textContent.match(/\d{4}/);
+              if (match) year = match[0];
+            }
+          });
+
+          // 3. Genres
+          let genres = [];
+          doc.querySelectorAll('li').forEach(li => {
+            if (li.textContent.includes('Жанр:')) {
+              li.querySelectorAll('a').forEach(a => {
+                genres.push(a.textContent.trim());
+              });
+            }
+          });
+          const genresStr = genres.join(', ');
+
+          // 4. Rating / Score
+          let rating = '9.5';
+          const ratingEl = doc.querySelector('.ratingNum') || doc.querySelector('[itemprop="ratingValue"]');
+          if (ratingEl) rating = ratingEl.textContent.trim();
+
+          // 5. Poster URL
+          let posterUrl = '';
+          const ogImg = doc.querySelector('meta[property="og:image"]');
+          if (ogImg) {
+            posterUrl = ogImg.getAttribute('content');
+          }
+          if (posterUrl && !posterUrl.startsWith('http')) {
+            posterUrl = 'https://anixart.site' + posterUrl;
+          }
+
+          // 6. Description
+          let description = '';
+          const descHeader = Array.from(doc.querySelectorAll('h2')).find(h => h.textContent.includes('Сюжет'));
+          if (descHeader && descHeader.nextElementSibling) {
+            description = descHeader.nextElementSibling.textContent.trim();
+          }
+
+          // Populate the form fields with what we parsed
+          if (title) document.getElementById('animeFormTitle').value = title;
+          if (year) document.getElementById('animeFormYear').value = year;
+          if (genresStr) document.getElementById('animeFormGenre').value = genresStr;
+          if (rating) document.getElementById('animeFormRating').value = rating;
+          if (posterUrl) document.getElementById('animeFormPoster').value = posterUrl;
+          if (description) document.getElementById('animeFormDesc').value = description;
+
+          showToast('🍿 Данные с Anixart получены! Ищем ID на Shikimori...');
+
+          // 7. Search Shikimori API for the matched title to get Shikimori ID!
+          return fetch(`https://shikimori.one/api/animes?search=${encodeURIComponent(title)}&limit=1`);
+        })
+        .then(res => {
+          if (!res) return; 
+          return res.json();
+        })
+        .then(data => {
+          if (data && Array.isArray(data) && data.length > 0) {
+            const anime = data[0];
+            document.getElementById('animeFormKinoboxId').value = anime.id;
+            
+            // If some fields were empty from Anixart, backfill them with Shikimori values
+            if (!document.getElementById('animeFormYear').value && anime.aired_on) {
+              document.getElementById('animeFormYear').value = anime.aired_on.split('-')[0];
+            }
+            if (!document.getElementById('animeFormPoster').value && anime.image) {
+              document.getElementById('animeFormPoster').value = 'https://shikimori.one' + anime.image.original;
+            }
+            
+            showToast('✅ УСПЕХ: Импортировано с Anixart и привязано к Shikimori ID! Проверьте и сохраните.');
+          } else {
+            showToast('⚠️ Данные импортированы, но не удалось автоматически связать с Shikimori ID. Введите ID вручную.');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          showToast('❌ Ошибка импорта: проверьте ссылку или прокси.');
+        })
+        .finally(() => {
+          importBtn.innerHTML = origText;
+          importBtn.disabled = false;
+        });
+    });
 
     // Automatic metadata fetching & form filling from Shikimori API!
     document.getElementById('btnShikimoriAutoFill').addEventListener('click', () => {
@@ -1362,5 +1500,6 @@
       updatePhoneTime();
     };
   </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
