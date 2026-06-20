@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <!-- Cache-Control Meta Tags to prevent heavy caching in future updates -->
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Aniverse GAME — Панель Управления & Бизнес-Аналитики</title>
@@ -368,6 +372,7 @@
     <!-- Sub-Tab Navigation Bar -->
     <div class="tab-bar">
       <button class="tab-btn active" id="btnTabBroadcast">📢 Рассылка</button>
+      <button class="tab-btn" id="btnTabAnime">🍿 Кинотеатр</button>
       <button class="tab-btn" id="btnTabAnalytics">📊 Аналитика</button>
     </div>
 
@@ -490,6 +495,84 @@
 
       <!-- Submit Button -->
       <button class="btn-action" id="btnSendAd">Запустить рассылку на ВСЕХ</button>
+    </div>
+
+    <!-- ================= SECTION 3: ANIME MANAGEMENT ================= -->
+    <div id="sectionAnime" style="display:none;">
+      <!-- Admin Password for saving -->
+      <div class="form-group">
+        <label for="animeAdminPass">Секретный пароль админа</label>
+        <input type="password" id="animeAdminPass" placeholder="Введите ваш пароль для сохранения изменений" style="padding:11px; font-size:11px; width:100%;">
+      </div>
+
+      <!-- Add/Edit Anime Form -->
+      <div class="form-group" style="background: rgba(168,85,247,0.03); border:1px solid rgba(168,85,247,0.1); border-radius:14px; padding:16px; margin-bottom:16px; text-align:left;">
+        <label id="formAnimeLabel" style="color:#c084fc; margin-bottom:10px; display:block; font-weight:bold; font-size:11px;">🍿 Добавить новое аниме</label>
+        
+        <input type="hidden" id="animeFormId" value="">
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Название аниме</label>
+            <input type="text" id="animeFormTitle" placeholder="Например: Монолог фармацевта" style="padding:10px; font-size:11px; width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none;">
+          </div>
+          <div>
+            <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Год выпуска</label>
+            <input type="number" id="animeFormYear" placeholder="Например: 2023" style="padding:10px; font-size:11px; width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none;">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Жанры (через запятую)</label>
+            <input type="text" id="animeFormGenre" placeholder="Например: Драма, Детектив, Сёнен" style="padding:10px; font-size:11px; width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none;">
+          </div>
+          <div>
+            <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Рейтинг</label>
+            <input type="text" id="animeFormRating" placeholder="Например: 9.8" style="padding:10px; font-size:11px; width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none;">
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Ссылка на картинку-постер (PNG/JPG)</label>
+          <input type="text" id="animeFormPoster" placeholder="https://shikimori.one/system/animes/original/54492.jpg" style="padding:10px; font-size:11px; width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none;">
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Shikimori ID (для Kinobox)</label>
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="animeFormKinoboxId" placeholder="Например: 54492" style="flex:1; padding:10px; font-size:11px; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none;">
+              <button id="btnShikimoriAutoFill" type="button" style="background:linear-gradient(135deg, #a855f7, #6366f1); border:none; border-radius:8px; color:#fff; font-size:10px; font-weight:bold; padding:0 12px; cursor:pointer; box-shadow:0 2px 8px rgba(168,85,247,0.25); -webkit-tap-highlight-color: transparent;">🪄 Заполнить</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Прямая ссылка на MP4 видео (опционально)</label>
+            <input type="text" id="animeFormVideoUrl" placeholder="https://.../highest.mp4" style="padding:10px; font-size:11px; width:100%; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none;">
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="font-size:9px; color:rgba(255,255,255,0.4); display:block; margin-bottom:4px;">Описание сюжета</label>
+          <textarea id="animeFormDesc" placeholder="Введите краткое описание аниме..." style="padding:10px; font-size:11px; width:100%; height:60px; background:rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.05); color:#fff; border-radius:8px; outline:none; resize:none;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <button class="btn-secondary" id="btnCancelAnimeForm" type="button" style="flex:1; padding:10px 0; font-size:11px;">Очистить</button>
+          <button class="btn-action" id="btnSaveAnimeForm" type="button" style="flex:1; padding:10px 0; font-size:11px; margin:0; background:linear-gradient(135deg, #10b981, #059669); border-color:#059669; box-shadow:0 4px 12px rgba(16,185,129,0.25);">Сохранить в список ➕</button>
+        </div>
+      </div>
+
+      <!-- Current Anime Cards List -->
+      <div class="form-group">
+        <label>Текущие карточки аниме в списке</label>
+        <div id="adminAnimeListContainer" style="max-height:300px; overflow-y:auto; padding-right:4px; display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.2); border-radius:12px; border:1px solid rgba(255,255,255,0.05); padding:10px;">
+          <!-- Loaded dynamically -->
+          <div style="text-align:center; padding: 20px 0; color: var(--text-muted); font-size: 11px;">Загрузка списка аниме...</div>
+        </div>
+      </div>
+
+      <button class="btn-action" id="btnPublishAnimeDb" style="margin-top:20px; background:linear-gradient(135deg, #a855f7, #7c3aed); box-shadow:0 4px 15px rgba(168,85,247,0.35);">ОПУБЛИКОВАТЬ В КИНОТЕАТРЕ НА САЙТЕ 🚀</button>
     </div>
 
     <!-- ================= SECTION 2: ANALYTICS ================= -->
@@ -688,19 +771,322 @@
     }
 
     // Tab toggling logic
+            // Custom beautiful glowing Toast notification system
+    function showToast(msg) {
+      let toast = document.getElementById('adminToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'adminToast';
+        toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(18, 22, 40, 0.96); border: 1px solid rgba(168, 85, 247, 0.3); padding: 12px 24px; border-radius: 10px; font-size: 12px; font-weight: bold; color: #fff; z-index: 999999; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+      clearTimeout(window._adminToastTimer);
+      window._adminToastTimer = setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+        toast.style.opacity = '0';
+      }, 3000);
+    }
+
+    // Cached section elements
+    const sectionBroadcast = document.getElementById('sectionBroadcast');
+    const sectionAnime = document.getElementById('sectionAnime');
+    const sectionAnalytics = document.getElementById('sectionAnalytics');
+
+    // Tab toggling logic
     document.getElementById('btnTabBroadcast').addEventListener('click', () => {
       document.getElementById('btnTabBroadcast').classList.add('active');
+      document.getElementById('btnTabAnime').classList.remove('active');
       document.getElementById('btnTabAnalytics').classList.remove('active');
-      document.getElementById('sectionBroadcast').style.display = 'block';
-      document.getElementById('sectionAnalytics').style.display = 'none';
+      sectionBroadcast.style.display = 'block';
+      if (sectionAnime) sectionAnime.style.display = 'none';
+      sectionAnalytics.style.display = 'none';
+    });
+
+    document.getElementById('btnTabAnime').addEventListener('click', () => {
+      document.getElementById('btnTabBroadcast').classList.remove('active');
+      document.getElementById('btnTabAnime').classList.add('active');
+      document.getElementById('btnTabAnalytics').classList.remove('active');
+      sectionBroadcast.style.display = 'none';
+      if (sectionAnime) sectionAnime.style.display = 'block';
+      sectionAnalytics.style.display = 'none';
+      loadAdminAnimeDatabase();
     });
 
     document.getElementById('btnTabAnalytics').addEventListener('click', () => {
       document.getElementById('btnTabBroadcast').classList.remove('active');
+      document.getElementById('btnTabAnime').classList.remove('active');
       document.getElementById('btnTabAnalytics').classList.add('active');
-      document.getElementById('sectionBroadcast').style.display = 'none';
-      document.getElementById('sectionAnalytics').style.display = 'block';
+      sectionBroadcast.style.display = 'none';
+      if (sectionAnime) sectionAnime.style.display = 'none';
+      sectionAnalytics.style.display = 'block';
       loadStats(); // Force reload fresh analytics when opening
+    });
+
+    // ================= ANIME MANAGEMENT CMS CONTROLLER =================
+    let localAnimeDb = [];
+
+    // Load active database from server on tab click
+    function loadAdminAnimeDatabase() {
+      const container = document.getElementById('adminAnimeListContainer');
+      if (container) container.innerHTML = '<div style="text-align:center; padding: 20px 0; color: var(--text-muted); font-size:11px;">Загрузка списка аниме с сервера...</div>';
+      
+      fetch('/api/anime')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.anime && Array.isArray(data.anime)) {
+            localAnimeDb = data.anime;
+            renderAdminAnimeList();
+          }
+        })
+        .catch(err => {
+          console.warn('Backend not ready, loading local fallback.', err);
+          // Fail-safe: use the default 12 cards as a local fallback so the panel is fully functional!
+          localAnimeDb = [
+            { id: '1', title: 'Магическая битва 2 (Трейлер)', year: 2023, genre: 'Экшен, Сёнен, Фэнтези', rating: '9.6', poster: 'https://image.mux.com/BV3YZtogl89mg9VcNBhhnHm02Y34zI1nlMuMQfAbl3dM/thumbnail.webp', description: 'Второй сезон Магической битвы, рассказывающий о трагических событиях в Сибуе и прошлом Сатору Годзё. Нажмите, чтобы запустить флагманский анимированный трейлер в нашем премиум-плеере!', kinoboxId: '51009', videoUrl: 'https://stream.mux.com/BV3YZtogl89mg9VcNBhhnHm02Y34zI1nlMuMQfAbl3dM/highest.mp4' },
+            { id: '2', title: 'Ван-Пис', year: 1999, genre: 'Приключения, Комедия, Сёнен', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/21.jpg', description: 'Манки Д. Луффи отправляется в плавание, чтобы собрать команду и найти легендарное сокровище Ван-Пис.', kinoboxId: '21' },
+            { id: '3', title: 'Блич', year: 2004, genre: 'Экшен, Сёнен, Мистика', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/269.jpg', description: 'Ичего Куросаки случайно получает силу Синигами и вступает в борьбу со злыми духами — Пустыми.', kinoboxId: '269' },
+            { id: '4', title: 'Монолог фармацевта', year: 2023, genre: 'Драма, Детектив, Исторический', rating: '9.8', poster: 'https://shikimori.one/system/animes/original/54492.jpg', description: 'Маомао, похищенная и проданная в императорский дворец, использует свои знания фармацевтики, чтобы расследовать интриги.', kinoboxId: '54492' },
+            { id: '5', title: 'Чёрный клевер', year: 2017, genre: 'Сёнен, Экшен, Фэнтези', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/34572.jpg', description: 'Аста и Юно, два сироты в мире магии, соревнуются за звание Короля Магов.', kinoboxId: '34572' },
+            { id: '6', title: 'Магическая битва 1', year: 2020, genre: 'Экшен, Сёнен, Мистика', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/40748.jpg', description: 'Итадори Юдзи поглощает палец могущественного проклятия Сукуны и вступает в мир шаманов.', kinoboxId: '40748' },
+            { id: '7', title: 'Истребитель демонов', year: 2019, genre: 'Экшен, Сёнен, Исторический', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/38000.jpg', description: 'Тандзиро Камадо становится истребителем демонов, чтобы спасти свою сестру Нэдзуко, обращённую в демона.', kinoboxId: '38000' },
+            { id: '8', title: 'Атака титанов 4', year: 2020, genre: 'Экшен, Драма, Фэнтези, Сёнен', rating: '9.9', poster: 'https://shikimori.one/system/animes/original/40028.jpg', description: 'Финальный сезон противостояния человечества и титанов, раскрывающий зловещие тайны мира за стенами.', kinoboxId: '40028' },
+            { id: '9', title: 'Наруто: Ураганные хроники', year: 2007, genre: 'Экшен, Комедия, Сёнен', rating: '9.7', poster: 'https://shikimori.one/system/animes/original/1735.jpg', description: 'Повзрослевший Наруто Удзумаки возвращается в Деревню Скрытого Листа после долгих тренировок с Джирайей.', kinoboxId: '1735' },
+            { id: '10', title: 'Человек-бензопила', year: 2022, genre: 'Экшен, Сёнен, Драма', rating: '9.6', poster: 'https://shikimori.one/system/animes/original/44511.jpg', description: 'Дэндзи, бедный парень, сливается со своим питомцем-демоном Почитой и становится Человеком-бензопилой.', kinoboxId: '44511' },
+            { id: '11', title: 'Поднятие уровня в одиночку', year: 2024, genre: 'Экшен, Приключения, Фэнтези', rating: '9.7', poster: 'https://shikimori.one/system/animes/original/52299.jpg', description: 'Слабейший охотник человечества Сон Джин-у получает уникальную возможность прокачивать свои силы.', kinoboxId: '52299' },
+            { id: '12', title: 'Кагуя: В любви как на войне', year: 2019, genre: 'Комедия, Романтика, Школа', rating: '9.5', poster: 'https://shikimori.one/system/animes/original/37999.jpg', description: 'Два гения студенческого совета ведут изощрённую психологическую войну, чтобы заставить друг друга признаться в любви первым.', kinoboxId: '37999' }
+          ];
+          renderAdminAnimeList();
+          showToast('🍿 Загружен стандартный резервный список.');
+        });
+    }
+
+    // Render the list of anime cards with Edit / Delete actions
+    function renderAdminAnimeList() {
+      const container = document.getElementById('adminAnimeListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      if (localAnimeDb.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:20px 0; color: var(--text-muted); font-size:11px;">Список пуст. Создайте первую карточку аниме выше!</div>';
+        return;
+      }
+
+      localAnimeDb.forEach((anime, idx) => {
+        const item = document.createElement('div');
+        item.style.cssText = 'background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:10px; display:flex; justify-content:space-between; align-items:center; gap:10px; text-align:left; margin-bottom:8px;';
+        item.innerHTML = `
+          <div style="flex:1; overflow:hidden;">
+            <div style="font-size:12px; font-weight:bold; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🍿 ${anime.title} (${anime.year})</div>
+            <div style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">Жанры: ${anime.genre} • Рейтинг: ⭐ ${anime.rating}</div>
+          </div>
+          <div style="display:flex; gap:6px; flex-shrink:0;">
+            <button class="btn-secondary" onclick="editAnimeCard(${idx})" type="button" style="padding:4px 8px; font-size:9px; border-color:#0088cc; color:#00aaee; margin:0;">Ред.</button>
+            <button class="btn-secondary" onclick="deleteAnimeCard(${idx})" type="button" style="padding:4px 8px; font-size:9px; border-color:#ef4444; color:#fca5a5; margin:0;">Удалить</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Pre-fill form for editing
+    window.editAnimeCard = function(idx) {
+      const anime = localAnimeDb[idx];
+      document.getElementById('animeFormId').value = idx;
+      document.getElementById('animeFormTitle').value = anime.title || '';
+      document.getElementById('animeFormYear').value = anime.year || '';
+      document.getElementById('animeFormGenre').value = anime.genre || '';
+      document.getElementById('animeFormRating').value = anime.rating || '';
+      document.getElementById('animeFormPoster').value = anime.poster || '';
+      document.getElementById('animeFormKinoboxId').value = anime.kinoboxId || '';
+      document.getElementById('animeFormVideoUrl').value = anime.videoUrl || '';
+      document.getElementById('animeFormDesc').value = anime.description || '';
+      
+      document.getElementById('formAnimeLabel').textContent = '📝 Редактировать аниме: ' + anime.title;
+      document.getElementById('btnSaveAnimeForm').textContent = 'Сохранить карточку 💾';
+      showToast('Карточка подгружена в форму редактирования!');
+    };
+
+    // Remove from local list
+    window.deleteAnimeCard = function(idx) {
+      if (confirm('Удалить аниме "' + localAnimeDb[idx].title + '" из списка?')) {
+        localAnimeDb.splice(idx, 1);
+        renderAdminAnimeList();
+        showToast('Аниме удалено из локального списка.');
+      }
+    };
+
+    // Reset / clear form
+    function clearAnimeForm() {
+      document.getElementById('animeFormId').value = '';
+      document.getElementById('animeFormTitle').value = '';
+      document.getElementById('animeFormYear').value = '';
+      document.getElementById('animeFormGenre').value = '';
+      document.getElementById('animeFormRating').value = '';
+      document.getElementById('animeFormPoster').value = '';
+      document.getElementById('animeFormKinoboxId').value = '';
+      document.getElementById('animeFormVideoUrl').value = '';
+      document.getElementById('animeFormDesc').value = '';
+      
+      document.getElementById('formAnimeLabel').textContent = '🍿 Добавить новое аниме';
+      document.getElementById('btnSaveAnimeForm').textContent = 'Сохранить в список ➕';
+    }
+
+    // Automatic metadata fetching & form filling from Shikimori API!
+    document.getElementById('btnShikimoriAutoFill').addEventListener('click', () => {
+      const shikimoriId = document.getElementById('animeFormKinoboxId').value.trim();
+      if (!shikimoriId) {
+        showToast('❌ Пожалуйста, введите Shikimori ID!');
+        return;
+      }
+      
+      const autoBtn = document.getElementById('btnShikimoriAutoFill');
+      const origText = autoBtn.innerHTML;
+      autoBtn.innerHTML = '🪄 Загрузка...';
+      autoBtn.disabled = true;
+
+      fetch(`https://shikimori.one/api/animes/${shikimoriId}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Аниме не найдено на Shikimori');
+          return res.json();
+        })
+        .then(data => {
+          // 1. Title
+          document.getElementById('animeFormTitle').value = data.russian || data.name || '';
+          
+          // 2. Year
+          if (data.aired_on) {
+            const year = data.aired_on.split('-')[0];
+            document.getElementById('animeFormYear').value = year;
+          } else if (data.released_on) {
+            const year = data.released_on.split('-')[0];
+            document.getElementById('animeFormYear').value = year;
+          }
+          
+          // 3. Genres
+          if (data.genres && Array.isArray(data.genres)) {
+            const genresStr = data.genres.map(g => g.russian || g.name).join(', ');
+            document.getElementById('animeFormGenre').value = genresStr;
+          }
+          
+          // 4. Rating
+          if (data.score) {
+            document.getElementById('animeFormRating').value = data.score;
+          }
+          
+          // 5. Poster URL
+          if (data.image && data.image.original) {
+            if (data.image.original.startsWith('http')) {
+              document.getElementById('animeFormPoster').value = data.image.original;
+            } else {
+              document.getElementById('animeFormPoster').value = 'https://shikimori.one' + data.image.original;
+            }
+          }
+          
+          // 6. Description
+          if (data.description) {
+            let desc = data.description;
+            desc = desc.replace(/\[\/?\w+[^\\]]*\]/g, ''); // Strip BBCode brackets
+            document.getElementById('animeFormDesc').value = desc;
+          } else {
+            document.getElementById('animeFormDesc').value = '';
+          }
+          
+          showToast('🪄 Автозаполнение выполнено! Проверьте и нажмите «Сохранить».');
+        })
+        .catch(err => {
+          console.error(err);
+          showToast('❌ Ошибка загрузки: проверьте правильность ID.');
+        })
+        .finally(() => {
+          autoBtn.innerHTML = origText;
+          autoBtn.disabled = false;
+        });
+    });
+
+    document.getElementById('btnCancelAnimeForm').addEventListener('click', clearAnimeForm);
+
+    // Add or Update in local list
+    document.getElementById('btnSaveAnimeForm').addEventListener('click', () => {
+      const title = document.getElementById('animeFormTitle').value.trim();
+      const year = parseInt(document.getElementById('animeFormYear').value);
+      const genre = document.getElementById('animeFormGenre').value.trim();
+      const rating = document.getElementById('animeFormRating').value.trim();
+      const poster = document.getElementById('animeFormPoster').value.trim();
+      const kinoboxId = document.getElementById('animeFormKinoboxId').value.trim();
+      const videoUrl = document.getElementById('animeFormVideoUrl').value.trim();
+      const desc = document.getElementById('animeFormDesc').value.trim();
+
+      if (!title || !year || !genre || !rating || !poster) {
+        showToast('Заполните обязательные поля: Название, Год, Жанры, Рейтинг и Постер!');
+        return;
+      }
+
+      const cardId = document.getElementById('animeFormId').value;
+      const animeData = {
+        id: cardId !== '' ? localAnimeDb[parseInt(cardId)].id : String(Date.now()),
+        title,
+        year,
+        genre,
+        rating,
+        poster,
+        description: desc || 'Краткое описание сюжета появится очень скоро...',
+        kinoboxId: kinoboxId || '51009'
+      };
+
+      if (videoUrl) {
+        animeData.videoUrl = videoUrl;
+      }
+
+      if (cardId !== '') {
+        // Update existing
+        localAnimeDb[parseInt(cardId)] = animeData;
+        showToast('Карточка успешно обновлена!');
+      } else {
+        // Create new
+        localAnimeDb.push(animeData);
+        showToast('Аниме успешно добавлено в список!');
+      }
+
+      clearAnimeForm();
+      renderAdminAnimeList();
+    });
+
+    // POST / Publish entire database permanently to Cloudflare KV
+    document.getElementById('btnPublishAnimeDb').addEventListener('click', () => {
+      const password = document.getElementById('animeAdminPass').value;
+      if (!password) {
+        showToast('Пожалуйста, введите секретный пароль админа для публикации!');
+        return;
+      }
+
+      const btn = document.getElementById('btnPublishAnimeDb');
+      btn.textContent = 'Публикация... ⏳';
+      btn.disabled = true;
+
+      fetch('/api/anime', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, anime: localAnimeDb })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success) {
+          showToast('🚀 КАТАЛОГ АНИМЕ УСПЕШНО ОПУБЛИКОВАН НА САЙТЕ!');
+        } else {
+          showToast('Ошибка публикации: ' + (data.error || 'Неверный пароль'));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('Ошибка соединения с сервером');
+      })
+      .finally(() => {
+        btn.textContent = 'ОПУБЛИКОВАТЬ В КИНОТЕАТРЕ НА САЙТЕ 🚀';
+        btn.disabled = false;
+      });
     });
 
     // Toggle Markdown Helper Box
@@ -965,11 +1351,13 @@
     document.getElementById('chkRemember').addEventListener('change', saveCredentials);
     document.getElementById('btnValidateBot').addEventListener('click', validateBot);
     document.getElementById('btnSendTestPush').addEventListener('click', sendTestPush);
+    document.getElementById('botToken').addEventListener('input', testBotPing);
 
     // Run on boot
     window.onload = () => {
       loadStats();
       loadCredentials();
+      testBotPing(); // Run diagnostics check on boot to prevent hanging "Проверка..." text!
       updatePreviewAndCounter();
       updatePhoneTime();
     };
