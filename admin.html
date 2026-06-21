@@ -582,6 +582,15 @@
       </div>
 
       <button class="btn-action" id="btnPublishAnimeDb" style="margin-top:20px; background:linear-gradient(135deg, #a855f7, #7c3aed); box-shadow:0 4px 15px rgba(168,85,247,0.35);">ОПУБЛИКОВАТЬ В КИНОТЕАТРЕ НА САЙТЕ 🚀</button>
+
+      <!-- Daily Auto-Sync with Shikimori -->
+      <div style="margin-top: 14px; padding: 12px; background: rgba(16,185,129,0.03); border: 1px solid rgba(16,185,129,0.1); border-radius: 12px; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 10px; color: #10b981; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: block; text-align: left;">🔄 Синхронизация новинок дня (Shikimori):</span>
+        <button class="btn-action" id="btnSyncShikimoriDaily" style="margin:0; background: linear-gradient(135deg, #10b981, #059669); border: none; font-size: 11px; padding: 10px 0; font-weight: bold; box-shadow: 0 4px 12px rgba(16,185,129,0.2); -webkit-tap-highlight-color: transparent;">🔄 Синхронизировать популярные новинки сейчас</button>
+        <span style="font-size: 9px; color: var(--text-muted); text-align: left; display: block; line-height: 1.35;">
+          Нажмите для моментального импорта 12 самых популярных онгоингов сезона в вашу базу. Для полной автоматизации (раз в сутки) настройте вызов ссылки <code style="background:rgba(0,0,0,0.3); padding:2px 4px; border-radius:4px;">https://aniverse-game.ru/api/sync?password=ВАШ_ПАРОЛЬ</code> через бесплатный сервис планировщика (например, cron-job.org).
+        </span>
+      </div>
     </div>
 
     <!-- ================= SECTION 2: ANALYTICS ================= -->
@@ -1190,6 +1199,45 @@
 
       clearAnimeForm();
       renderAdminAnimeList();
+    });
+
+    // Automatic background database synchronization with Shikimori API!
+    document.getElementById('btnSyncShikimoriDaily').addEventListener('click', () => {
+      const password = document.getElementById('animeAdminPass').value.trim();
+      if (!password) {
+        showToast('Пожалуйста, введите секретный пароль админа для синхронизации!');
+        return;
+      }
+
+      const syncBtn = document.getElementById('btnSyncShikimoriDaily');
+      const origText = syncBtn.innerHTML;
+      syncBtn.textContent = 'Синхронизация... ⏳';
+      syncBtn.disabled = true;
+
+      fetch(`/api/sync?password=${encodeURIComponent(password)}`)
+        .then(res => {
+          if (!res.ok) {
+            if (res.status === 403) throw new Error("Неверный пароль администратора!");
+            throw new Error("Сетевая ошибка сервера");
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.success) {
+            showToast(`✅ ${data.message}`);
+            // Force reload database to show newly added items!
+            loadAdminAnimeDatabase();
+          } else {
+            showToast("⚠️ Возникла ошибка при синхронизации.");
+          }
+        })
+        .catch(err => {
+          showToast("❌ Ошибка: " + err.message);
+        })
+        .finally(() => {
+          syncBtn.innerHTML = origText;
+          syncBtn.disabled = false;
+        });
     });
 
     // POST / Publish entire database permanently to Cloudflare KV
