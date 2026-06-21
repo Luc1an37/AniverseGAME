@@ -644,6 +644,12 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      animation: ambilightGlow 8s infinite ease-in-out;
+      transition: all 0.3s ease;
+    }
+    @keyframes ambilightGlow {
+      0%, 100% { box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 15px rgba(138, 43, 226, 0.3); }
+      50% { box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0, 255, 255, 0.5), 0 0 15px rgba(168, 85, 247, 0.3); }
     }
     .video-js {
       width: 100% !important;
@@ -1430,7 +1436,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#7a090f0a0a15080e3a1b14130c1f08091f571d1b171f54080f" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="dcafa9acacb3aea89cbdb2b5aab9aeafb9f1bbbdb1b9f2aea9">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#3a494f4a4a55484e7a5b54534c5f48495f175d5b575f14484f" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="d6a5a3a6a6b9a4a296b7b8bfa0b3a4a5b3fbb1b7bbb3f8a4a3">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -7905,7 +7911,89 @@
         if (genre) genre.style.opacity = '1';
       };
 
-      // Interactive Star Rating system
+      // Audio Dubbing track switching simulator (with seeking overlay!)
+      let currentDubbing = 'Anilibria';
+      window.switchDubbing = function(dubName) {
+        currentDubbing = dubName;
+        
+        ['Anilibria', 'Shiza', 'Dream', 'Animevost'].forEach(d => {
+          const btn = document.getElementById('dub-' + d);
+          if (btn) {
+            if (d === dubName) {
+              btn.style.background = 'rgba(168,85,247,0.15)';
+              btn.style.borderColor = '#a855f7';
+              btn.style.color = '#fff';
+            } else {
+              btn.style.background = 'rgba(255,255,255,0.03)';
+              btn.style.borderColor = 'rgba(255,255,255,0.08)';
+              btn.style.color = 'rgba(255,255,255,0.7)';
+            }
+          }
+        });
+
+        const p = videojs('animePlayer');
+        if (p) {
+          p.pause();
+          showNotification(`🎙️ Переключаем на озвучку ${dubName}...`);
+          triggerHaptic('medium');
+          
+          p.addClass('vjs-seeking');
+          setTimeout(() => {
+            p.removeClass('vjs-seeking');
+            p.play().catch(() => {});
+            showNotification(`✅ Озвучка ${dubName} загружена!`);
+          }, 800);
+        }
+      };
+
+      // Direct URL sharing to clipboard / navigator
+      window.shareAnimeLink = function() {
+        const title = document.getElementById('modalAnimeTitle').textContent;
+        const shareUrl = `https://aniverse-game.ru/?anime=${currentAnimeId}`;
+        
+        if (navigator.share) {
+          navigator.share({
+            title: `Смотреть аниме «${title}» на AniVerse`,
+            url: shareUrl
+          }).catch(() => {});
+        } else {
+          navigator.clipboard.writeText(shareUrl)
+            .then(() => {
+              showNotification('🔗 Ссылка скопирована в буфер обмена!');
+              triggerHaptic('light');
+            })
+            .catch(() => {
+              alert(`Ссылка на аниме: ${shareUrl}`);
+            });
+        }
+      };
+
+      // Simulates loading next episode with loading spinner
+      window.triggerNextEpisode = function() {
+        triggerHaptic('heavy');
+        showNotification('⏭️ Загружаем следующую серию...');
+        const p = videojs('animePlayer');
+        if (p) {
+          p.pause();
+          p.addClass('vjs-seeking');
+          setTimeout(() => {
+            p.removeClass('vjs-seeking');
+            p.currentTime(0);
+            p.play().catch(() => {});
+            showNotification('🍿 Серия 2 запущена!');
+          }, 1000);
+        }
+      };
+
+      // Format time helper (MM:SS)
+      window.formatMinSec = function(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
+        return `${m}:${String(s).padStart(2, '0')}`;
+      };
+
+      // Interactive Star Rating system      // Interactive Star Rating system
       window.renderStarRating = function() {
         const ratingRow = document.getElementById('starRatingRow');
         const ratingText = document.getElementById('userRatingText');
@@ -8408,8 +8496,24 @@
         }
       });
 
+      // Auto-save watch progress inside localStorage
+      player.on('timeupdate', function() {
+        const currentTime = player.currentTime();
+        if (currentTime > 5 && typeof currentAnimeId !== 'undefined' && currentAnimeId) {
+          const progress = JSON.parse(localStorage.getItem('aniverse_watch_progress') || '{}');
+          progress[currentAnimeId] = currentTime;
+          localStorage.setItem('aniverse_watch_progress', JSON.stringify(progress));
+        }
+      });
+
       player.on('ended', function() {
         showNotification('🎬 Видео завершено. Спасибо за просмотр!');
+        // Clear progress when video is fully finished!
+        if (typeof currentAnimeId !== 'undefined' && currentAnimeId) {
+          const progress = JSON.parse(localStorage.getItem('aniverse_watch_progress') || '{}');
+          delete progress[currentAnimeId];
+          localStorage.setItem('aniverse_watch_progress', JSON.stringify(progress));
+        }
         if (watchTimer) {
           clearInterval(watchTimer);
           watchTimer = null;
