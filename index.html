@@ -1339,6 +1339,8 @@
   <meta name="referrer" content="no-referrer">
   <!-- Stable VideoJS v8.6.1 Player CDN & Styles -->
   <link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet" />
+  <!-- Global Mail.ru Ads Loader -->
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
 <body class="theme-default">
   <!-- Unified Welcoming/Login Overlay (Visible only to guests outside Telegram) -->
@@ -1438,7 +1440,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#3d4e484d4d524f497d5c53544b584f4e58105a5c5058134f48" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="57242227273825231736393e21322524327a30363a32792522">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#37444247475845437756595e41524544521a50565a52194542" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="55262025253a272115343b3c233027263078323438307b2720">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -7640,14 +7642,23 @@
           }
         }
 
-        // Insert Adsterra 300x250 square banner inside player dynamically to maximize revenue!
+        // Insert Mail.ru 300x250 square banner inside player dynamically to maximize revenue! (Completely replaced Adsterra!)
         const adBox = document.getElementById('playerAdBox');
         if (adBox) {
           adBox.innerHTML = `
-            <div style="width:300px; height:80px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-              <span style="font-size:10px; color:var(--text-muted);">РЕКЛАМА • Adsterra</span>
+            <div style="width:300px; height:250px; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:10px;">
+              <ins class="mrg-tag" 
+                   style="display:inline-block;width:300px;height:250px"
+                   data-ad-client="ad-2027133" 
+                   data-ad-slot="2027133">
+              </ins>
             </div>
           `;
+          try {
+            (window.MRGtag = window.MRGtag || []).push({});
+          } catch(err) {
+            console.warn("Mail.ru player ad push failed:", err);
+          }
         }
 
         document.getElementById('animePlayerModal').classList.add('show');
@@ -8304,17 +8315,15 @@
   <!-- Permanent Static Bottom Banner Panel (320x50 Mobile Format) -->
   <div id="bottomAdPanel">
     <div style="width: 320px; height: 50px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #000;">
-      <!-- Adsterra 320x50 Mobile Banner -->
-      <script type="text/javascript">
-        atOptions = {
-          'key' : '11db4febd0ee37a031f2e03afadafa8d', // Вставьте сюда ваш 320x50 ключ от Adsterra при наличии
-          'format' : 'iframe',
-          'height' : 50,
-          'width' : 320,
-          'params' : {}
-        };
+      <!-- Mail.ru 320x50 Mobile Banner (Completely replaced Adsterra!) -->
+      <ins class="mrg-tag" 
+           style="display:inline-block;width:320px;height:50px" 
+           data-ad-client="ad-2027135"
+           data-ad-slot="2027135">
+      </ins>
+      <script>
+          (MRGtag = window.MRGtag || []).push({});
       </script>
-      <script type="text/javascript" src="https://www.highperformanceformat.com/11db4febd0ee37a031f2e03afadafa8d/invoke.js"></script>
     </div>
   </div>
 
