@@ -7,6 +7,10 @@
   <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
+  <!-- Cache-Control Meta Tags to prevent heavy caching in future updates -->
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Aniverse GAME — Панель Управления & Бизнес-Аналитики</title>
@@ -593,6 +597,8 @@
           Нажмите для моментального импорта 12 самых популярных онгоингов сезона в вашу базу. Для полной автоматизации (раз в сутки) настройте вызов ссылки <code style="background:rgba(0,0,0,0.3); padding:2px 4px; border-radius:4px;">https://aniverse-game.ru/api/sync?password=ВАШ_ПАРОЛЬ</code> через бесплатный сервис планировщика (например, cron-job.org).
         </span>
       </div>
+
+
     </div>
 
     <!-- ================= SECTION 2: ANALYTICS ================= -->
@@ -954,7 +960,7 @@
       document.getElementById('btnSaveAnimeForm').textContent = 'Сохранить в список ➕';
     }
 
-    // Automatic metadata fetching & parsing from Anixart.site with background Shikimori ID lookup!
+        // Automatic metadata fetching & parsing from Anixart.site with background Shikimori ID lookup!
     document.getElementById('btnAnixartImport').addEventListener('click', () => {
       const url = document.getElementById('anixartUrlInput').value.trim();
       if (!url) {
@@ -1203,7 +1209,7 @@
       renderAdminAnimeList();
     });
 
-    // Automatic background database synchronization with Shikimori API!
+        // Automatic background database synchronization with Shikimori API!
     document.getElementById('btnSyncShikimoriDaily').addEventListener('click', () => {
       const password = document.getElementById('animeAdminPass').value.trim();
       if (!password) {
@@ -1540,6 +1546,7 @@
     document.getElementById('btnValidateBot').addEventListener('click', validateBot);
     document.getElementById('btnSendTestPush').addEventListener('click', sendTestPush);
     document.getElementById('botToken').addEventListener('input', testBotPing);
+
 
     // Run on boot
     window.onload = () => {
