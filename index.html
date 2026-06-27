@@ -1448,7 +1448,7 @@
       <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 12px; font-size: 11px;">
         <a href="https://t.me/Aniverse_gamebot" target="_blank" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Телеграм Бот</a>
         <span style="color: rgba(255,255,255,0.1);">|</span>
-        <a href="/cdn-cgi/l/email-protection#f98a8c8989968b8db99897908f9c8b8a9cd49e98949cd78b8c" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="07747277776875734766696e71627574622a60666a62297572">[email&#160;protected]</span></a>
+        <a href="/cdn-cgi/l/email-protection#4c3f393c3c233e380c2d22253a293e3f29612b2d2129623e39" style="color: var(--text-secondary); text-decoration: none; transition: color 0.15s;">Поддержка: <span class="__cf_email__" data-cfemail="25565055554a575165444b4c534057564008424448400b5750">[email&#160;protected]</span></a>
       </div>
       <p style="font-size: 10px; color: rgba(255,255,255,0.15); line-height: 1.4; text-align: center; margin-bottom: 10px;">&copy; 2026 Aniverse Game. Все права защищены.</p>
       <p style="font-size: 9px; color: rgba(255,255,255,0.1); line-height: 1.45; text-align: center;">
@@ -7501,7 +7501,7 @@
               <div class="anime-poster-wrap">
                 <span class="anime-badge-rating">⭐ ${item.rating}</span>
                 <span class="anime-badge-year">${item.year}</span>
-                <img src="${item.poster}" class="anime-poster" alt="${item.title}" loading="lazy">
+                <img src="${item.poster}?cache_bust=3" class="anime-poster" alt="${item.title}" loading="lazy">
               </div>
               <div class="anime-card-info">
                 <h4 class="anime-card-title">${item.title}</h4>
@@ -7513,7 +7513,7 @@
             card.innerHTML = `
               <div class="anime-list-poster-wrap">
                 <span class="anime-badge-rating" style="font-size:8px; padding:2px 4px;">⭐ ${item.rating}</span>
-                <img src="${item.poster}" class="anime-list-poster" alt="${item.title}" loading="lazy">
+                <img src="${item.poster}?cache_bust=3" class="anime-list-poster" alt="${item.title}" loading="lazy">
               </div>
               <div class="anime-list-info">
                 <h4 class="anime-list-title">${item.title} (${item.year})</h4>
@@ -7569,7 +7569,24 @@
           `;
         }
 
+        // Smart Video URL validation: must be a genuine direct video stream, not a web page link
+        let isDirectVideo = false;
         if (anime.videoUrl) {
+          const urlLower = anime.videoUrl.toLowerCase();
+          if (urlLower.startsWith('http') && 
+              (urlLower.includes('.mp4') || 
+               urlLower.includes('.m3u8') || 
+               urlLower.includes('.mov') || 
+               urlLower.includes('.avi') ||
+               urlLower.includes('/highest.mp4') ||
+               urlLower.includes('/highest.m3u8') ||
+               urlLower.includes('commondatastorage') ||
+               urlLower.includes('vjs.zencdn.net'))) {
+            isDirectVideo = true;
+          }
+        }
+
+        if (isDirectVideo) {
           // --- Native Premium Custom Player Mode (VideoJS) ---
           if (iframeContainer) iframeContainer.style.display = 'none';
           if (playerFrame) playerFrame.src = ''; // Clear iframe source to stop playback
@@ -7652,7 +7669,7 @@
         const dubSelector = document.getElementById('dubSelectorContainer');
         const qualityRow = document.getElementById('qualityShareRow');
 
-        if (anime.videoUrl) {
+        if (isDirectVideo) {
           if (sourceSelector) sourceSelector.style.display = 'none';
           if (dubSelector) dubSelector.style.display = 'block';
           if (qualityRow) qualityRow.style.display = 'flex';
@@ -7934,7 +7951,7 @@
             <div class="anime-poster-wrap">
               <span class="anime-badge-rating">⭐ ${item.rating}</span>
               <span class="anime-badge-year">${item.year}</span>
-              <img src="${item.poster}" class="anime-poster" alt="${item.title}" loading="lazy">
+              <img src="${item.poster}?cache_bust=3" class="anime-poster" alt="${item.title}" loading="lazy">
             </div>
             <div class="anime-card-info">
               <h4 class="anime-card-title">${item.title}</h4>
@@ -8804,5 +8821,5 @@
   </script>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0fddb9ace898d57',t:'MTc4MjE1ODYyMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
