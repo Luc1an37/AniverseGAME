@@ -999,6 +999,194 @@
   <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
 <body class="theme-default">
+  <!-- Unified Welcoming/Login Overlay (Visible only to guests outside Telegram) -->
+  <div id="guestWelcomeOverlay" style="position: fixed; inset: 0; background: var(--bg-primary); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; text-align: center; box-sizing: border-box; animation: fadeIn 0.4s ease;">
+    <!-- Cosmic animated particles background -->
+    <div class="cosmic-bg" id="particles"></div>
+    
+    <!-- Top Header / Logo -->
+    <header class="header" style="background: transparent; border-bottom: none; box-shadow: none; margin-top: 30px; margin-bottom: 20px; z-index: 2; width: 100%;">
+      <div class="header-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+        <h1 class="logo" style="font-size: 38px; font-weight: 900; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; letter-spacing: 2px;">ANIVERSE</h1>
+        <p class="tagline" style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold;">Мультимедийный Игровой Портал</p>
+        <div class="online-counter" id="online-counter" style="margin-top: 15px; background: linear-gradient(135deg, var(--accent-red), #ff6b35); padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 11px; color: #fff; box-shadow: 0 4px 15px rgba(255, 69, 0, 0.35);">
+          🔥 Сейчас онлайн: загрузка...
+        </div>
+      </div>
+    </header>
+
+    <!-- Cards Container (Beautiful Split Cards responsive layout!) -->
+    <div class="welcome-cards-container" style="display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 500px; z-index: 2; margin-bottom: 40px; position:relative;">
+      <!-- Карточка кинотеатра -->
+      <div class="section-card cinema" id="cardCinema" style="margin-bottom: 8px; border: 1px solid rgba(255, 107, 107, 0.3); box-shadow: 0 0 15px rgba(255, 107, 107, 0.15); background: var(--bg-card); border-radius: var(--radius); padding: 24px; text-align: center;">
+        <span class="section-icon" style="font-size:32px; margin-bottom:8px; display:block;">🍿</span>
+        <h2 class="section-title" style="font-size: 16px; font-weight: 800; margin-bottom: 8px; color: #fff;">Онлайн-Кинотеатр</h2>
+        <p class="section-desc" style="color: var(--text-secondary); font-size: 11px; line-height: 1.5; margin-bottom: 16px;">
+          Смотрите тысячи популярных аниме и фильмов в Full HD качестве с выбором серверов совершенно бесплатно и без регистрации!
+        </p>
+        <button id="btnEnterCinema" type="button" class="btn btn-cinema" style="width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; background: linear-gradient(135deg, #ff6b6b, #feca57); color: white;">
+          🍿 Смотреть Аниме
+        </button>
+      </div>
+
+      <!-- Карточка игры -->
+      <div class="section-card game" id="cardGame" style="border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 15px rgba(168, 85, 247, 0.15); background: var(--bg-card); border-radius: var(--radius); padding: 24px; text-align: center;">
+        <span class="section-icon" style="font-size:32px; margin-bottom:8px; display:block;">🎮</span>
+        <h2 class="section-title" style="font-size: 16px; font-weight: 800; margin-bottom: 8px; color: #fff;">Кликер Империи</h2>
+        <p class="section-desc" style="color: var(--text-secondary); font-size: 11px; line-height: 1.5; margin-bottom: 16px;">
+          Развивайте свою золотую империю, соревнуйтесь в таблице лидеров с реальными игроками и покупайте редких питомцев!
+        </p>
+        <button id="btnEnterGame" type="button" class="btn btn-game" style="width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; background: linear-gradient(135deg, var(--accent-purple), #6a0dad); color: white;">
+          🎮 Запустить Игру
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Anixart-style Header for AniVerse -->
+  <header id="anixartHeader" style="width: 100%; max-width: 560px; height: 56px; background: rgba(18, 22, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.06); display: none; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 9999; box-sizing: border-box; backdrop-filter: blur(8px); margin: 0 auto; flex-shrink:0;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <!-- Hamburger filter toggle -->
+      <button id="btnToggleFilters" type="button" style="background:transparent; border:none; cursor:pointer; color:#fff; display:flex; align-items:center;">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg>
+      </button>
+      <h2 style="font-size:16px; font-weight:900; letter-spacing:1px; margin:0; text-transform:uppercase; background:linear-gradient(135deg, #fff, #c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">AniVerse</h2>
+    </div>
+    
+    <div style="flex:1; max-width:200px; margin:0 10px;">
+      <input type="text" id="animeSearchInput" placeholder="Поиск аниме..." style="padding: 6px 12px; font-size:11px; border-radius:14px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.05); color:#fff; width:100%;">
+    </div>
+
+    <div style="display:flex; align-items:center; gap:10px;">
+      <!-- Layout Switcher Button (Grid/List toggle) -->
+      <button onclick="window.toggleAnimeLayout()" type="button" style="background:transparent; border:none; cursor:pointer; color:#fff; display:flex; align-items:center; justify-content:center; width:36px; height:36px; -webkit-tap-highlight-color: transparent;" title="Переключить вид">
+        <span id="layoutToggleIcon" style="font-size:16px;">📜</span>
+      </button>
+
+      <!-- Theme Switcher button -->
+      <button id="btnThemeToggle" type="button" style="background:transparent; border:none; cursor:pointer; color:#ffd700; display:flex;">
+        <span id="themeToggleIcon" style="font-size:16px;">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="app" style="padding-top: 0 !important; max-width: 560px; margin: 0 auto; min-height: 100vh;">
+    
+    <!-- ================= VIEW 1: ANIME PORTAL VIEW ================= -->
+    <div id="anime-portal-view" style="display: none; flex-direction: column; width: 100%; flex: 1;">
+      <!-- Advanced Dropdown Filter Bar (Anixart style) -->
+      <div id="anixartFilterDropdown" style="display:none; padding: 14px var(--page-pad); background:rgba(18, 22, 40, 0.95); border-bottom:1px solid rgba(255,255,255,0.06); box-shadow: 0 8px 24px rgba(0,0,0,0.35);">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; text-align:left;">
+          <div>
+            <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">Фильтр Жанров</label>
+            <select id="filterGenre" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
+              <option value="all">Все жанры</option>
+              <option value="Экшен">Экшен</option>
+              <option value="Фэнтези">Фэнтези</option>
+              <option value="Приключения">Приключения</option>
+              <option value="Комедия">Комедия</option>
+              <option value="Детектив">Детектив</option>
+              <option value="Драма">Драма</option>
+              <option value="Сёнен">Сёнен</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:9px; font-weight:900; color:var(--text-muted); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">Год выпуска</label>
+            <select id="filterYear" style="width:100%; background:#101424; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px; color:#fff; font-size:11px; outline:none;">
+              <option value="all">Все годы</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2017">2017</option>
+              <option value="2013">2013</option>
+              <option value="2004">2004</option>
+              <option value="1999">1999</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Combined Filter Chips Bar (Genre / Year / Status) -->
+      <div style="background:rgba(22, 28, 45, 0.4); border:1px solid rgba(255,255,255,0.04); border-radius:16px; padding:12px; margin: 15px var(--page-pad) 15px var(--page-pad);">
+        <!-- Status Filters -->
+        <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; margin-bottom:10px; -webkit-overflow-scrolling:touch;" class="custom-scrollbar" id="statusFilterRow">
+          <button class="filter-chip active" data-status-filter="all">🌟 Все статусы</button>
+          <button class="filter-chip" data-status-filter="ongoing">🟢 Онгоинги</button>
+          <button class="filter-chip" data-status-filter="completed">🔵 Завершенные</button>
+          <button class="filter-chip" data-status-filter="announced">🟠 Анонсы</button>
+        </div>
+
+        <!-- Genres Scrollable Bar (25+ Genres!) -->
+        <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:8px; margin-bottom:10px; -webkit-overflow-scrolling:touch;" class="custom-scrollbar" id="genreFilterRow">
+          <button class="filter-chip active" data-genre-filter="all">🎭 Все жанры</button>
+        </div>
+
+        <!-- Years Scrollable Bar (1960 to 2026!) -->
+        <div style="display:flex; gap:6px; align-items:center; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch;" class="custom-scrollbar" id="yearFilterRow">
+          <span style="font-size:9px; color:var(--text-muted); font-weight:bold; text-transform:uppercase; margin-right:4px;">Год:</span>
+          <button class="filter-chip active" data-year-filter="all">📅 Все годы</button>
+        </div>
+      </div>
+
+      <!-- Real-time Counters Row -->
+      <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:8px 14px; border-radius:10px; margin: 0 var(--page-pad) 15px var(--page-pad); border:1px solid rgba(255,255,255,0.03);">
+        <span style="font-size:10px; color:rgba(255,255,255,0.5); font-weight:bold;" id="countTotal">Всего: — аниме</span>
+        <span style="font-size:10px; color:#ffd700; font-weight:bold;" id="countShown">Показано: —</span>
+        <span style="font-size:10px; color:#ff6b6b; font-weight:bold;" id="countFavs">В избранном: — ❤️</span>
+      </div>
+
+      <!-- Colossal Cinema Header & Sub-Navigation -->
+      <div style="padding: 0 0 10px; flex-shrink: 0; z-index: 10;">
+        <div style="display: flex; gap: 6px; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto;">
+          <div style="display: flex; gap: 4px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 3px;">
+            <button onclick="switchCinemaSubTab('catalog')" id="cinemaTab-catalog" type="button" style="background: var(--accent-purple); color: #fff; border: none; border-radius: 6px; font-size: 10px; font-weight: bold; padding: 5px 10px; cursor: pointer; transition: all 0.2s;">🍿 Каталог</button>
+            <button onclick="switchCinemaSubTab('schedule')" id="cinemaTab-schedule" type="button" style="background: transparent; color: rgba(255,255,255,0.6); border: none; border-radius: 6px; font-size: 10px; font-weight: bold; padding: 5px 10px; cursor: pointer; transition: all 0.2s;">📅 Расписание</button>
+            <button onclick="switchCinemaSubTab('favorites')" id="cinemaTab-favorites" type="button" style="background: transparent; color: rgba(255,255,255,0.6); border: none; border-radius: 6px; font-size: 10px; font-weight: bold; padding: 5px 10px; cursor: pointer; transition: all 0.2s;">⭐️ Избранное</button>
+          </div>
+          
+          <button onclick="rollRandomAnime()" type="button" class="btn-action" style="margin: 0; padding: 6px 10px; font-size: 10px; background: linear-gradient(135deg, #a855f7, #ec4899); border-radius: 8px; box-shadow: 0 4px 12px rgba(168,85,247,0.3); border: none; font-weight: bold; width: auto; -webkit-tap-highlight-color: transparent;">
+            🎰 Случайное
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. Catalog View (Grid) -->
+      <div id="cinemaContent-catalog" class="cinema-subpage" style="width:100%;">
+        <div class="anime-container" id="animeGrid"></div>
+      </div>
+
+      <!-- 2. Interactive Release Schedule View -->
+      <div id="cinemaContent-schedule" class="cinema-subpage" style="display: none; padding: 0 var(--page-pad) 40px; width:100%; max-width:500px; margin: 0 auto;">
+        <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;" id="cinemaScheduleList"></div>
+      </div>
+
+      <!-- 3. Favorites / Watchlist View -->
+      <div id="cinemaContent-favorites" class="cinema-subpage" style="display: none; padding: 0 var(--page-pad) 40px; width:100%;">
+        <div class="anime-container" id="favoritesGrid"></div>
+      </div>
+
+      <!-- Premium Mail.ru Responsive 950x300 Advertising Banner -->
+      <div class="mailru-ad-wrapper" style="width: 95%; max-width: 500px; margin: 20px auto 40px; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(8,12,24,0.3); display: flex; flex-direction: column; align-items: center; box-sizing: border-box; padding: 12px; margin-left: auto; margin-right: auto;">
+        <span style="font-size: 8px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 8px; display: block;">СПОНСОР • РЕКЛАМА MAIL.RU</span>
+        <div style="overflow-x: auto; width: 100%; text-align: center; -webkit-overflow-scrolling: touch; padding: 4px; box-sizing: border-box;">
+          <ins class="mrg-tag" 
+               style="display:inline-block;width:950px;height:300px" 
+               data-ad-client="ad-2027131"
+               data-ad-slot="2027131">
+          </ins>
+          <script>
+              (window.MRGtag = window.MRGtag || []).push({});
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 2: GAME PORTAL VIEW ================= -->
+    <div id="game-portal-view" style="display: none; flex-direction: column; width: 100%; flex: 1;">
+      <div class="top-bar">
   <div class="frenzy-overlay" id="frenzyOverlay"></div>
   <div class="frenzy-timer-bar" id="frenzyTimerBar">
     <span>⚡ Золотая лихорадка x5!</span>
@@ -1622,7 +1810,8 @@
       <div class="nav-item" data-page="profile"><div class="nav-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg></div><span class="nav-label">Профиль</span></div>
     </nav>
 
-  </div>
+    </div><!-- /#game-portal-view -->
+  </div><!-- /.app -->
 
   <div class="modal-overlay" id="chestModal">
     <div class="modal-box">
