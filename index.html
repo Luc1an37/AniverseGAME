@@ -6701,6 +6701,80 @@
       function hideLoading() { el.loadingScreen.classList.add('hidden'); }
 
       function init() {
+        // --- AniVerse Initializations ---
+        try {
+          OnlineCounter.init();
+          loadLocalAnimeDatabase();
+          populateFilterChipsOnBoot();
+          
+          // Bind AniVerse welcome UI controls
+          document.getElementById('btnEnterCinema').addEventListener('click', () => {
+            document.getElementById('guestWelcomeOverlay').style.display = 'none';
+            document.getElementById('anixartHeader').style.display = 'flex';
+            document.getElementById('anime-portal-view').style.display = 'flex';
+            document.getElementById('game-portal-view').style.display = 'none';
+            currentViewMode = 'anime';
+            renderAnimeGrid();
+            triggerHaptic('medium');
+          });
+
+          document.getElementById('btnEnterGame').addEventListener('click', () => {
+            document.getElementById('guestWelcomeOverlay').style.display = 'none';
+            document.getElementById('anixartHeader').style.display = 'none';
+            document.getElementById('anime-portal-view').style.display = 'none';
+            document.getElementById('game-portal-view').style.display = 'flex';
+            currentViewMode = 'game';
+            triggerHaptic('medium');
+          });
+
+          // Bind other controls
+          document.getElementById('btnThemeToggle').addEventListener('click', toggleThemeMode);
+          document.getElementById('btnAppToggle').addEventListener('click', () => {
+            if (currentViewMode === 'anime') {
+              document.getElementById('anixartHeader').style.display = 'none';
+              document.getElementById('anime-portal-view').style.display = 'none';
+              document.getElementById('game-portal-view').style.display = 'flex';
+              currentViewMode = 'game';
+            } else {
+              document.getElementById('anixartHeader').style.display = 'flex';
+              document.getElementById('anime-portal-view').style.display = 'flex';
+              document.getElementById('game-portal-view').style.display = 'none';
+              currentViewMode = 'anime';
+              renderAnimeGrid();
+            }
+            triggerHaptic('light');
+          });
+
+          document.getElementById('btnToggleFilters').addEventListener('click', () => {
+            const filterDropdown = document.getElementById('anixartFilterDropdown');
+            if (filterDropdown) {
+              filterDropdown.style.display = filterDropdown.style.display === 'none' ? 'block' : 'none';
+              triggerHaptic('light');
+            }
+          });
+
+          // Search & filter listeners
+          document.getElementById('animeSearchInput').addEventListener('input', (e) => {
+            renderAnimeGrid();
+          });
+          document.getElementById('filterSort').addEventListener('change', (e) => {
+            renderAnimeGrid();
+          });
+
+          // Check if opened inside Telegram
+          const insideTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+          if (insideTelegram) {
+            document.getElementById('guestWelcomeOverlay').style.display = 'none';
+            document.getElementById('anixartHeader').style.display = 'none';
+            document.getElementById('anime-portal-view').style.display = 'none';
+            document.getElementById('game-portal-view').style.display = 'flex';
+            currentViewMode = 'game';
+          } else {
+            document.getElementById('guestWelcomeOverlay').style.display = 'flex';
+          }
+        } catch(e) {
+          console.warn("AniVerse initializations failed:", e);
+        }
         try {
           try { if (TELEGRAM_WEBAPP && typeof TELEGRAM_WEBAPP.ready === 'function') TELEGRAM_WEBAPP.ready(); } catch (e) {}
           cacheElements();
