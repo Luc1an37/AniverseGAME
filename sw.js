@@ -1,10 +1,9 @@
-const CACHE_NAME = 'aniverse-v3'; // Incremented to v3 to force browsers to fetch the fresh index.html from network!
+const CACHE_NAME = 'aniverse-v4'; // Incremented to v4 to force client browsers to immediately flush the old cache and load the updated index.html!
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/favicon.svg',
-  'https://telegram.org/js/telegram-web-app.js',
-  'https://sad.adsgram.ai/js/sad.min.js'
+  'https://telegram.org/js/telegram-web-app.js'
 ];
 
 // 1. Install Event - pre-cache key assets
